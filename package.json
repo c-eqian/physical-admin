@@ -10,7 +10,9 @@
   "dependencies": {
     "axios": "^0.18.0",
     "echarts": "^4.2.0-rc.2",
-    "element-ui": "^2.4.11",
+    "element-ui": "^2.15.6",
+    "less": "^4.1.1",
+    "mqtt": "^3.0.0",
     "qs": "^6.10.3",
     "vue": "^2.5.17",
     "vue-quill-editor": "^3.0.6",
@@ -28,8 +30,9 @@
     "gm-crypt": "0.0.2",
     "mockjs": "^1.0.1-beta3",
     "node-sass": "^6.0.1",
-    "postcss-loader": "^2.0.8",
     "sass-loader": "^5.0.1",
+    "postcss-loader": "^2.0.8",
+    "less-loader": "^4.1.0",
     "vue-style-loader": "^3.0.1",
     "vue-template-compiler": "^2.5.17"
   }

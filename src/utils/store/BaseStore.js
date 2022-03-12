@@ -24,7 +24,8 @@ const BaseStore = {
     // 用户
     user: {},
     //  当前路由
-    CurrentPath: ''
+    CurrentPath: '',
+    mqttData: {}
   },
   /*
   Mutation 用于变更 Store中的数据。
@@ -38,6 +39,10 @@ const BaseStore = {
   mutations: {
     switchCollapse (state) {
       state.isCollapse = !state.isCollapse
+    },
+    UpdateMqttData (state, payload) {
+      // 在组件中不能直接修改属性值，通过此方法更新state中的meus
+      state.mqttData = payload
     },
     UpdateMenus (state, payload) {
       // 在组件中不能直接修改属性值，通过此方法更新state中的meus

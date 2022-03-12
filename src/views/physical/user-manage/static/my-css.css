@@ -1,0 +1,13 @@
+
+#user-data-contain .input-search{
+  width:50%!important;
+  }
+#user-data-contain .input-search .el-input__inner{
+  width:100%!important;
+  }
+  #user-data-contain .el-page-header__title {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    font-weight: 500;
+}

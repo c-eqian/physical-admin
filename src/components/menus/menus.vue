@@ -7,15 +7,19 @@
     text-color="rgba(255,255,255,.8)"
     active-text-color="#ffd04b"
     :collapse="isCollapse">
+        <el-menu-item index="/console">
+      <i class="iconfont icon-shouyeshouye"></i>
+      <span slot="title">首页</span>
+    </el-menu-item>
         <!--          一级导航-->
           <el-submenu :index="item.menuid+''" v-for="item in menu" :key="item.menuid">
             <template slot="title">
-              <i  :class='item.icon'></i>
+              <i  class='iconfont' :class="item.icon" ></i>
               <span slot="title">{{ item.menuname }}</span>
             </template>
             <!--          二级菜单-->
             <el-menu-item :index="item2.path" v-for="item2 in item.children" :key="item2.menuid">
-              <i :class='item2.icon'></i>
+              <i class='iconfont' :class="item2.icon"></i>
               <span slot="title">{{ item2.menuname }}</span>
             </el-menu-item>
           </el-submenu>

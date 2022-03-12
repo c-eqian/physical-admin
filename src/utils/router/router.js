@@ -19,9 +19,23 @@ const router = new Router({
       component: Login
     },
     {
+      path: '/apply-list',
+      component: () => import('@/views/physical/user-apply/apply-list/index')
+    },
+    {
       path: '/index',
       component: Index,
+      redirect: '/console',
       children: [
+        {
+          path: '/user-manage/user-exam',
+          component: () => import('@/views/physical/exam-manage/user-exam/index')
+        },
+        {
+          path: '/userList',
+          name: 'user-list',
+          component: () => import('@/views/physical/user-manage/user-list')
+        },
         {
           path: '/console',
           name: 'console',
@@ -45,6 +59,10 @@ const router = new Router({
         {
           path: '/404',
           component: NotFound
+        },
+        {
+          path: '/network-manage/Internet-connection',
+          component: () => import('@/views/physical/network-manage/Internet-connection/index')
         }
       ]
     },

@@ -2,17 +2,36 @@
   <div class="header-box">
     <el-row type="flex" justify="space-between">
       <el-col :span="6">
-        <button class="btn-tool" title="折叠" @click="collapse" >
-            <i class="el-icon-d-arrow-left"></i>
+        <button class="btn-tool" title="折叠" @click="collapse">
+          <i :class="changeIcon"></i>
         </button>
         <button class="btn-tool" title="刷新" @click="refresh">
-            <i class="el-icon-refresh"></i>
+          <i class="el-icon-refresh"></i>
         </button>
         <button class="btn-tool" title="全屏" @click="Utils.fullScreen">
-            <i class="el-icon-rank"></i>
+          <i class="el-icon-rank"></i>
         </button>
-        <button class="btn-tool" title="便签" @click="dialogVisible = true" >
+        <button class="btn-tool" title="便签" @click="dialogVisible = true">
           <i class="el-icon-edit"></i>
+        </button>
+        <button class="btn-tool" title="消息" @click="dialogVisible = true">
+          <i class="iconfont icon-shoucanghezi"></i>
+        </button>
+        <button class="btn-tool" title="用户体检" @click="dialogVisible = true">
+          <i class="iconfont icon-shenqing"></i>
+        </button>
+<!--        <el-popover-->
+        <!--          placement="top-start"-->
+        <!--          title=""-->
+        <!--          width="200"-->
+        <!--          trigger="hover"-->
+        <!--          content="用户体检申请">-->
+        <!--          <button slot="reference" class="btn-tool" title="体检申请" @click="applyClicked">-->
+        <!--          <el-badge is-dot class="iconfont icon-tongzhi1"></el-badge>-->
+        <!--        </button>-->
+        <!--        </el-popover>-->
+        <button class="btn-tool" title="体检申请" @click="applyClicked">
+          <el-badge is-dot class="iconfont icon-tongzhi1"></el-badge>
         </button>
       </el-col>
       <el-col :span="6" align="right">
@@ -30,9 +49,9 @@
       </el-col>
     </el-row>
     <el-dialog title="便签" width="400px"
-      :close-on-click-modal="false"
-      :visible.sync="dialogVisible"
-      @closed="saveNotes">
+               :close-on-click-modal="false"
+               :visible.sync="dialogVisible"
+               @closed="saveNotes">
       <el-input
         type="textarea"
         :rows="7"
@@ -54,6 +73,10 @@ export default {
     }
   },
   methods: {
+    applyClicked () {
+      console.log(222)
+      this.$router.push({ path: '/apply-list' })
+    },
     collapse () {
       this.$store.commit('BaseStore/switchCollapse')
     },
@@ -71,7 +94,12 @@ export default {
       }
     }
   },
+  //
   computed: {
+    changeIcon () {
+      let icon = this.$store.state.BaseStore.isCollapse
+      return icon ? 'el-icon-d-arrow-right' : 'el-icon-d-arrow-left'
+    },
     username () {
       // eslint-disable-next-line no-unused-vars
       let { name } = this.$store.state.BaseStore.user
@@ -82,16 +110,17 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .btn-tool {
-    border: none;
-    background: transparent;
-    font-size: 18px;
-    padding: 5px 10px;
-    cursor: pointer;
-    outline: none;
-    text-align: left;
-  }
-  .user-name {
-    margin-left: 20px;
-  }
+.btn-tool {
+  border: none;
+  background: transparent;
+  font-size: 18px;
+  padding: 5px 10px;
+  cursor: pointer;
+  outline: none;
+  text-align: left;
+}
+
+.user-name {
+  margin-left: 20px;
+}
 </style>

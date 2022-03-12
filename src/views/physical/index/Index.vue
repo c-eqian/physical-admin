@@ -2,7 +2,7 @@
   <el-container class="index-box">
     <el-aside :width="asideWidth">
       <div class="logo">
-        <img v-show="!isCollapse" src="../../../assets/logo.png" alt="ELementUI" width="122" height="27">
+        <img class="logo" v-show="!isCollapse" src="../../../assets/logo2.png" alt="ELementUI" width="122" height="27">
       </div>
       <menus :isCollapse="isCollapse"/>
     </el-aside>
