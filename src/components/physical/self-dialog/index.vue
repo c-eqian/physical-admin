@@ -22,7 +22,7 @@ export default {
     }
   },
   methods: {
-    dialogClicked() {
+    dialogClicked () {
       this.dialogOptions.DialogShow = false
     }
   },

@@ -85,10 +85,20 @@
           width="200">
         </el-table-column>
         <el-table-column
-          prop="apply_type"
           label="申请类型"
-          sortable
           width="130">
+          <template slot-scope="scope">
+            <el-popover
+            placement="right"
+            width="400"
+            trigger="hover">
+            <el-table :data="scope.row.apply_type">
+              <el-table-column width="150" property="FeeItemCode" label="项目编码"></el-table-column>
+              <el-table-column width="100" property="FeeItemName" label="项目名称"></el-table-column>
+            </el-table>
+              <el-button type="text" slot="reference" size="small">查看</el-button>
+          </el-popover>
+          </template>
         </el-table-column>
         <el-table-column
           prop="apply_time"
@@ -171,7 +181,7 @@
     <el-button :disabled="dialogInputDisable" type="primary" @click="dialogClicked">确 定</el-button>
   </span>
     </el-dialog>
-    <!--    <dialog :dialogOptions="dialogOptions" :show="show"></dialog>-->
+    <!--    <self-dialog :dialogOptions="dialogOptions" :show="show"></self-dialog>-->
   </div>
 
 </template>
@@ -181,7 +191,7 @@ import pageHeader from '@/components/physical/pageHeader/pageHeader'
 import searchInput from '@/components/physical/searchInput/searchInput'
 import '../static/notice.css'
 import { getAge, handleGender } from '@/utils/plugin/utils'
-import dialog from '@/components/physical/dialog/index'
+import selfDialog from '@/components/physical/self-dialog/index'
 
 export default {
   name: '',
@@ -221,12 +231,15 @@ export default {
       }
     },
     dropdownCallback (event) {
+      console.log(event)
       if (event.id === 1) {
         this.$confirm(`是否同意${event.data.name}-[${event.data.apply_type}]的申请?`, '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(res => {
+          // eslint-disable-next-line no-unused-vars
+          let id = event.data.id
           console.log(res)
         })
           .catch(() => {
@@ -281,15 +294,12 @@ export default {
           data[index].apply_tag = '未通过'
           data[index].apply_tag_style = 'danger'
         }
-        if (data[index].apply_type === 0) {
-          data[index].apply_type = '基本体检'
-        } else if (data[index].apply_type === 1) {
-          data[index].apply_type = '全部体检'
-        } else if (data[index].apply_type === 2) {
-          data[index].apply_type = '尿常规'
-        } else if (data[index].apply_type === 3) {
-          data[index].apply_type = '血常规'
-        }
+        // if (data[index].apply_type.length === 1) {
+        //   data[index].apply_type = data[index].apply_type[0]
+        // }
+        // else {
+        //
+        // }
       }
       this.tableData = data
     },
@@ -326,7 +336,7 @@ export default {
     pageHeader,
     searchInput,
     // eslint-disable-next-line vue/no-unused-components
-    dialog
+    selfDialog
   }
 }
 </script>
