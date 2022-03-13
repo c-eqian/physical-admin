@@ -42,6 +42,7 @@ export default {
         this.createConnection()
       } else {
         disConnection()
+        this.$store.commit('BaseStore/updateNetConnect')
         this.message = '断开连接'
         this.loading = status
       }
@@ -54,6 +55,7 @@ export default {
       mqtt.mqttInit()
       this.loading = false
       this.message = '连接成功'
+      this.$store.commit('BaseStore/updateNetConnect')
       mqtt.mqttSub('123456')
       let client = selfMqttClient()
       client.on('message', (topic, message) => {

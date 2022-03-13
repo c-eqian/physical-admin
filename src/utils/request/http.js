@@ -16,8 +16,8 @@ import qs from 'qs'
 const http = axios.create({
 //  基本URL，当配置该项后，在后面发起请求时，加请求的路径即可
 //   baseURL:'http://120.77.44.219:13208',//后台接口url
-  baseURL: 'https://django-82zo-1586671-1308572844.ap-shanghai.run.tcloudbase.com/api/v3', // 后台接口url
-  // baseURL:'http://127.0.0.1:13209/api/v3',
+  //baseURL: 'https://django-82zo-1586671-1308572844.ap-shanghai.run.tcloudbase.com/api/v3', // 后台接口url
+  baseURL: 'http://127.0.0.1:13209/api/v3',
   //  设置超时时间
   timeout: 10 * 1000
   // withCredentials: false,

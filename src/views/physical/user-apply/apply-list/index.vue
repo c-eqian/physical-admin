@@ -197,6 +197,7 @@ export default {
   name: '',
   data () {
     return {
+      applyId: 0, // 申请ID
       contentTitle: '审核中心',
       userTotal: 50,
       placeholder: '支持姓名、证件、机构搜索',
@@ -223,24 +224,54 @@ export default {
   },
   methods: {
     inputChange (value) {
+      console.log(this.dialogInput)
       this.dialogInputDisable = value === ''
     },
     dialogClicked () {
-      this.dialogOptions = {
-        DialogShow: false
-      }
+      // eslint-disable-next-line no-unused-vars
+      let userId = this.$store.state.BaseStore.user.user_id
+      // eslint-disable-next-line no-unused-vars
+      this.$get('/update-apply-status', {
+        Id: this.applyId,
+        apply_status: -1,
+        operator_id: userId,
+        apply_reason: this.dialogInput
+      }).then(res => {
+        this.$message({
+          showClose: true,
+          message: res.data.msg,
+          type: res.data.status === 200 ? 'success' : 'error'
+        })
+        if (res.data.status === 200) {
+          this.dialogOptions = {
+            DialogShow: false
+          }
+        }
+      })
     },
     dropdownCallback (event) {
-      console.log(event)
+      this.applyId = event.data.id
       if (event.id === 1) {
-        this.$confirm(`是否同意${event.data.name}-[${event.data.apply_type}]的申请?`, '提示', {
+        this.$confirm(`是否同意${event.data.name}的申请?`, '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(res => {
           // eslint-disable-next-line no-unused-vars
-          let id = event.data.id
-          console.log(res)
+          let userId = this.$store.state.BaseStore.user.user_id
+
+          // eslint-disable-next-line no-unused-vars
+          this.$get('/update-apply-status', {
+            Id: this.applyId,
+            apply_status: 1,
+            operator_id: userId
+          }).then(res => {
+            this.$message({
+              showClose: true,
+              message: res.data.msg,
+              type: res.data.status === 200 ? 'success' : 'error'
+            })
+          })
         })
           .catch(() => {
             console.log('拒绝')
@@ -315,7 +346,20 @@ export default {
       console.log(row, column, event)
     },
     handleClick (row) { // 右侧操作按钮
-      console.log(row)
+      // eslint-disable-next-line no-unused-vars
+      let userId = this.$store.state.BaseStore.user.user_id
+      // eslint-disable-next-line no-unused-vars
+      this.$get('/update-apply-status', {
+        Id: row.id,
+        apply_status: 0,
+        operator_id: userId
+      }).then(res => {
+        this.$message({
+          showClose: true,
+          message: res.data.msg,
+          type: res.data.status === 200 ? 'success' : 'error'
+        })
+      })
     },
     toBack () {
       this.$router.go(-1)

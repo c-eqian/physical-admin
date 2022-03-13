@@ -25,6 +25,7 @@ const BaseStore = {
     user: {},
     //  当前路由
     CurrentPath: '',
+    netConnect: false, // 网络连接状态
     mqttData: {}
   },
   /*
@@ -37,6 +38,9 @@ const BaseStore = {
   调用（需要在根节点注入 store）。
    */
   mutations: {
+    updateNetConnect (state) {
+      state.netConnect = !state.netConnect
+    },
     switchCollapse (state) {
       state.isCollapse = !state.isCollapse
     },

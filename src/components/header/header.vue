@@ -33,6 +33,9 @@
         <button class="btn-tool" title="体检申请" @click="applyClicked">
           <el-badge is-dot class="iconfont icon-tongzhi1"></el-badge>
         </button>
+        <button class="btn-tool" title="网络连接" @click="netConnectClicked">
+          <el-badge is-dot class="iconfont" :class="netConnectStatus"></el-badge>
+        </button>
       </el-col>
       <el-col :span="6" align="right">
         <span>{{ Utils.todayDate() }}</span>
@@ -73,9 +76,11 @@ export default {
     }
   },
   methods: {
-    applyClicked () {
-      console.log(222)
+    applyClicked () { // 申请列表
       this.$router.push({ path: '/apply-list' })
+    },
+    netConnectClicked () { // 网络连接
+      this.$router.push({ path: '/network-manage/Internet-connection' })
     },
     collapse () {
       this.$store.commit('BaseStore/switchCollapse')
@@ -96,6 +101,11 @@ export default {
   },
   //
   computed: {
+    netConnectStatus () { // 网络连接状态
+      // eslint-disable-next-line no-unused-vars
+      let status = this.$store.state.BaseStore.netConnect
+      return status ? 'icon-wuxianwangluo' : 'icon-wuwangluo'
+    },
     changeIcon () {
       let icon = this.$store.state.BaseStore.isCollapse
       return icon ? 'el-icon-d-arrow-right' : 'el-icon-d-arrow-left'
