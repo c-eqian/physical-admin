@@ -89,15 +89,15 @@
           width="130">
           <template slot-scope="scope">
             <el-popover
-            placement="right"
-            width="400"
-            trigger="hover">
-            <el-table :data="scope.row.apply_type">
-              <el-table-column width="150" property="FeeItemCode" label="项目编码"></el-table-column>
-              <el-table-column width="100" property="FeeItemName" label="项目名称"></el-table-column>
-            </el-table>
+              placement="right"
+              width="400"
+              trigger="hover">
+              <el-table :data="scope.row.apply_type">
+                <el-table-column width="150" property="FeeItemCode" label="项目编码"></el-table-column>
+                <el-table-column width="100" property="FeeItemName" label="项目名称"></el-table-column>
+              </el-table>
               <el-button type="text" slot="reference" size="small">查看</el-button>
-          </el-popover>
+            </el-popover>
           </template>
         </el-table-column>
         <el-table-column
@@ -164,7 +164,7 @@
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
         :current-page="currentPage"
-        :page-sizes="[50, 100, 150, 200]"
+        :page-sizes="[30, 60, 90]"
         :page-size="pageSize"
         layout="total, sizes, prev, pager, next, jumper"
         :total="userTotal">
@@ -175,7 +175,8 @@
       :visible.sync="dialogOptions.DialogShow"
       width="30%"
       center>
-      <el-input clearable @input="inputChange" type="textarea" v-model="dialogInput" :placeholder="dialogOptions.dialogPlaceholder"></el-input>
+      <el-input clearable @input="inputChange" type="textarea" v-model="dialogInput"
+                :placeholder="dialogOptions.dialogPlaceholder"></el-input>
       <span slot="footer" class="dialog-footer">
     <el-button @click="dialogOptions.DialogShow = false">取 消</el-button>
     <el-button :disabled="dialogInputDisable" type="primary" @click="dialogClicked">确 定</el-button>
@@ -190,7 +191,8 @@
 import pageHeader from '@/components/physical/pageHeader/pageHeader'
 import searchInput from '@/components/physical/searchInput/searchInput'
 import '../static/notice.css'
-import { getAge, handleGender } from '@/utils/plugin/utils'
+// eslint-disable-next-line camelcase
+import { handle_apply_data } from '@/utils/handle'
 import selfDialog from '@/components/physical/self-dialog/index'
 
 export default {
@@ -199,10 +201,10 @@ export default {
     return {
       applyId: 0, // 申请ID
       contentTitle: '审核中心',
-      userTotal: 50,
+      userTotal: 0,
       placeholder: '支持姓名、证件、机构搜索',
       currentPage: 1, // 当前页
-      pageSize: 50, // 每页数据
+      pageSize: 30, // 每页数据
       org_code: 0, // 机构代码
       dialogInput: '',
       dialogInputDisable: true,
@@ -223,6 +225,9 @@ export default {
     this.get_apply_list()
   },
   methods: {
+    /**
+     * 监听弹窗的输入框
+     * */
     inputChange (value) {
       console.log(this.dialogInput)
       this.dialogInputDisable = value === ''
@@ -237,11 +242,7 @@ export default {
         operator_id: userId,
         apply_reason: this.dialogInput
       }).then(res => {
-        this.$message({
-          showClose: true,
-          message: res.data.msg,
-          type: res.data.status === 200 ? 'success' : 'error'
-        })
+        this.messageTip(res.data.msg, res.data.status === 200 ? 'success' : 'error')
         if (res.data.status === 200) {
           this.dialogOptions = {
             DialogShow: false
@@ -252,25 +253,16 @@ export default {
     dropdownCallback (event) {
       this.applyId = event.data.id
       if (event.id === 1) {
-        this.$confirm(`是否同意${event.data.name}的申请?`, '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(res => {
-          // eslint-disable-next-line no-unused-vars
+        // eslint-disable-next-line no-template-curly-in-string
+        this.confirmTip('是否同意${event.data.name}的申请?').then(res => {
           let userId = this.$store.state.BaseStore.user.user_id
-
-          // eslint-disable-next-line no-unused-vars
-          this.$get('/update-apply-status', {
+          let params = {
             Id: this.applyId,
             apply_status: 1,
             operator_id: userId
-          }).then(res => {
-            this.$message({
-              showClose: true,
-              message: res.data.msg,
-              type: res.data.status === 200 ? 'success' : 'error'
-            })
+          }
+          this.getRequest('/update-apply-status', params).then(res => {
+            this.messageTip(res.data.msg, res.data.status === 200 ? 'success' : 'error')
           })
         })
           .catch(() => {
@@ -287,7 +279,7 @@ export default {
     },
     search (text) { // 搜索
       this.currentPage = 1
-      this.pageSize = 50
+      this.pageSize = 30
       this.$get('/searchApply', {
         searchText: text,
         page: this.currentPage,
@@ -306,33 +298,9 @@ export default {
         console.log(res)
         if (res.data.status === 200) {
           this.userTotal = res.data.result.total
-          this.handle_apply_data(res.data.result.lt)
+          this.tableData = handle_apply_data(res.data.result.lt)
         }
       })
-    },
-    handle_apply_data (data) {
-      for (var index in data) {
-        data[index].ids = (parseInt(index) + 1).toString()
-        data[index].gender = handleGender(data[index].gender)
-        data[index].birthday = getAge(data[index].birthday)
-        if (data[index].apply_status === 0) {
-          data[index].apply_tag = '待审核'
-          data[index].apply_tag_style = 'primary'
-        } else if (data[index].apply_status === 1) {
-          data[index].apply_tag = '已审核'
-          data[index].apply_tag_style = 'success'
-        } else if (data[index].apply_status === -1) {
-          data[index].apply_tag = '未通过'
-          data[index].apply_tag_style = 'danger'
-        }
-        // if (data[index].apply_type.length === 1) {
-        //   data[index].apply_type = data[index].apply_type[0]
-        // }
-        // else {
-        //
-        // }
-      }
-      this.tableData = data
     },
     handleCurrentChange (val) {
       this.currentPage = val
@@ -346,14 +314,13 @@ export default {
       console.log(row, column, event)
     },
     handleClick (row) { // 右侧操作按钮
-      // eslint-disable-next-line no-unused-vars
       let userId = this.$store.state.BaseStore.user.user_id
-      // eslint-disable-next-line no-unused-vars
-      this.$get('/update-apply-status', {
+      let params = {
         Id: row.id,
         apply_status: 0,
         operator_id: userId
-      }).then(res => {
+      }
+      this.getRequest('/update-apply-status', params).then(res => {
         this.$message({
           showClose: true,
           message: res.data.msg,
@@ -374,6 +341,32 @@ export default {
     },
     goBack () {
       this.$router.go(-1)
+    },
+    /**
+     *信息弹窗提示
+     * */
+    messageTip (msg, type = 'success') {
+      this.$message({
+        showClose: true,
+        message: msg,
+        type: type
+      })
+    },
+    /**
+     * 弹窗提示确认
+     */
+    confirmTip (msg) {
+      return this.$confirm(`${msg}`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+    },
+    /**
+     * 二次封装请求
+     */
+    getRequest (url, data) {
+      return this.$get('/update-apply-status', data)
     }
   },
   components: {

@@ -32,6 +32,10 @@ const router = new Router({
           component: () => import('@/views/physical/exam-manage/user-exam/index')
         },
         {
+          path: '/user-manage/user-exam-result',
+          component: () => import('@/views/physical/exam-manage/exam-result/index')
+        },
+        {
           path: '/userList',
           name: 'user-list',
           component: () => import('@/views/physical/user-manage/user-list')
