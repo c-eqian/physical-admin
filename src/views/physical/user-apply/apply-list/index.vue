@@ -32,7 +32,14 @@
           <el-tag type="warning">未通过</el-tag>
 
         </el-badge>
-
+        <el-badge  :max="10" class="item">
+          <el-button type="primary"
+                     plain icon="el-icon-refresh-left"
+                     @click="refreshClicked"
+          >
+            刷新
+          </el-button>
+        </el-badge>
       </div>
     </div>
     <div class="notice-table">
@@ -164,7 +171,7 @@
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
         :current-page="currentPage"
-        :page-sizes="[30, 60, 90]"
+        :page-sizes="[20, 30, 40]"
         :page-size="pageSize"
         layout="total, sizes, prev, pager, next, jumper"
         :total="userTotal">
@@ -204,7 +211,7 @@ export default {
       userTotal: 0,
       placeholder: '支持姓名、证件、机构搜索',
       currentPage: 1, // 当前页
-      pageSize: 30, // 每页数据
+      pageSize: 20, // 每页数据
       org_code: 0, // 机构代码
       dialogInput: '',
       dialogInputDisable: true,
@@ -225,6 +232,13 @@ export default {
     this.get_apply_list()
   },
   methods: {
+    /**
+     * 刷新
+     * */
+    refreshClicked () {
+      let timestamp = (new Date()).valueOf() // 获取时间戳
+      this.get_apply_list(timestamp)
+    },
     /**
      * 监听弹窗的输入框
      * */
@@ -254,7 +268,7 @@ export default {
       this.applyId = event.data.id
       if (event.id === 1) {
         // eslint-disable-next-line no-template-curly-in-string
-        this.confirmTip('是否同意${event.data.name}的申请?').then(res => {
+        this.confirmTip(`是否同意${event.data.name}的申请?`).then(res => {
           let userId = this.$store.state.BaseStore.user.user_id
           let params = {
             Id: this.applyId,
@@ -279,7 +293,7 @@ export default {
     },
     search (text) { // 搜索
       this.currentPage = 1
-      this.pageSize = 30
+      this.pageSize = 20
       this.$get('/searchApply', {
         searchText: text,
         page: this.currentPage,
@@ -288,13 +302,25 @@ export default {
         console.log(res.data)
       })
     },
-    get_apply_list () { // 查询申请列表
+    get_apply_list (timestamp = 0) { // 查询申请列表
       this.org_code = this.$store.state.BaseStore.user.org_id
-      this.$get('/applyList', {
-        org_code: this.org_code,
-        page: this.currentPage,
-        limit: this.pageSize
-      }).then(res => {
+      // eslint-disable-next-line no-unused-vars
+      let params = {}
+      if (timestamp === 0) {
+        params = {
+          org_code: this.org_code,
+          page: this.currentPage,
+          limit: this.pageSize
+        }
+      } else {
+        params = {
+          org_code: this.org_code,
+          page: this.currentPage,
+          limit: this.pageSize,
+          timestamp: timestamp
+        }
+      }
+      this.$get('/applyList', params).then(res => {
         console.log(res)
         if (res.data.status === 200) {
           this.userTotal = res.data.result.total

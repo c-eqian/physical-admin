@@ -8,7 +8,7 @@
       </el-select>
       <el-button slot="append" icon="el-icon-search"></el-button>
     </el-input>
-    <exam-card></exam-card>
+    <exam-card :examList="examList"></exam-card>
 
   </div>
 
@@ -23,8 +23,35 @@ export default {
   data () {
     return {
       input3: '',
-      select: ''
+      select: '',
+      RequisitionId: '21101700008',
+      examList: []
     }
+  },
+  methods: {
+    requestUserExamList () { // 查询该条码下需要体检的项目大类
+      this.$get('/current-exam-list', {
+        RequisitionId: this.RequisitionId
+      }).then(res => {
+        if (res.data.status !== 200) {
+          this.messageTip(res.data.msg)
+        }
+        else {
+          this.examList = res.data.result
+        }
+        console.log(res)
+      })
+    },
+    messageTip (msg) {
+      this.$message({
+        showClose: true,
+        message: msg,
+        type: 'error'
+      })
+    }
+  },
+  created () {
+    this.requestUserExamList()
   },
   components: {
     // eslint-disable-next-line vue/no-unused-components
