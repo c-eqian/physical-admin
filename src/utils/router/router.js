@@ -28,6 +28,10 @@ const router = new Router({
       redirect: '/console',
       children: [
         {
+          path: '/upload_physical_exam',
+          component: () => import('@/views/physical/Users')
+        },
+        {
           path: '/user-manage/user-exam',
           component: () => import('@/views/physical/exam-manage/user-exam/index')
         },

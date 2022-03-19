@@ -37,9 +37,7 @@
       </div>
       <el-collapse>
         <el-collapse-item :title="item.FeeItemName" :name="item.FeeItemName" v-for="item in examList" :key="item.FeeItemCode">
-          <div>简化流程：设计简洁直观的操作流程；</div>
-          <div>清晰明确：语言表达清晰且表意明确，让用户快速理解进而作出决策；</div>
-          <div>帮助用户识别：界面简单直白，让用户快速识别而非回忆，减少用户记忆负担。</div>
+          <div style="color: blue" v-for="(ite,index) in item.lt" :key="ite.ItemCode">{{index+1}}.{{ite.ItemName}}</div>
         </el-collapse-item>
       </el-collapse>
     </el-card>

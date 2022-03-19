@@ -12,6 +12,14 @@
          @click="searchBtn">
          </el-button>
     </el-autocomplete>
+<!--      <el-row>-->
+<!--      <el-col :span="24">-->
+<!--        <div class="tool-box">-->
+<!--          <el-button type="primary" icon="el-icon-circle-plus-outline" size="small" @click="handleAdd">新增</el-button>-->
+<!--          <el-button type="danger" icon="el-icon-delete" size="small" @click="mulDelete">批量删除</el-button>-->
+<!--        </div>-->
+<!--      </el-col>-->
+<!--    </el-row>-->
     </div>
     <div class="user-data-table">
       <el-table
@@ -103,17 +111,21 @@
       layout="total, sizes, prev, pager, next, jumper"
       :total="userTotal">
     </el-pagination>
+    <user-info :dialogVisible="dialogVisible"></user-info>
   </div>
 </template>
 
 <script>
 import { getAge, handleGender } from '@/utils/plugin/utils'
 import pageHeader from '@/components/physical/pageHeader/pageHeader'
+import userInfo from '@/components/physical/user-info/index'
 import '../static/my-css.css'
 export default {
   name: 'userList',
   components: {
     pageHeader,
+    // eslint-disable-next-line vue/no-unused-components
+    userInfo
   },
   data () {
     return {
@@ -126,6 +138,7 @@ export default {
       tableData: [],
       isShowBack: false, // 是否显示返回按钮
       isSearch: false, // 是否搜索状态
+      dialogVisible: false,
       searchSelect: [
         { id: 1, value: '111' },
         { id: 2, value: '222' },
@@ -266,6 +279,7 @@ export default {
     },
     handleClick (row) {
       console.log(row)
+      this.dialogVisible = !this.dialogVisible
     },
     // 处理用户数据
     handleUserData (userData) {

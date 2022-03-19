@@ -7,6 +7,7 @@ import 'element-ui/lib/theme-chalk/index.css'
 import Utils from './common/utils'
 import 'element-ui/lib/theme-chalk/reset.css'
 import './mock.js'
+import axios from 'axios'
 // eslint-disable-next-line no-unused-vars
 import { post, get, all } from './utils/request/request'
 // eslint-disable-next-line no-unused-vars
@@ -25,6 +26,7 @@ window.addEventListener('onmessageWS', getsocketData)
 Vue.prototype.Utils = Utils
 Vue.prototype.$post = post
 Vue.prototype.$get = get
+Vue.prototype.$http = axios
 Vue.prototype.$SM4DeCrypto = SM4DeCrypto
 Vue.prototype.$SM4EnCrypto = SM4EnCrypto
 new Vue({
