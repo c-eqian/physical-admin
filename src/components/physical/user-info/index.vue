@@ -20,38 +20,38 @@
 <!--    <el-button @click="dialogVisible = false">取 消</el-button>-->
 <!--    <el-button type="primary" @click="dialogVisible = false">确 定</el-button>-->
 <!--  </span>-->
-<el-form :model="formData" ref="vForm" :rules="rules" label-position="left" label-width="72px" size="medium"
+<el-form :model="formUserInfo=userInfoForm?userInfoForm:formUserInfo" ref="vForm" :rules="rules" label-position="left" label-width="72px" size="medium"
     @submit.native.prevent>
     <el-row>
       <el-col :span="12" class="grid-cell">
         <el-form-item label="姓名" prop="userName" class="required">
-          <el-input v-model="formData.userName" type="text" placeholder="输入姓名" clearable></el-input>
+          <el-input v-model="formUserInfo.userName" type="text" placeholder="输入姓名" clearable></el-input>
         </el-form-item>
       </el-col>
       <el-col :span="12" class="grid-cell">
         <el-form-item label="创建者" prop="creator">
-          <el-input v-model="formData.creator" type="text" clearable></el-input>
+          <el-input v-model="formUserInfo.creator" type="text" clearable></el-input>
         </el-form-item>
       </el-col>
       <el-col :span="12" class="grid-cell">
         <el-form-item label="证件号码" prop="idCard" class="required label-center-align">
-          <el-input v-model="formData.idCard" type="text" placeholder="请输入身份证" clearable></el-input>
+          <el-input v-model="formUserInfo.idCard" type="text" placeholder="请输入身份证" clearable></el-input>
         </el-form-item>
       </el-col>
       <el-col :span="12" class="grid-cell">
         <el-form-item label="建档时间" prop="creatTime" class="label-center-align">
-          <el-date-picker v-model="formData.creatTime" type="date" class="full-width-input"
+          <el-date-picker v-model="formUserInfo.creatTime" type="date" class="full-width-input"
             format="yyyy-MM-dd" value-format="yyyy-MM-dd" clearable></el-date-picker>
         </el-form-item>
       </el-col>
       <el-col :span="12" class="grid-cell">
         <el-form-item label="年龄" prop="age" class="required">
-          <el-input v-model="formData.age" type="text" clearable></el-input>
+          <el-input v-model="formUserInfo.age" type="text" clearable></el-input>
         </el-form-item>
       </el-col>
       <el-col :span="12" class="grid-cell">
         <el-form-item label="所属机构" prop="org_name">
-          <el-select v-model="formData.org_name" class="full-width-input" clearable>
+          <el-select v-model="formUserInfo.org_name" class="full-width-input" clearable>
             <el-option v-for="(item, index) in org_nameOptions" :key="index" :label="item.value"
               :value="item.value" :disabled="item.disabled"></el-option>
           </el-select>
@@ -59,7 +59,7 @@
       </el-col>
       <el-col :span="12" class="grid-cell">
         <el-form-item label="民族" prop="nation" class="required">
-          <el-select v-model="formData.nation" class="full-width-input" clearable>
+          <el-select v-model="formUserInfo.nation" class="full-width-input" clearable>
             <el-option v-for="(item, index) in nationOptions" :key="index" :label="item.value"
               :value="item.value" :disabled="item.disabled"></el-option>
           </el-select>
@@ -67,7 +67,7 @@
       </el-col>
       <el-col :span="12" class="grid-cell">
         <el-form-item label="建档状态" prop="status">
-          <el-select v-model="formData.status" class="full-width-input" clearable>
+          <el-select v-model="formUserInfo.status" class="full-width-input" clearable>
             <el-option v-for="(item, index) in statusOptions" :key="index" :label="item.value"
               :value="item.value" :disabled="item.disabled"></el-option>
           </el-select>
@@ -75,12 +75,12 @@
       </el-col>
       <el-col :span="12" class="grid-cell">
         <el-form-item label="联系方式" prop="phone" class="required label-center-align">
-          <el-input v-model="formData.phone" type="text" placeholder="请输入手机号" clearable></el-input>
+          <el-input v-model="formUserInfo.phone" type="text" placeholder="请输入手机号" clearable></el-input>
         </el-form-item>
       </el-col>
       <el-col :span="12" class="grid-cell">
         <el-form-item label="性别" prop="gender" class="required">
-          <el-radio-group v-model="formData.gender">
+          <el-radio-group v-model="formUserInfo.gender">
             <el-radio v-for="(item, index) in genderOptions" :key="index" :label="item.value"
               :disabled="item.disabled" style="{display: inline}">{{item.label}}</el-radio>
           </el-radio-group>
@@ -88,13 +88,13 @@
       </el-col>
       <el-col :span="12" class="grid-cell">
         <el-form-item label="出生日期" prop="birthday" class="required label-center-align">
-          <el-date-picker v-model="formData.birthday" type="date" class="full-width-input" format="yyyy-MM-dd"
+          <el-date-picker v-model="formUserInfo.birthday" type="date" class="full-width-input" format="yyyy-MM-dd"
             value-format="yyyy-MM-dd" clearable></el-date-picker>
         </el-form-item>
       </el-col>
       <el-col :span="12" class="grid-cell">
         <el-form-item label="居住类型" prop="live_type" class="required label-center-align">
-          <el-radio-group v-model="formData.live_type">
+          <el-radio-group v-model="formUserInfo.live_type">
             <el-radio v-for="(item, index) in live_typeOptions" :key="index" :label="item.value"
               :disabled="item.disabled" style="{display: inline}">{{item.label}}</el-radio>
           </el-radio-group>
@@ -102,7 +102,7 @@
       </el-col>
       <el-col :span="12" class="grid-cell">
         <el-form-item label="血型" prop="blood_type" class="required">
-          <el-select v-model="formData.blood_type" class="full-width-input" clearable>
+          <el-select v-model="formUserInfo.blood_type" class="full-width-input" clearable>
             <el-option v-for="(item, index) in blood_typeOptions" :key="index" :label="item.value"
               :value="item.value" :disabled="item.disabled"></el-option>
           </el-select>
@@ -110,7 +110,7 @@
       </el-col>
       <el-col :span="12" class="grid-cell">
         <el-form-item label="类别" prop="person_type" class="required">
-          <el-select v-model="formData.person_type" class="full-width-input" clearable>
+          <el-select v-model="formUserInfo.person_type" class="full-width-input" clearable>
             <el-option v-for="(item, index) in person_typeOptions" :key="index" :label="item.value"
               :value="item.value" :disabled="item.disabled"></el-option>
           </el-select>
@@ -118,7 +118,7 @@
       </el-col>
       <el-col :span="24" class="grid-cell">
         <el-form-item label="详细地址" prop="address" class="required">
-          <el-input v-model="formData.address" type="text" placeholder="请输入居住详细地址" clearable></el-input>
+          <el-input v-model="formUserInfo.address" type="text" placeholder="请输入居住详细地址" clearable></el-input>
         </el-form-item>
       </el-col>
     </el-row>
@@ -132,7 +132,8 @@ export default {
   name: 'index',
   data () {
     return {
-      formData: {
+      selfDialogVisible: false,
+      formUserInfo: {
         userName: '',
         creator: '',
         idCard: '',
@@ -289,16 +290,20 @@ export default {
       this.$refs['vForm'].resetFields()
     },
     handleClose (done) {
-      this.$confirm('确认关闭？', {
-        type: 'warning'
-      }).then(_ => {
-        done()
-      })
-        .catch(_ => {})
+      this.$emit('closeDialogVisible')
+      // console.log(111)
+      // done()
+      // this.$confirm('确认关闭？', {
+      //   type: 'warning'
+      // }).then(_ => {
+      //   done()
+      // })
+      //   .catch(_ => {})
+      // done()
     }
   },
   // eslint-disable-next-line vue/no-dupe-keys
-  props: ['dialogVisible']
+  props: ['dialogVisible', 'userInfoForm']
 }
 </script>
 

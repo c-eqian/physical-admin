@@ -26,7 +26,9 @@ const BaseStore = {
     //  当前路由
     CurrentPath: '',
     netConnect: false, // 网络连接状态
-    mqttData: {}
+    mqttData: {},
+    isShowUserInfoDialog: false, // 是否显示用户信息弹窗
+    userInfoForm: {}
   },
   /*
   Mutation 用于变更 Store中的数据。
@@ -38,6 +40,12 @@ const BaseStore = {
   调用（需要在根节点注入 store）。
    */
   mutations: {
+    updateIsShowUserInfoDialog (state) {
+      state.isShowUserInfoDialog = !state.isShowUserInfoDialog
+    },
+    updateUserInfoForm (state, payload) {
+      state.userInfoForm = payload
+    },
     updateNetConnect (state) {
       state.netConnect = !state.netConnect
     },

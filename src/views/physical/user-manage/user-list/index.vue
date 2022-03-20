@@ -96,7 +96,7 @@
           label="操作"
           width="100">
           <template slot-scope="scope">
-            <el-button @click="handleClick(scope.row)" type="text" size="small">查看</el-button>
+            <el-button @click="viewUserClick(scope.row)" type="text" size="small">查看</el-button>
             <el-button type="text" size="small">编辑</el-button>
           </template>
         </el-table-column>
@@ -111,7 +111,7 @@
       layout="total, sizes, prev, pager, next, jumper"
       :total="userTotal">
     </el-pagination>
-    <user-info :dialogVisible="dialogVisible"></user-info>
+    <user-info @closeDialogVisible="closeDialogVisible" :dialogVisible="dialogVisible" :userInfoForm="userInfo" ></user-info>
   </div>
 </template>
 
@@ -139,6 +139,7 @@ export default {
       isShowBack: false, // 是否显示返回按钮
       isSearch: false, // 是否搜索状态
       dialogVisible: false,
+      userInfo: {},
       searchSelect: [
         { id: 1, value: '111' },
         { id: 2, value: '222' },
@@ -251,6 +252,9 @@ export default {
         }
       })
     },
+    closeDialogVisible () { // 关闭弹窗
+      this.dialogVisible = false
+    },
     // 用户总数
     getTotal () {
       this.$get('/userTotal', {
@@ -277,8 +281,10 @@ export default {
     rowDoubleClicked (row, column, event) {
       console.log(row, column, event)
     },
-    handleClick (row) {
+    viewUserClick (row) {
       console.log(row)
+      // this.$store.commit('BaseStore/updateUserInfoForm', row)
+      this.userInfo = row
       this.dialogVisible = !this.dialogVisible
     },
     // 处理用户数据
