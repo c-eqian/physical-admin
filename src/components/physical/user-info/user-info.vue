@@ -9,7 +9,7 @@ https://www.vform666.com
     <el-row>
       <el-col :span="24" class="grid-cell">
         <el-form-item label="姓名" prop="userName" class="required label-center-align">
-          <el-input v-model="formData.userName" type="text" placeholder="输入姓名" clearable></el-input>
+          <el-input v-model="formData.name" type="text" placeholder="输入姓名" clearable></el-input>
         </el-form-item>
       </el-col>
       <el-col :span="24" class="grid-cell">

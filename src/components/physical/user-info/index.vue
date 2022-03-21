@@ -25,41 +25,41 @@
     <el-row>
       <el-col :span="12" class="grid-cell">
         <el-form-item label="姓名" prop="userName" class="required">
-          <el-input v-model="formUserInfo.userName" type="text" placeholder="输入姓名" clearable></el-input>
+          <el-input v-model="formUserInfo.name" type="text" placeholder="输入姓名" clearable></el-input>
         </el-form-item>
       </el-col>
       <el-col :span="12" class="grid-cell">
         <el-form-item label="创建者" prop="creator">
-          <el-input v-model="formUserInfo.creator" type="text" clearable></el-input>
+          <el-input disabled v-model="formUserInfo.creator" type="text" clearable></el-input>
         </el-form-item>
       </el-col>
       <el-col :span="12" class="grid-cell">
         <el-form-item label="证件号码" prop="idCard" class="required label-center-align">
-          <el-input v-model="formUserInfo.idCard" type="text" placeholder="请输入身份证" clearable></el-input>
+          <el-input v-model="formUserInfo.idcard" type="text" placeholder="请输入身份证"></el-input>
         </el-form-item>
       </el-col>
       <el-col :span="12" class="grid-cell">
         <el-form-item label="建档时间" prop="creatTime" class="label-center-align">
-          <el-date-picker v-model="formUserInfo.creatTime" type="date" class="full-width-input"
+          <el-date-picker disabled v-model="formUserInfo.creatime" type="date" class="full-width-input"
             format="yyyy-MM-dd" value-format="yyyy-MM-dd" clearable></el-date-picker>
         </el-form-item>
       </el-col>
       <el-col :span="12" class="grid-cell">
         <el-form-item label="年龄" prop="age" class="required">
-          <el-input v-model="formUserInfo.age" type="text" clearable></el-input>
+          <el-input disabled v-model="formUserInfo.birthday" type="text" clearable></el-input>
         </el-form-item>
       </el-col>
       <el-col :span="12" class="grid-cell">
         <el-form-item label="所属机构" prop="org_name">
-          <el-select v-model="formUserInfo.org_name" class="full-width-input" clearable>
-            <el-option v-for="(item, index) in org_nameOptions" :key="index" :label="item.value"
+          <el-select v-model="formUserInfo.org_name" class="full-width-input" >
+            <el-option v-for="(item, index) in org_nameOptions" :key="index" :label="item.label"
               :value="item.value" :disabled="item.disabled"></el-option>
           </el-select>
         </el-form-item>
       </el-col>
       <el-col :span="12" class="grid-cell">
         <el-form-item label="民族" prop="nation" class="required">
-          <el-select v-model="formUserInfo.nation" class="full-width-input" clearable>
+          <el-select v-model="formUserInfo.nation" class="full-width-input" >
             <el-option v-for="(item, index) in nationOptions" :key="index" :label="item.value"
               :value="item.value" :disabled="item.disabled"></el-option>
           </el-select>
@@ -67,7 +67,7 @@
       </el-col>
       <el-col :span="12" class="grid-cell">
         <el-form-item label="建档状态" prop="status">
-          <el-select v-model="formUserInfo.status" class="full-width-input" clearable>
+          <el-select v-model="formUserInfo.status" class="full-width-input" >
             <el-option v-for="(item, index) in statusOptions" :key="index" :label="item.value"
               :value="item.value" :disabled="item.disabled"></el-option>
           </el-select>
@@ -81,7 +81,7 @@
       <el-col :span="12" class="grid-cell">
         <el-form-item label="性别" prop="gender" class="required">
           <el-radio-group v-model="formUserInfo.gender">
-            <el-radio v-for="(item, index) in genderOptions" :key="index" :label="item.value"
+            <el-radio v-for="(item, index) in genderOptions" :key="index" :label="item.label"
               :disabled="item.disabled" style="{display: inline}">{{item.label}}</el-radio>
           </el-radio-group>
         </el-form-item>
@@ -89,29 +89,29 @@
       <el-col :span="12" class="grid-cell">
         <el-form-item label="出生日期" prop="birthday" class="required label-center-align">
           <el-date-picker v-model="formUserInfo.birthday" type="date" class="full-width-input" format="yyyy-MM-dd"
-            value-format="yyyy-MM-dd" clearable></el-date-picker>
+            value-format="yyyy-MM-dd"></el-date-picker>
         </el-form-item>
       </el-col>
       <el-col :span="12" class="grid-cell">
         <el-form-item label="居住类型" prop="live_type" class="required label-center-align">
           <el-radio-group v-model="formUserInfo.live_type">
-            <el-radio v-for="(item, index) in live_typeOptions" :key="index" :label="item.value"
+            <el-radio v-for="(item, index) in live_typeOptions" :key="index" :label="item.label"
               :disabled="item.disabled" style="{display: inline}">{{item.label}}</el-radio>
           </el-radio-group>
         </el-form-item>
       </el-col>
       <el-col :span="12" class="grid-cell">
         <el-form-item label="血型" prop="blood_type" class="required">
-          <el-select v-model="formUserInfo.blood_type" class="full-width-input" clearable>
-            <el-option v-for="(item, index) in blood_typeOptions" :key="index" :label="item.value"
+          <el-select v-model="formUserInfo.blood_type" class="full-width-input" >
+            <el-option v-for="(item, index) in blood_typeOptions" :key="index" :label="item.label"
               :value="item.value" :disabled="item.disabled"></el-option>
           </el-select>
         </el-form-item>
       </el-col>
       <el-col :span="12" class="grid-cell">
         <el-form-item label="类别" prop="person_type" class="required">
-          <el-select v-model="formUserInfo.person_type" class="full-width-input" clearable>
-            <el-option v-for="(item, index) in person_typeOptions" :key="index" :label="item.value"
+          <el-select v-model="formUserInfo.person_type" class="full-width-input" >
+            <el-option v-for="(item, index) in person_typeOptions" :key="index" :label="item.label"
               :value="item.value" :disabled="item.disabled"></el-option>
           </el-select>
         </el-form-item>
@@ -128,6 +128,17 @@
 </template>
 
 <script>
+
+import { nationList,
+  rules,
+  liveType,
+  personType,
+  boolType,
+  genderType,
+  orgName
+}
+  from '@/utils/plugin/utils'
+
 export default {
   name: 'index',
   data () {
@@ -150,134 +161,24 @@ export default {
         person_type: '',
         address: ''
       },
-      rules: {
-        userName: [{
-          required: true,
-          message: '字段值不可为空'
-        }, {
-          pattern: /^[一-龥]+$/,
-          trigger: ['blur', 'change'],
-          message: '姓名格式错误'
-        }],
-        idCard: [{
-          required: true,
-          message: '字段值不可为空'
-        }],
-        age: [{
-          required: true,
-          message: '字段值不可为空'
-        }],
-        nation: [{
-          required: true,
-          message: '字段值不可为空'
-        }, {
-          pattern: /^[一-龥]+$/,
-          trigger: ['blur', 'change'],
-          message: ''
-        }],
-        phone: [{
-          required: true,
-          message: '字段值不可为空'
-        }, {
-          pattern: /^[1][3-9][0-9]{9}$/,
-          trigger: ['blur', 'change'],
-          message: '手机号格式不正确'
-        }],
-        gender: [{
-          required: true,
-          message: '字段值不可为空'
-        }, {
-          pattern: /^\d+(\.\d+)?$/,
-          trigger: ['blur', 'change'],
-          message: '性别格式错误'
-        }],
-        birthday: [{
-          required: true,
-          message: '字段值不可为空'
-        }, {
-          pattern: /^[一-龥]+$/,
-          trigger: ['blur', 'change'],
-          message: '出生日期格式错误'
-        }],
-        live_type: [{
-          required: true,
-          message: '字段值不可为空'
-        }],
-        blood_type: [{
-          required: true,
-          message: '字段值不可为空'
-        }],
-        person_type: [{
-          required: true,
-          message: '字段值不可为空'
-        }],
-        address: [{
-          required: true,
-          message: '字段值不可为空'
-        }]
-      },
-      org_nameOptions: [{
-        'label': 'select 1',
-        'value': 1
-      }, {
-        'label': 'select 2',
-        'value': 2
-      }, {
-        'label': 'select 3',
-        'value': 3
-      }],
-      nationOptions: [{
-        'label': 'select 2',
-        'value': 2
-      }, {
-        'label': 'select 3',
-        'value': 3
-      }],
-      statusOptions: [{
-        'label': 'select 1',
-        'value': 1
-      }, {
-        'label': 'select 2',
-        'value': 2
-      }, {
-        'label': 'select 3',
-        'value': 3
-      }],
-      genderOptions: [{
-        'label': '男',
-        'value': 1
-      }, {
-        'label': '女',
-        'value': 2
-      }],
-      live_typeOptions: [{
-        'label': '户籍',
-        'value': '1'
-      }, {
-        'label': '非户籍',
-        'value': 2
-      }],
-      blood_typeOptions: [{
-        'label': 'select 1',
-        'value': 1
-      }, {
-        'label': 'select 2',
-        'value': 2
-      }, {
-        'label': 'select 3',
-        'value': 3
-      }],
-      person_typeOptions: [{
-        'label': 'select 1',
-        'value': 1
-      }, {
-        'label': 'select 2',
-        'value': 2
-      }, {
-        'label': 'select 3',
-        'value': 3
-      }]
+      rules: {},
+      org_nameOptions: [],
+      nationOptions: [],
+      statusOptions: [],
+      genderOptions: [],
+      live_typeOptions: [],
+      blood_typeOptions: [],
+      person_typeOptions: []
     }
+  },
+  created () {
+    this.nationOptions = nationList()
+    this.rules = rules()
+    this.org_nameOptions = orgName()
+    this.genderOptions = genderType()
+    this.live_typeOptions = liveType()
+    this.blood_typeOptions = boolType()
+    this.person_typeOptions = personType()
   },
   methods: {
     submitForm () {
