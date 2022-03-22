@@ -1,7 +1,7 @@
 <template>
   <div class="user-data-contain" id="user-data-contain">
 
-    <div style="width: 50% !important;display: flex;justify-content:space-between">
+    <div style="width: 100% !important;display: flex;justify-content:space-between">
     <pageHeader v-if="isSearch" @goBack="goBack" :contentTitle="contentTitle"></pageHeader>
     <el-autocomplete class="input-search" :placeholder="placeholder" :debounce=0
                 @select="handleSelect"
@@ -12,14 +12,14 @@
          @click="searchBtn">
          </el-button>
     </el-autocomplete>
-<!--      <el-row>-->
-<!--      <el-col :span="24">-->
-<!--        <div class="tool-box">-->
-<!--          <el-button type="primary" icon="el-icon-circle-plus-outline" size="small" @click="handleAdd">新增</el-button>-->
-<!--          <el-button type="danger" icon="el-icon-delete" size="small" @click="mulDelete">批量删除</el-button>-->
-<!--        </div>-->
-<!--      </el-col>-->
-<!--    </el-row>-->
+      <el-row>
+      <el-col :span="24">
+        <div class="tool-box">
+          <el-button type="primary" icon="el-icon-circle-plus-outline" size="small" @click="handleAdd">新增</el-button>
+          <el-button type="danger" icon="el-icon-delete" size="small" >批量删除</el-button>
+        </div>
+      </el-col>
+    </el-row>
     </div>
     <div class="user-data-table">
       <el-table
@@ -56,7 +56,7 @@
           width="80">
         </el-table-column>
         <el-table-column
-          prop="birthday"
+          prop="age"
           label="年龄"
           width="100">
         </el-table-column>
@@ -155,6 +155,9 @@ export default {
     await this.getUserList()// 获取用户数据
   },
   methods: {
+    handleAdd () { // 新增
+      this.dialogVisible = !this.dialogVisible
+    },
     requestSearch () { // 搜索请求
       this.$get(
         '/likeSearch',
@@ -293,7 +296,7 @@ export default {
         userData[index].ids = (parseInt(index) + 1).toString() // 添加编号
         userData[index].gender = handleGender(userData[index].gender)
         userData[index].live_type = userData[index].live_type === 1 ? '户籍' : '非户籍'
-        userData[index].birthday = getAge(userData[index].birthday)
+        userData[index].age = getAge(userData[index].birthday)
       }
       this.tableData = userData
     },
@@ -315,7 +318,9 @@ export default {
 </script>
 
 <style scoped lang="less">
-
+/deep/ .user-data-contain .el-input{
+  width: 100%;
+}
 .user-data-contain {
   width: 100%;
   height: 690px;
