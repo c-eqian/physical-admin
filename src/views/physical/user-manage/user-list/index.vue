@@ -116,10 +116,12 @@
 </template>
 
 <script>
-import { getAge, handleGender } from '@/utils/plugin/utils'
+import {getAge, handleGender} from '@/utils/plugin/utils'
+import {deepClone} from '@/utils/handle'
 import pageHeader from '@/components/physical/pageHeader/pageHeader'
 import userInfo from '@/components/physical/user-info/index'
 import '../static/my-css.css'
+
 export default {
   name: 'userList',
   components: {
@@ -285,9 +287,9 @@ export default {
       console.log(row, column, event)
     },
     viewUserClick (row) {
-      console.log(row)
       // this.$store.commit('BaseStore/updateUserInfoForm', row)
-      this.userInfo = row
+      // 深度拷贝
+      this.userInfo = deepClone(row)
       this.dialogVisible = !this.dialogVisible
     },
     // 处理用户数据

@@ -20,3 +20,30 @@ export function handle_apply_data (data) {
   }
   return data
 }
+export function deepClone (data) {
+  // eslint-disable-next-line no-undef
+  const t = typeof data
+  let o
+  let i
+  let ni
+
+  if (t === 'array') {
+    o = []
+  } else if (t === 'object') {
+    o = {}
+  } else {
+    return data
+  }
+
+  if (t === 'array') {
+    for (i = 0, ni = data.length; i < ni; i++) {
+      o.push(deepClone(data[i]))
+    }
+    return o
+  } else if (t === 'object') {
+    for (i in data) {
+      o[i] = deepClone(data[i])
+    }
+    return o
+  }
+}

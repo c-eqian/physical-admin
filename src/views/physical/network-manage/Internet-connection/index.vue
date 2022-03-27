@@ -4,10 +4,10 @@
       <div slot="header" class="clearfix">
         <span>网络连接</span>
         <el-switch style="float: right; padding: 3px 0"
-          v-model="switchStatus"
+                   v-model="switchStatus"
                    v-loading="loading"
                    @change="switchChange"
-          active-text="连接">
+                   active-text="连接">
         </el-switch>
       </div>
       <el-input class="el-textarea__inner" v-model="message" type="textarea"></el-input>
@@ -17,53 +17,73 @@
 
 <script>
 // eslint-disable-next-line no-unused-vars,import/no-duplicates
-import { Mqtt,
-  selfMqttClient,
-  Utf8ArrayToStr,
-  // eslint-disable-next-line no-unused-vars
-  mqttConnectStatus,
-  disConnection
-
-} from '@/utils/network/mqtt'
+// import { Mqtt,
+//   selfMqttClient,
+//   Utf8ArrayToStr,
+//   // eslint-disable-next-line no-unused-vars
+//   mqttConnectStatus,
+//   disConnection
+//
+// } from '@/utils/network/mqtt'
+import {MQTT, Utf8ArrayToStr} from '@/utils/MQTT/index'
 // eslint-disable-next-line no-unused-vars,import/no-duplicates
 export default {
   name: 'index',
-  data () {
+  data() {
     return {
       loading: false,
       switchStatus: false,
-      message: ''
+      message: '',
+      client: '',
+      topic: 'send/weight', // 发布主题
+      sub: 'get/weight', //订阅主题
     }
   },
+  created() {
+    this.client = this.$store.state.BaseStore.mqttClient
+    this.switchStatus = this.$store.state.BaseStore.netConnect
+  },
   methods: {
-    switchChange (status) {
+    switchChange(status) {
+      this.loading = status
       if (status) {
-        this.loading = status
         this.createConnection()
       } else {
-        disConnection()
+        //连接断开
+        if(this.client) {
+          this.client.end()
+        }
+        this.$store.commit('BaseStore/updateMqttClient','')
         this.$store.commit('BaseStore/updateNetConnect')
         this.message = '断开连接'
-        this.loading = status
       }
     },
     // 创建连接
-    createConnection () {
-      // eslint-disable-next-line no-unused-vars
-      let mqtt = new Mqtt()
-      // eslint-disable-next-line no-unused-vars
-      mqtt.mqttInit()
-      this.loading = false
-      this.message = '连接成功'
-      this.$store.commit('BaseStore/updateNetConnect')
-      mqtt.mqttSub('123456')
-      let client = selfMqttClient()
-      client.on('message', (topic, message) => {
-        this.message = Utf8ArrayToStr(message).msg
-        console.log(1, this.message)
+    createConnection() {
+      let mqtt = new MQTT({
+        clientId: "physical-weight"
       })
-    }
 
+      this.client = mqtt.mqtt_init()
+      this.client.on("connect", e => {
+        this.message = '连接成功'
+        this.loading = false
+        this.$store.commit('BaseStore/updateNetConnect')
+        this.$store.commit('BaseStore/updateMqttClient',this.client)
+        this.client.subscribe(this.sub, (err) => {
+          if (!err) {
+            this.message = `订阅成功-${this.sub}`
+          }
+        });
+
+      });
+      this.client.on("message", (topic, message) => {
+        console.log(topic, message)
+        this.message = JSON.stringify(Utf8ArrayToStr(message))
+      });
+
+
+    }
   }
 }
 </script>
@@ -79,8 +99,8 @@ export default {
   clear: both
 }
 
-.network-box-card /deep/.network-card {
-  width: 630px!important;
+.network-box-card /deep/ .network-card {
+  width: 630px !important;
   min-height: 300px;
 }
 
@@ -91,16 +111,19 @@ export default {
   width: 90%;
   height: 600px;
 }
-.el-textarea__inner{
+
+.el-textarea__inner {
   min-height: 300px !important;
 }
-.network-box-card /deep/ .el-textarea__inner,.network-box-card /deep/.el-card__body{
-      padding: 0;
-}
-.network-box-card /deep/.el-textarea__inner textarea{
-    width: 100%;
 
-    min-height: 300px !important;
+.network-box-card /deep/ .el-textarea__inner, .network-box-card /deep/ .el-card__body {
+  padding: 0;
+}
+
+.network-box-card /deep/ .el-textarea__inner textarea {
+  width: 100%;
+
+  min-height: 300px !important;
 }
 
 </style>

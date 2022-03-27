@@ -26,6 +26,7 @@ const BaseStore = {
     //  当前路由
     CurrentPath: '',
     netConnect: false, // 网络连接状态
+    mqttClient:'',
     mqttData: {},
     isShowUserInfoDialog: false, // 是否显示用户信息弹窗
     userInfoForm: {}
@@ -45,6 +46,9 @@ const BaseStore = {
     },
     updateUserInfoForm (state, payload) {
       state.userInfoForm = payload
+    },
+    updateMqttClient (state,payload) {
+      state.mqttClient = payload
     },
     updateNetConnect (state) {
       state.netConnect = !state.netConnect
