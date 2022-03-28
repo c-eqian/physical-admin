@@ -17,43 +17,73 @@
         <td colspan="3" style="width:300px">18616242909</td>
       </tr>
 
-      <!-- 眼科 -->
+      <!-- 一般状况 -->
       <tr>
-        <td rowspan="4">眼科</td>
-        <td rowspan="2">裸眼视力</td>
-        <td colspan="">右: 0.3</td>
-        <td rowspan="2">矫正视力(度数)</td>
-        <td colspan="3">右 -575</td>
-        <td class="top" rowspan="4" colspan="2">医师意见:不过用眼疲劳,<br>每天三次眼保健操</td>
+        <td rowspan="4">一般状况</td>
+        <td>身高 : 171cm</td>
+        <td colspan="2"></td>
+        <td>体重</td>
+        <td colspan="2">104kg</td>
+        <td class="top" rowspan="4" colspan="2"></td>
       </tr>
       <tr>
-        <td>左: 0.5</td>
-        <td colspan="3">左 -425</td>
+        <td> 体质指数（BMI</td>
+        <td>222kg</td>
+        <td>参考值：</td>
+        <td colspan="2">体质指数正常值：18.5～23.9</td>
+
       </tr>
       <tr>
-        <td colspan="6">色觉 :正常</td>
+        <td> 血压</td>
+        <td colspan="2">正常</td>
+        <td> 状态</td>
+        <td>正常</td>
       </tr>
       <tr>
-        <td colspan="6">其他 :右眼散光50,左眼散光50,瞳距62</td>
+        <td colspan="6">血压正常值：舒张压：60-90mmHg 收缩压：90-140mmHg</td>
       </tr>
 
-      <!-- 五官科 -->
+      <!-- 心电图 -->
       <tr>
-        <td rowspan="3">五官科</td>
-        <td>听力(0~25dB)</td>
-        <td>右: &gt;10cm</td>
-        <td>左: &gt;10cm</td>
-        <td colspan="3">耳疾: 无</td>
+        <td rowspan="3">心电图</td>
+        <td colspan="6" style="height: 200px">血压正常值：舒张压：60-90mmHg 收缩压：90-140mmHg</td>
         <td class="top" rowspan="3" colspan="2">医师意见: 可遵医嘱口服维<br>生素B族</td>
       </tr>
       <tr>
-        <td colspan="3">嗅觉(嗅阈检查) : 无黑色失嗅带</td>
-        <td colspan="3">口吃 : 无</td>
       </tr>
       <tr>
-        <td colspan="6">颜面部 : 面部有闭口及痤疮,无肿块,其他无异常</td>
       </tr>
 
+      <!-- B超 -->
+      <tr>
+        <td rowspan="3">B超</td>
+        <td colspan="6" style="height: 200px">血压正常值：舒张压：60-90mmHg 收缩压：90-140mmHg</td>
+        <td class="top" rowspan="3" colspan="2">医师意见: 可遵医嘱口服维<br>生素B族</td>
+      </tr>
+      <tr>
+      </tr>
+      <tr>
+      </tr>
+      <!-- 老年人评估 -->
+      <tr>
+        <td rowspan="4">老年人评估</td>
+        <td colspan="2">老年人智力评估</td>
+        <td colspan="4">心血管 : 正常</td>
+        <td class="top" rowspan="4" colspan="2">医师意见: 可遵医嘱口服维<br>生素B族</td>
+      </tr>
+
+      <tr>
+        <td colspan="2">老年人中医体质辨识</td>
+        <td colspan="4">心血管 : 正常</td>
+      </tr>
+      <tr>
+        <td colspan="2">老年人自理评估</td>
+        <td colspan="4">心血管 : 正常</td>
+      </tr>
+            <tr>
+        <td colspan="2">老年人自理评估</td>
+        <td colspan="4" style="min-height: 100px;width: 100px">心血管 : 觉哦啊红烧婚纱后送哈怂上海好好</td>
+      </tr>
       <!-- 内科 -->
       <tr>
         <td rowspan="5">内科</td>
@@ -126,35 +156,40 @@ export default {
 </script>
 
 <style scoped lang="less">
-    h1{
+h1 {
+  text-align: center;
+}
+
+.base-info {
+  // border: 1px solid #000;
+  display: block;
+  width: 900px;
+  margin: 0 auto;
+  border-collapse: collapse;
+  border-spacing: 0;
+
+  td {
+    border: 1px solid #000;
+    white-space: nowrap;
+    width: 100px;
+    text-align: left;
+    padding-left: 10px;
+
+    &.center {
       text-align: center;
     }
-  .base-info{
-    // border: 1px solid #000;
-    display: block;
-    width: 900px;
-    margin: 0 auto;
-    border-collapse: collapse;
-    border-spacing: 0;
-    td{
-      border: 1px solid #000;
-      white-space:nowrap;
-      width: 100px;
-      text-align: left;
-      padding-left: 10px;
-      &.center{
-        text-align: center;
-      }
-      &.top{
-        vertical-align: top;
-      }
+
+    &.top {
+      vertical-align: top;
     }
   }
-  .tips,{
-    text-align: left;
-    width: 900px;
-    margin: 0 auto;
-    padding: 10px;
-  }
+}
+
+.tips, {
+  text-align: left;
+  width: 900px;
+  margin: 0 auto;
+  padding: 10px;
+}
 </style>
 

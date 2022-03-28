@@ -19,6 +19,10 @@ const router = new Router({
       component: Login
     },
     {
+      path: '/physical-manage/phy-exam-audit',
+      component: () => import('@/views/physical/exam-manage/exam-audit/index')
+    },
+    {
       path: '/apply-list',
       component: () => import('@/views/physical/user-apply/apply-list/index')
     },

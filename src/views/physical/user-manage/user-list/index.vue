@@ -15,7 +15,7 @@
       <el-row>
       <el-col :span="24">
         <div class="tool-box">
-          <el-button type="primary" icon="el-icon-circle-plus-outline" size="small" @click="handleAdd">新增</el-button>
+          <el-button type="primary" icon="el-icon-circle-plus-outline" size="small" @click="handleAdd" >新增</el-button>
           <el-button type="danger" icon="el-icon-delete" size="small" >批量删除</el-button>
         </div>
       </el-col>
@@ -111,7 +111,7 @@
       layout="total, sizes, prev, pager, next, jumper"
       :total="userTotal">
     </el-pagination>
-    <user-info @closeDialogVisible="closeDialogVisible" :dialogVisible="dialogVisible" :userInfoForm="userInfo" ></user-info>
+    <user-info @closeDialogVisible="closeDialogVisible" @user-info-form="dialogCallback" :dialogVisible="dialogVisible" :userInfoForm.sync="userInfo" ></user-info>
   </div>
 </template>
 
@@ -157,6 +157,9 @@ export default {
     await this.getUserList()// 获取用户数据
   },
   methods: {
+    dialogCallback(value){
+      this.userInfo = {}
+    },
     handleAdd () { // 新增
       this.dialogVisible = !this.dialogVisible
     },
