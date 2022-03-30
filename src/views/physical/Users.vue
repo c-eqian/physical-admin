@@ -8,7 +8,22 @@
         </div>
       </el-col>
       <el-col>
-        <div class="exam-card"></div>
+        <div class="exam-card">
+          <el-form class="demo-form-inline">
+              <el-form-item label="已上传">
+              <span>36</span>
+            </el-form-item>
+            <el-form-item label="未上传">
+              <span>36</span>
+            </el-form-item>
+            <el-form-item label="已审核">
+              <span>36</span>
+            </el-form-item>
+            <el-form-item label="已驳回">
+              <span>36</span>
+            </el-form-item>
+          </el-form>
+        </div>
       </el-col>
     </el-row>
     <el-table
@@ -256,20 +271,36 @@ export default {
 <style lang="scss" scoped>
 .user-box {
   width: 100%;
-  .exam-card{
+
+  .exam-card {
     height: 80px;
-    background-color: rgb(245,247,250);
+    background-color: rgb(245, 247, 250);
     border-radius: 10px;
+    .demo-form-inline {
+
+      padding-left: 15px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    /deep/ .el-form-item__content {
+      min-width: 100px;
+      line-height: 40px;
+      position: relative;
+      font-size: 14px;
+    }
   }
+
   .tool-box {
     display: flex;
     height: 80px;
     align-items: center;
     border-bottom: 1px solid #eee;
   }
+
   /deep/ .el-col-24 {
     width: 50%;
-}
+  }
 
   .el-pagination {
     margin-top: 20px;
