@@ -1,58 +1,97 @@
 <template>
   <div class="user-box">
     <el-row>
-      <el-col :span="24">
+      <el-col :span="12">
         <div class="tool-box">
           <el-button type="primary" icon="el-icon-circle-plus-outline" size="small" @click="handleAdd">新增</el-button>
           <el-button type="danger" icon="el-icon-delete" size="small" @click="mulDelete">批量删除</el-button>
         </div>
       </el-col>
+      <el-col>
+        <div class="exam-card"></div>
+      </el-col>
     </el-row>
     <el-table
+      highlight-current-row
       :data="users"
+      height="550"
+      border
       @selection-change="selectChange"
       style="width: 100%">
       <el-table-column
-        type="selection"
-        width="55">
+        sortable
+        prop="date"
+        label="体检编号"
+        fixed
+        align="center"
+        min-width="180">
       </el-table-column>
       <el-table-column
         sortable
         prop="date"
-        label="日期"
-        width="180">
+        label="体检日期"
+        align="center"
+        min-width="180">
       </el-table-column>
       <el-table-column
         prop="name"
-        label="姓名"
-        width="180">
+        align="center"
+        label="姓名">
       </el-table-column>
       <el-table-column
         prop="phone"
-        label="手机"
-        width="180">
+        align="center"
+        label="证件号码"
+        min-width="180">
       </el-table-column>
       <el-table-column
         prop="address"
-        label="地址">
+        align="center"
+        min-width="150"
+        label="体检单位">
       </el-table-column>
       <el-table-column
-        label="状态">
+        prop="address"
+        align="center"
+        min-width="150"
+        label="体检医生">
+      </el-table-column>
+
+      <el-table-column
+        align="center"
+        label="体检状态">
         <template slot-scope="scope">
           {{ scope.row.status ? '启用' : '禁用' }}
         </template>
       </el-table-column>
-      <el-table-column label="操作" fixed="right" width="150">
+      <el-table-column
+        align="center"
+        label="审核状态">
+        <template slot-scope="scope">
+          {{ scope.row.status ? '启用' : '禁用' }}
+        </template>
+      </el-table-column>
+      <el-table-column
+        align="center"
+        label="上传状态">
+        <template slot-scope="scope">
+          {{ scope.row.status ? '启用' : '禁用' }}
+        </template>
+      </el-table-column>
+      <el-table-column
+        label="操作" fixed="right" width="150">
         <template slot-scope="scope">
           <el-button
             size="mini"
             type="primary"
             plain
-            @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+            @click="handleEdit(scope.$index, scope.row)">编辑
+          </el-button>
           <el-button
             size="mini"
             type="danger"
-            @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+            @click="handleDelete(scope.$index, scope.row)">删除
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -84,9 +123,9 @@
         </el-form-item>
         <el-form-item label="状态" label-width="50px">
           <el-switch v-model="user.status" active-color="#13ce66"
-            inactive-color="#ff4949"
-            :active-value="1"
-            :inactive-value="0"></el-switch>
+                     inactive-color="#ff4949"
+                     :active-value="1"
+                     :inactive-value="0"></el-switch>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -99,7 +138,7 @@
 
 <script>
 export default {
-  data () {
+  data() {
     return {
       users: [],
       user: {
@@ -117,17 +156,17 @@ export default {
       rowIndex: 9999,
       rules: {
         name: [
-          { required: true, message: '请输入姓名', trigger: 'blur' },
-          { min: 2, max: 5, message: '长度在 2 到 5 个字符', trigger: 'blur' }
+          {required: true, message: '请输入姓名', trigger: 'blur'},
+          {min: 2, max: 5, message: '长度在 2 到 5 个字符', trigger: 'blur'}
         ]
       }
     }
   },
-  mounted () {
+  mounted() {
     this.getUsers()
   },
   methods: {
-    getUsers () {
+    getUsers() {
       this.loading = true
       this.$http('/api/users').then((res) => {
         this.users = res.data
@@ -135,13 +174,13 @@ export default {
         console.error(err)
       })
     },
-    handleEdit (index, row) {
+    handleEdit(index, row) {
       this.dialogTitle = '编辑'
       this.user = Object.assign({}, row)
       this.userFormVisible = true
       this.rowIndex = index
     },
-    submitUser (formName) {
+    submitUser(formName) {
       // 表单验证
       this.$refs[formName].validate((valid) => {
         if (valid) {
@@ -162,7 +201,7 @@ export default {
         }
       })
     },
-    handleDelete (index, row) {
+    handleDelete(index, row) {
       this.$confirm(`确定删除用户 【${row.name}】 吗?`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -177,10 +216,10 @@ export default {
         console.log('取消删除')
       })
     },
-    resetForm (formName) {
+    resetForm(formName) {
       this.$refs[formName].clearValidate()
     },
-    mulDelete () {
+    mulDelete() {
       let len = this.multipleSelection.length
       if (len === 0) {
         this.$message({
@@ -202,10 +241,10 @@ export default {
         })
       }
     },
-    selectChange (val) {
+    selectChange(val) {
       this.multipleSelection = val
     },
-    handleAdd () {
+    handleAdd() {
       this.dialogTitle = '新增'
       this.user = Object.assign({}, this.userBackup)
       this.userFormVisible = true
@@ -215,14 +254,25 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .user-box {
-    width: 100%;
-    .tool-box {
-      padding: 10px 10px;
-      border-bottom: 1px solid #eee;
-    }
-    .el-pagination {
-      margin-top: 20px;
-    }
+.user-box {
+  width: 100%;
+  .exam-card{
+    height: 80px;
+    background-color: rgb(245,247,250);
+    border-radius: 10px;
   }
+  .tool-box {
+    display: flex;
+    height: 80px;
+    align-items: center;
+    border-bottom: 1px solid #eee;
+  }
+  /deep/ .el-col-24 {
+    width: 50%;
+}
+
+  .el-pagination {
+    margin-top: 20px;
+  }
+}
 </style>
