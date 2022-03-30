@@ -11,16 +11,16 @@
         <div class="exam-card">
           <el-form class="demo-form-inline">
               <el-form-item label="已上传">
-              <span>36</span>
+              <span>356</span>
             </el-form-item>
             <el-form-item label="未上传">
-              <span>36</span>
+              <span>356</span>
             </el-form-item>
             <el-form-item label="已审核">
-              <span>36</span>
+              <span>365</span>
             </el-form-item>
             <el-form-item label="已驳回">
-              <span>36</span>
+              <span>356</span>
             </el-form-item>
           </el-form>
         </div>
@@ -277,14 +277,13 @@ export default {
     background-color: rgb(245, 247, 250);
     border-radius: 10px;
     .demo-form-inline {
-
       padding-left: 15px;
       display: flex;
       justify-content: space-between;
     }
-
+  text-align: center;
     /deep/ .el-form-item__content {
-      min-width: 100px;
+      text-align: center;
       line-height: 40px;
       position: relative;
       font-size: 14px;
