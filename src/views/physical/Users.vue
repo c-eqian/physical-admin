@@ -3,14 +3,17 @@
     <el-row>
       <el-col :span="12">
         <div class="tool-box">
-          <el-button type="primary" icon="el-icon-circle-plus-outline" size="small" @click="handleAdd">新增</el-button>
-          <el-button type="danger" icon="el-icon-delete" size="small" @click="mulDelete">批量删除</el-button>
+          <searchInput :placeholder="placeholder" @search="search"></searchInput>
         </div>
       </el-col>
       <el-col>
         <div class="exam-card">
+
           <el-form class="demo-form-inline">
-              <el-form-item label="已上传">
+            <el-form-item label="全部">
+              <span>356</span>
+            </el-form-item>
+            <el-form-item label="已上传">
               <span>356</span>
             </el-form-item>
             <el-form-item label="未上传">
@@ -35,11 +38,16 @@
       style="width: 100%">
       <el-table-column
         sortable
-        prop="date"
+        prop="rid"
         label="体检编号"
         fixed
         align="center"
         min-width="180">
+        <template scope="scope">
+          <router-link to="">
+            {{ scope.row.rid }}
+          </router-link>
+        </template>
       </el-table-column>
       <el-table-column
         sortable
@@ -74,38 +82,68 @@
 
       <el-table-column
         align="center"
+        prop="examStatus"
         label="体检状态">
         <template slot-scope="scope">
-          {{ scope.row.status ? '启用' : '禁用' }}
+          <el-tag :type="scope.row.examStatus===1?'success':'primary'">
+            {{ scope.row.examStatus === 1 ? "已完成" : "体检中" }}
+          </el-tag>
         </template>
       </el-table-column>
       <el-table-column
         align="center"
+        prop="auditStatus"
         label="审核状态">
         <template slot-scope="scope">
-          {{ scope.row.status ? '启用' : '禁用' }}
+          <el-tag v-if="scope.row.auditStatus===1" type="success">
+            已审核
+          </el-tag>
+          <el-tag v-if="scope.row.auditStatus===0" type="primary">
+            待审核
+          </el-tag>
+          <el-tag v-if="scope.row.auditStatus===-1" type="warning">
+            未通过
+          </el-tag>
         </template>
       </el-table-column>
       <el-table-column
         align="center"
+        prop="uploadStatus"
         label="上传状态">
         <template slot-scope="scope">
-          {{ scope.row.status ? '启用' : '禁用' }}
+          <el-tag v-if="scope.row.uploadStatus===1" type="success">
+            上传成功
+          </el-tag>
+          <el-tag v-if="scope.row.uploadStatus===0" type="primary">
+            待上传
+          </el-tag>
+          <el-tag v-if="scope.row.uploadStatus===-1" type="warning">
+            上传失败
+          </el-tag>
         </template>
       </el-table-column>
       <el-table-column
-        label="操作" fixed="right" width="150">
-        <template slot-scope="scope">
-          <el-button
+        align="center"
+        prop="remark"
+        label="备注">
+        <template  slot-scope="scope" v-if="scope.row.uploadStatus===-1">
+           <el-button  plain size="mini" type="primary">查看</el-button>
+        </template>
+      </el-table-column>
+      <el-table-column
+        label="操作" fixed="right"
+         align="center"
+        width="150">
+        <template slot-scope="scope" v-if="scope.row.auditStatus===1">
+          <el-button v-if="scope.row.uploadStatus===1"
+            size="mini"
+            type="success"
+            @click="handleDelete(scope.$index, scope.row)">撤销上传
+          </el-button>
+          <el-button v-if="scope.row.uploadStatus===0"
             size="mini"
             type="primary"
-            plain
-            @click="handleEdit(scope.$index, scope.row)">编辑
-          </el-button>
-          <el-button
-            size="mini"
-            type="danger"
-            @click="handleDelete(scope.$index, scope.row)">删除
+            @click="handleDelete(scope.$index, scope.row)">{{scope.row.uploadStatus===-1?'重新上传':'上传体检'}}
           </el-button>
         </template>
       </el-table-column>
@@ -152,10 +190,17 @@
 </template>
 
 <script>
+import searchInput from "@/components/physical/searchInput/searchInput";
+
 export default {
+  name: 'User',
+  components: {
+    searchInput,
+  },
   data() {
     return {
       users: [],
+      placeholder: '请输入',
       user: {
         id: '',
         date: '',
@@ -181,10 +226,14 @@ export default {
     this.getUsers()
   },
   methods: {
+    search(value) {
+      console.log(value)
+    },
     getUsers() {
       this.loading = true
       this.$http('/api/users').then((res) => {
         this.users = res.data
+        console.log(res)
       }).catch((err) => {
         console.error(err)
       })
@@ -273,15 +322,20 @@ export default {
   width: 100%;
 
   .exam-card {
+    background-color: lightskyblue;
+    box-shadow: 4px 4px 5px #999;
     height: 80px;
-    background-color: rgb(245, 247, 250);
+    //background-color: rgb(245, 247, 250);
     border-radius: 10px;
+
     .demo-form-inline {
       padding-left: 15px;
       display: flex;
       justify-content: space-between;
     }
-  text-align: center;
+
+    text-align: center;
+
     /deep/ .el-form-item__content {
       text-align: center;
       line-height: 40px;

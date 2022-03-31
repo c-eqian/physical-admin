@@ -19,6 +19,7 @@
 
 <script>
 import Menus from '@/components/menus/menus'
+import  './main.css'
 import Headers from '@/components/header/header'
 export default {
   provide () {
@@ -90,4 +91,5 @@ export default {
     line-height: 60px;
   }
 }
+
 </style>

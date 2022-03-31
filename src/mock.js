@@ -13,12 +13,20 @@ const userData = () => {
   let users = []
   for (let i = 0; i < 10; i++) {
     let user = {
+      'rid':Random.id(),
       'id': i + 1,
       'date': Random.date('yyyy-MM-dd'),
       'name': Random.cname(),
       'address': Mock.mock('@county(true)'),
       'phone': Mock.mock(/^1[0-9]{10}$/),
-      'status': Random.integer(0, 1)
+      'status': Random.integer(0, 1),
+      'idCard':Random.id(),
+      'uploadStatus':Random.integer(-1, 1),
+      'doctorName':Random.cname(),
+      'auditStatus':Random.integer(-1, 1),
+      'examStatus':Random.integer(-1, 1),
+      'remark':Random.cword(20),
+      'org_name':Random.cword(10),
     }
     users.push(user)
   }
@@ -36,7 +44,8 @@ const articleData = () => {
       'title': Random.csentence(),
       'author': Random.cname(),
       'content': Random.csentence(),
-      'status': Random.integer(0, 1)
+      'status': Random.integer(0, 1),
+      'idCard':Random.id()
     }
     articles.push(article)
   }
