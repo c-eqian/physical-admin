@@ -4,23 +4,7 @@
   :visible.sync="dialogVisible"
   width="50%"
   :before-close="handleClose">
-<!--    <el-descriptions class="margin-top" title="无边框列表" :column="3" :size="size">-->
-<!--    <template slot="extra">-->
-<!--      <el-button type="primary" size="small">操作</el-button>-->
-<!--    </template>-->
-<!--    <el-descriptions-item label="用户名">kooriookami</el-descriptions-item>-->
-<!--    <el-descriptions-item label="手机号">18100000000</el-descriptions-item>-->
-<!--    <el-descriptions-item label="居住地">苏州市</el-descriptions-item>-->
-<!--    <el-descriptions-item label="备注">-->
-<!--      <el-tag size="small">学校</el-tag>-->
-<!--    </el-descriptions-item>-->
-<!--    <el-descriptions-item label="联系地址">江苏省苏州市吴中区吴中大道 1188 号</el-descriptions-item>-->
-<!--  </el-descriptions>-->
-<!--  <span slot="footer" class="dialog-footer">-->
-<!--    <el-button @click="dialogVisible = false">取 消</el-button>-->
-<!--    <el-button type="primary" @click="dialogVisible = false">确 定</el-button>-->
-<!--  </span>-->
-<el-form :model="formUserInfo=userInfoForm||formUserInfo" ref="vForm" :rules="rules" label-position="left" label-width="72px" size="medium"
+<el-form :model="formUserInfo=userInfoForm||formUserInfo" ref="vForm"  label-position="left" label-width="72px" size="medium"
     @submit.native.prevent>
     <el-row>
       <el-col :span="12" class="grid-cell">
@@ -75,7 +59,7 @@
       </el-col>
       <el-col :span="12" class="grid-cell">
         <el-form-item label="联系方式" prop="phone" class="required label-center-align">
-          <el-input :disabled="!editor" v-model="formUserInfo.phone" type="text" placeholder="请输入手机号" clearable></el-input>
+          <el-input :disabled="!editor" v-model="formUserInfo.phone||''" type="text" placeholder="请输入手机号" clearable></el-input>
         </el-form-item>
       </el-col>
       <el-col :span="12" class="grid-cell">
@@ -204,16 +188,8 @@ export default {
     },
     handleClose (done) {
       this.editor = false
+      this.$emit('user-info-form',{})
       this.$emit('closeDialogVisible')
-      // console.log(111)
-      // done()
-      // this.$confirm('确认关闭？', {
-      //   type: 'warning'
-      // }).then(_ => {
-      //   done()
-      // })
-      //   .catch(_ => {})
-      // done()
     }
   },
   // eslint-disable-next-line vue/no-dupe-keys

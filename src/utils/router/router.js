@@ -19,6 +19,10 @@ const router = new Router({
       component: Login
     },
     {
+      path: '/physical-manage/phy-exam-audit',
+      component: () => import('@/views/physical/exam-manage/exam-audit/index')
+    },
+    {
       path: '/apply-list',
       component: () => import('@/views/physical/user-apply/apply-list/index')
     },
@@ -27,6 +31,11 @@ const router = new Router({
       component: Index,
       redirect: '/console',
       children: [
+        {
+          path: '/physical-manage/exam-report-audit/:id',
+          name:"examReportAudit",
+          component: () => import('@/views/physical/exam-manage/exam-report-audit/index')
+        },
         {
           path: '/upload_physical_exam',
           component: () => import('@/views/physical/Users')
