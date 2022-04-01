@@ -1,6 +1,6 @@
 <template>
   <div class="user-box">
-    <el-row>
+    <el-row class="margin-bottom-10">
       <el-col :span="12">
         <div class="tool-box">
           <searchInput :placeholder="placeholder" @search="search"></searchInput>
@@ -10,19 +10,19 @@
         <div class="exam-card">
 
           <el-form class="demo-form-inline">
-            <el-form-item label="全部">
+            <el-form-item label="全部" class="font-white">
               <span>356</span>
             </el-form-item>
-            <el-form-item label="已上传">
+            <el-form-item label="已上传" class="font-white">
               <span>356</span>
             </el-form-item>
-            <el-form-item label="未上传">
+            <el-form-item label="未上传" class="font-white">
               <span>356</span>
             </el-form-item>
-            <el-form-item label="已审核">
+            <el-form-item label="已审核" class="font-white">
               <span>365</span>
             </el-form-item>
-            <el-form-item label="已驳回">
+            <el-form-item label="已驳回" class="font-white">
               <span>356</span>
             </el-form-item>
           </el-form>
@@ -44,7 +44,7 @@
         align="center"
         min-width="180">
         <template scope="scope">
-          <router-link to="">
+          <router-link :to="{ name:'examReportAudit',params:{id:scope.row.rid}}">
             {{ scope.row.rid }}
           </router-link>
         </template>
@@ -70,7 +70,7 @@
       <el-table-column
         prop="address"
         align="center"
-        min-width="150"
+        min-width="300"
         label="体检单位">
       </el-table-column>
       <el-table-column
@@ -126,24 +126,34 @@
         align="center"
         prop="remark"
         label="备注">
-        <template  slot-scope="scope" v-if="scope.row.uploadStatus===-1">
-           <el-button  plain size="mini" type="primary">查看</el-button>
+        <template slot-scope="scope" v-if="scope.row.uploadStatus===-1">
+          <el-popover
+            placement="right"
+            width="400"
+            trigger="hover">{{ scope.row.remark }}
+            <el-button type="text" slot="reference" size="small">查看</el-button>
+          </el-popover>
         </template>
       </el-table-column>
       <el-table-column
         label="操作" fixed="right"
-         align="center"
-        width="150">
+        align="center"
+        width="120">
         <template slot-scope="scope" v-if="scope.row.auditStatus===1">
           <el-button v-if="scope.row.uploadStatus===1"
-            size="mini"
-            type="success"
-            @click="handleDelete(scope.$index, scope.row)">撤销上传
+                     size="mini"
+                     type="success"
+                     @click="handleDelete(scope.$index, scope.row)">撤销上传
           </el-button>
-          <el-button v-if="scope.row.uploadStatus===0"
-            size="mini"
-            type="primary"
-            @click="handleDelete(scope.$index, scope.row)">{{scope.row.uploadStatus===-1?'重新上传':'上传体检'}}
+          <el-button v-else-if="scope.row.uploadStatus===0"
+                     size="mini"
+                     type="primary"
+                     @click="handleDelete(scope.$index, scope.row)">上传体检
+          </el-button>
+          <el-button v-else-if="scope.row.uploadStatus===-1"
+                     size="mini"
+                     type="primary"
+                     @click="handleDelete(scope.$index, scope.row)">重新上传
           </el-button>
         </template>
       </el-table-column>
@@ -321,17 +331,33 @@ export default {
 .user-box {
   width: 100%;
 
+  .margin-bottom-10 {
+    margin-bottom: 10px;
+  }
+
   .exam-card {
-    background-color: lightskyblue;
-    box-shadow: 4px 4px 5px #999;
+    //background-color: lightskyblue;
+    box-shadow: 4px 4px 5px #ecb3b3;
     height: 80px;
-    //background-color: rgb(245, 247, 250);
+    border-bottom: 20px;
+    background-color: rgb(67, 149, 255);
     border-radius: 10px;
 
     .demo-form-inline {
-      padding-left: 15px;
+      height: 100%;
+      padding: 0 15px 0;
       display: flex;
       justify-content: space-between;
+
+      .font-white {
+        color: white;
+      }
+
+      /deep/ .el-form-item__label {
+        text-align: center;
+        color: white;
+        padding: 0;
+      }
     }
 
     text-align: center;

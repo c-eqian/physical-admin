@@ -1,5 +1,10 @@
 <template>
+
   <div>
+    <el-row style="position: absolute;right: 50px">
+  <el-button type="primary" @click="success" icon="el-icon-check" circle></el-button>
+  <el-button type="danger" @click="refuse" icon="el-icon-close" circle></el-button>
+</el-row>
     <h1>体检结果基础信息</h1>
     <table class="base-info">
       <tr>
@@ -153,7 +158,20 @@
       </tr>
     </table>
     <div class="tips">* 根据体检执行编号和血清检查执行编号可追溯检验医师相关信息及打印原始报告单据</div>
+      <el-dialog
+      :title="dialogOptions.dialogTitle"
+      :visible.sync="dialogOptions.DialogShow"
+      width="30%"
+      center>
+      <el-input clearable @input="inputChange" type="textarea" v-model="dialogInput"
+                :placeholder="dialogOptions.dialogPlaceholder"></el-input>
+      <span slot="footer" class="dialog-footer">
+    <el-button @click="dialogOptions.DialogShow = false">取 消</el-button>
+    <el-button :disabled="dialogInputDisable" type="primary" @click="dialogClicked">确 定</el-button>
+  </span>
+    </el-dialog>
   </div>
+
 </template>
 
 <script>
@@ -161,6 +179,9 @@ export default {
   name: 'base-info',
   data(){
     return{
+      dialogOptions: {},
+      dialogInput:'',
+      dialogInputDisable:false,
       examData:{
         code:'485455455855545',
         height:'182',
@@ -178,7 +199,40 @@ export default {
         bloodPressure:'52-45',
       }
     }
-  }
+  },
+  methods:{
+    inputChange(){
+
+    },
+    dialogClicked(){
+
+    },
+    refuse(){//不通过
+      this.dialogOptions = {
+          dialogTitle: '备注',
+          dialogPlaceholder: '请输入备注内容',
+          DialogShow: true
+        }
+    },
+    success() { // 通过
+
+        this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.$message({
+            type: 'success',
+            message: '操作成功!'
+          });
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });
+        });
+      }
+    }
 }
 </script>
 

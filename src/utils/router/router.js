@@ -32,6 +32,11 @@ const router = new Router({
       redirect: '/console',
       children: [
         {
+          path: '/physical-manage/exam-report-audit/:id',
+          name:"examReportAudit",
+          component: () => import('@/views/physical/exam-manage/exam-report-audit/index')
+        },
+        {
           path: '/upload_physical_exam',
           component: () => import('@/views/physical/Users')
         },
