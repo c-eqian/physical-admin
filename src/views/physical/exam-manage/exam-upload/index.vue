@@ -44,7 +44,7 @@
         align="center"
         min-width="180">
         <template scope="scope">
-          <router-link :to="{ name:'examReportAudit',params:{id:scope.row.rid}}">
+          <router-link :to="{ name:'examReportAudit',params:{id:scope.row.rid,visible:true}}">
             {{ scope.row.rid }}
           </router-link>
         </template>
@@ -351,6 +351,13 @@ export default {
 
       .font-white {
         color: white;
+
+        span {
+          font-family: YouYuan,sans-serif;
+          font-size: 1em;
+          vertical-align: middle;
+          font-weight: normal
+        }
       }
 
       /deep/ .el-form-item__label {

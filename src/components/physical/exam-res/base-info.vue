@@ -1,55 +1,56 @@
 <template>
-
   <div>
-    <el-row style="position: absolute;right: 50px">
-  <el-button type="primary" @click="success" icon="el-icon-check" circle></el-button>
-  <el-button type="danger" @click="refuse" icon="el-icon-close" circle></el-button>
-</el-row>
+    <div v-if="visible">
+      <el-row style="position: absolute;right: 50px">
+        <el-button type="primary" @click="success" icon="el-icon-check" circle></el-button>
+        <el-button type="danger" @click="refuse" icon="el-icon-close" circle></el-button>
+      </el-row>
+    </div>
     <h1>体检结果基础信息</h1>
     <table class="base-info">
       <tr>
         <td>体检执行编号</td>
-        <td colspan="8" class=" height-30">{{examData.code}}</td>
+        <td colspan="8" class=" height-30">{{ examOptions.examData.code }}</td>
       </tr>
       <tr>
         <td class="center height-30">姓名</td>
-        <td colspan="2" class="center height-30" style="width:200px">{{examData.userName}}</td>
+        <td colspan="2" class="center height-30" style="width:200px">{{ examOptions.examData.userName }}</td>
         <td class="center height-30" style="height: 30px">性别</td>
-        <td class="center height-30">{{examData.gender}}</td>
+        <td class="center height-30">{{ examOptions.examData.gender }}</td>
         <td class="center height-30" style="height: 30px">年龄</td>
-        <td colspan="3" class="center height-30" style="width:300px">{{examData.age}}</td>
+        <td colspan="3" class="center height-30" style="width:300px">{{ examOptions.examData.age }}</td>
       </tr>
       <tr>
         <td class="center height-30">证件号码</td>
-        <td colspan="4" class="center height-30">{{examData.idCard}}</td>
+        <td colspan="4" class="center height-30">{{ examOptions.examData.idCard }}</td>
         <td class="center height-30">体检时间</td>
-        <td colspan="3" class="center height-30">{{examData.examTime}}</td>
+        <td colspan="3" class="center height-30">{{ examOptions.examData.examTime }}</td>
       </tr>
       <tr>
         <td class="center height-30">联系地址</td>
-        <td colspan="4" style="width:400px" class="center height-30">{{examData.address}}</td>
+        <td colspan="4" style="width:400px" class="center height-30">{{ examOptions.examData.address }}</td>
         <td>联系电话</td>
-        <td colspan="3" style="width:300px" class="center height-30">{{examData.phone}}</td>
+        <td colspan="3" style="width:300px" class="center height-30">{{ examOptions.examData.phone }}</td>
       </tr>
       <!-- 一般状况 -->
       <tr>
         <td rowspan="5">一般状况</td>
         <td class="center height-30">身高</td>
-        <td colspan="2" class="center">{{examData.height}} cm</td>
+        <td colspan="2" class="center">{{ examOptions.examData.height }} cm</td>
         <td class="center height-30">体重</td>
-        <td class="center height-30" colspan="2">{{examData.weight}} kg</td>
+        <td class="center height-30" colspan="2">{{ examOptions.examData.weight }} kg</td>
         <td class="top" rowspan="5" colspan="2"></td>
       </tr>
       <tr>
         <td class="center height-30"> 体质指数（BMI</td>
-        <td class="center height-30">{{examData.BMI}}kg</td>
+        <td class="center height-30">{{ examOptions.examData.BMI }}kg</td>
         <td class="center height-30">参考值：</td>
         <td colspan="2">体质指数正常值：18.5～23.9</td>
 
       </tr>
       <tr>
         <td class="center height-30">心率</td>
-        <td class="center height-30">{{examData.heartRate}}次/分钟</td>
+        <td class="center height-30">{{ examOptions.examData.heartRate }}次/分钟</td>
       </tr>
       <tr>
         <td class="center height-30"> 血压</td>
@@ -158,7 +159,7 @@
       </tr>
     </table>
     <div class="tips">* 根据体检执行编号和血清检查执行编号可追溯检验医师相关信息及打印原始报告单据</div>
-      <el-dialog
+    <el-dialog
       :title="dialogOptions.dialogTitle"
       :visible.sync="dialogOptions.DialogShow"
       width="30%"
@@ -177,62 +178,71 @@
 <script>
 export default {
   name: 'base-info',
-  data(){
-    return{
+  data() {
+    return {
       dialogOptions: {},
-      dialogInput:'',
-      dialogInputDisable:false,
-      examData:{
-        code:'485455455855545',
-        height:'182',
-        weight:'50',
-        userName:'试试',
-        age:'18',
-        gender: '女',
-        idCard:'45021124558855886',
-        examTime:'2022-03-03 18:52:00',
-        address:"上海市浦东新区高博路211弄1304室",
-        phone:'1521654879',
-        BMI:20,
-        heartRate:'80',
-        temperature:'36.5',
-        bloodPressure:'52-45',
+      dialogInput: '',
+      dialogInputDisable: false,
+      visible:false,
+      examOptions: {
+        examData: {
+          code: '485455455855545',
+          height: '182',
+          weight: '50',
+          userName: '试试',
+          age: '18',
+          gender: '女',
+          idCard: '45021124558855886',
+          examTime: '2022-03-03 18:52:00',
+          address: "上海市浦东新区高博路211弄1304室",
+          phone: '1521654879',
+          BMI: 20,
+          heartRate: '80',
+          temperature: '36.5',
+          bloodPressure: '52-45',
+        }
       }
+
     }
   },
-  methods:{
-    inputChange(){
+  created() {
+    this.visible = this.$route.params.visible;
+    const id = this.$route.params.id;
+    console.log(id)
+  },
+  methods: {
+    inputChange() {
 
     },
-    dialogClicked(){
+    dialogClicked() {
 
     },
-    refuse(){//不通过
+    refuse() {//不通过
       this.dialogOptions = {
-          dialogTitle: '备注',
-          dialogPlaceholder: '请输入备注内容',
-          DialogShow: true
-        }
+        dialogTitle: '备注',
+        dialogPlaceholder: '请输入备注内容',
+        DialogShow: true
+      }
     },
     success() { // 通过
 
-        this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          this.$message({
-            type: 'success',
-            message: '操作成功!'
-          });
-        }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '已取消删除'
-          });
+      this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$message({
+          type: 'success',
+          message: '操作成功!'
         });
-      }
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        });
+      });
     }
+  }
 }
 </script>
 

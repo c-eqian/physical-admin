@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Index from '../../views/physical/index/Index.vue'
 import Console from '../../views/physical/Console.vue'
-import Users from '../../views/physical/Users.vue'
+import Users from '../../views/physical/exam-manage/exam-upload/index.vue'
 import Articles from '../../views/physical/Articles.vue'
 import Echarts from '../../views/physical/Echarts.vue'
 import Login from '../../views/physical/login/Login.vue'
@@ -32,13 +32,18 @@ const router = new Router({
       redirect: '/console',
       children: [
         {
+          path: '/analyze-manage/analyze-center',
+          name:"analyzeManageAnalyze",
+          component: () => import('@/views/physical/analyze-manage/analyze-center/index')
+        },
+        {
           path: '/physical-manage/exam-report-audit/:id',
           name:"examReportAudit",
           component: () => import('@/views/physical/exam-manage/exam-report-audit/index')
         },
         {
-          path: '/upload_physical_exam',
-          component: () => import('@/views/physical/Users')
+          path: '/physical-manage/upload_physical_exam',
+          component: () => import('@/views/physical/exam-manage/exam-upload/index')
         },
         {
           path: '/user-manage/user-exam',

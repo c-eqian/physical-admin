@@ -19,8 +19,9 @@
 
 <script>
 import Menus from '@/components/menus/menus'
-import  './main.css'
+import './main.css'
 import Headers from '@/components/header/header'
+
 export default {
   provide () {
     return {
@@ -46,12 +47,10 @@ export default {
   },
   computed: {
     isCollapse () {
-      let status = this.$store.state.BaseStore.isCollapse
-      return status
+      return this.$store.state.BaseStore.isCollapse
     },
     asideWidth () {
-      let width = this.$store.state.BaseStore.isCollapse ? 'auto' : '200px'
-      return width
+      return this.$store.state.BaseStore.isCollapse ? 'auto' : '200px'
     }
   }
 }
