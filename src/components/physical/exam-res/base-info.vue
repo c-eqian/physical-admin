@@ -6,6 +6,12 @@
         <el-button type="danger" @click="refuse" icon="el-icon-close" circle></el-button>
       </el-row>
     </div>
+    <div v-else style="position: absolute;top: 200px;">
+      <el-row >
+        <el-button type="primary" @click="success" icon="el-icon-check" >生成</el-button>
+      </el-row>
+      <el-row><el-button type="danger" @click="refuse" icon="el-icon-close" >保存</el-button></el-row>
+    </div>
     <h1>体检结果基础信息</h1>
     <table class="base-info">
       <tr>

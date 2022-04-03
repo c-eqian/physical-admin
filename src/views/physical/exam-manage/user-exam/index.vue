@@ -8,7 +8,7 @@
       </el-select>
       <el-button slot="append" icon="el-icon-search"></el-button>
     </el-input>
-    <exam-card :examList="examList"></exam-card>
+    <exam-card :examList="examList" @updateData="updateData"></exam-card>
 
   </div>
 
@@ -24,11 +24,14 @@ export default {
     return {
       input3: '',
       select: '',
-      RequisitionId: '21101700008',
+      RequisitionId: '21101700009',
       examList: []
     }
   },
   methods: {
+    updateData(params){
+      console.log(params)
+    },
     requestUserExamList () { // 查询该条码下需要体检的项目大类
       this.$get('/current-exam-list', {
         RequisitionId: this.RequisitionId

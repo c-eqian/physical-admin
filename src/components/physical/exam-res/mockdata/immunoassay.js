@@ -2,8 +2,8 @@ let result1 = [
   {
     id: 1,
     abbreviation: 'U-LEU',
-    name: '尿白细胞',
-    result: '6',
+    name: '白细胞',
+    result: '',
     hint: '↑',
     reference: '<5',
     units: ''
@@ -11,8 +11,8 @@ let result1 = [
   {
     id: 2,
     abbreviation: 'U-Ket',
-    name: '尿胴体',
-    result: '+',
+    name: '酮体',
+    result: '',
     hint: '↑',
     reference: '阴性(-)',
     units: ''
@@ -20,8 +20,8 @@ let result1 = [
   {
     id: 3,
     abbreviation: 'NIT',
-    name: '尿亚硝酸盐',
-    result: '+',
+    name: '亚硝酸盐',
+    result: '',
     hint: '↑',
     reference: '阴性(-)',
     units: ''
@@ -29,8 +29,8 @@ let result1 = [
   {
     id: 4,
     abbreviation: 'URO',
-    name: '尿胆原',
-    result: '弱阳性',
+    name: '尿胆素',
+    result: '',
     hint: '',
     reference: '弱阳性',
     units: ''
@@ -38,8 +38,8 @@ let result1 = [
   {
     id: 5,
     abbreviation: 'U-BIL',
-    name: '尿胆红素',
-    result: '-',
+    name: '胆红素',
+    result: '',
     hint: '',
     reference: '阴性(-)',
     units: ''
@@ -48,7 +48,7 @@ let result1 = [
     id: 6,
     abbreviation: 'PRO',
     name: '尿蛋白',
-    result: '+',
+    result: '',
     hint: '↑',
     reference: '阴性(-)',
     units: ''
@@ -57,7 +57,7 @@ let result1 = [
     id: 7,
     abbreviation: 'GLU',
     name: '尿糖',
-    result: '-',
+    result: '',
     hint: '',
     reference: '阴性(-)',
     units: ''
@@ -66,7 +66,7 @@ let result1 = [
     id: 8,
     abbreviation: 'SG',
     name: '尿比重',
-    result: '1.028',
+    result: '',
     hint: '↑',
     reference: '1.015~1.025',
     units: ''
@@ -75,7 +75,7 @@ let result1 = [
     id: 9,
     abbreviation: 'PH',
     name: '尿酸咸度',
-    result: '6.7',
+    result: '',
     hint: '',
     reference: '4.5~8.0',
     units: ''
@@ -84,7 +84,7 @@ let result1 = [
     id: 10,
     abbreviation: 'BLO',
     name: '隐血',
-    result: '-',
+    result: '',
     hint: '',
     reference: '阴性(-)',
     units: ''
@@ -92,12 +92,12 @@ let result1 = [
   {
     id: 11,
     abbreviation: 'VC',
-    name: '维C',
-    result: '-',
+    name: '维生素C',
+    result: '',
     hint: '',
     reference: '阴性(-)',
     units: ''
-  }    
+  }
 ]
 
 let result2 = [

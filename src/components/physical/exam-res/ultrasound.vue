@@ -1,5 +1,11 @@
 <template>
   <div>
+     <div  style="position: absolute;">
+      <el-row >
+        <el-button type="primary"  icon="el-icon-check" >生成</el-button>
+      </el-row>
+      <el-row><el-button type="danger"  icon="el-icon-close" >保存</el-button></el-row>
+    </div>
     <h1>超声波检查</h1>
     <div class="uname">姓名:高胜云    性别:男     年龄:35    检查日期:2019-03-28</div>
     <div class="result" v-for="(item, index) in result" :key="index.id">

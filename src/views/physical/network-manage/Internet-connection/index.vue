@@ -36,7 +36,7 @@ export default {
       message: '',
       client: '',
       topic: 'send/weight', // 发布主题
-      sub: 'get/weight', //订阅主题
+      sub: 'toServer', //订阅主题
     }
   },
   created() {
