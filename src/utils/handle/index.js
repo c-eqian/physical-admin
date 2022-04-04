@@ -1,6 +1,13 @@
 // eslint-disable-next-line camelcase
 import { getAge, handleGender } from '@/utils/plugin/utils'
 
+
+export  function  handle_BMI(height,weight){
+//  BMI=68/(1.75*1.75)=22.2
+  const h = height/100;
+  return weight/(h*h).toFixed(1).toString()
+}
+
 // eslint-disable-next-line camelcase
 export function handle_apply_data (data) {
   for (const index in data) {

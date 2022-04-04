@@ -1,5 +1,12 @@
+
 <template>
   <div>
+    <div >
+      <el-row style="position: absolute;right: 50px">
+        <el-button type="primary" @click="success" icon="el-icon-check" circle></el-button>
+        <el-button type="danger" @click="refuse" icon="el-icon-close" circle></el-button>
+      </el-row>
+    </div>
     <h1>体检结果基础信息</h1>
     <table class="base-info">
       <tr>
@@ -178,35 +185,38 @@ import {handle_BMI} from "@/utils/handle";
 
 export default {
   name: 'base-info',
-  props:['dialogOptions'],
   data() {
     return {
+      dialogOptions: {},
       dialogInput: '',
       dialogInputDisable: false,
-      RequisitionId: '',
-      examData:{}
+      visible: false,
+      examData: {
+        RequisitionId:'',
+        org_code: '',
+        Height: '',
+        Weight: '',
+        name: '',
+        birthday: '',
+        gender: '',
+        idCard: '',
+        VisitingDate: '',
+        cur_address: '',
+        phone: '',
+        BMI: '',
+        heart_rate: '',
+        Temperature: '36.5',
+        LSBP: '',
+        LDBP: ''
+      }
+
     }
   },
   created() {
     this.visible = this.$route.params.visible;
-    const RequisitionId = this.$route.params.id;
-    this.queryBaseExam(RequisitionId)
+    const id = this.$route.params.id;
   },
   methods: {
-    queryBaseExam(RequisitionId){
-      this.$get('/query-exam-base-by-rid',{
-        RequisitionId:RequisitionId
-      }).then(res=>{
-        if(res.data.status ===200){
-          this.examData = Object.assign({},res.data.result)
-        }else {
-          this.messageTip(res.data.msg)
-        }
-      })
-    },
-    inputChange() {
-
-    },
     messageTip(msg, type = 'error') {
       this.$message({
         showClose: true,
@@ -217,7 +227,7 @@ export default {
     dialogClicked() {
 
     },
-        refuse() {//不通过
+    refuse() {//不通过
       this.dialogOptions = {
         dialogTitle: '备注',
         dialogPlaceholder: '请输入备注内容',
@@ -242,7 +252,6 @@ export default {
         });
       });
     },
-
   }
 }
 </script>

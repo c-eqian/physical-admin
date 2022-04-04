@@ -26,20 +26,21 @@ const router = new Router({
       path: '/apply-list',
       component: () => import('@/views/physical/user-apply/apply-list/index')
     },
+
     {
       path: '/index',
       component: Index,
       redirect: '/console',
       children: [
+            {
+          path: '/physical-manage/exam-report-audit/:id',
+          name:"examReportAudit",
+          component: () => import('@/views/physical/exam-manage/exam-report-audit/index')
+    },
         {
           path: '/analyze-manage/analyze-center',
           name:"analyzeManageAnalyze",
           component: () => import('@/views/physical/analyze-manage/analyze-center/index')
-        },
-        {
-          path: '/physical-manage/exam-report-audit/:id',
-          name:"examReportAudit",
-          component: () => import('@/views/physical/exam-manage/exam-report-audit/index')
         },
         {
           path: '/physical-manage/upload_physical_exam',
@@ -50,8 +51,13 @@ const router = new Router({
           component: () => import('@/views/physical/exam-manage/user-exam/index')
         },
         {
+          path: '/user-manage/exam-report/mock',
+          name:"examReportMock",
+          component: () => import('@/views/physical/exam-manage/exam-mock/index')
+        },
+        {
           path: '/user-manage/user-exam-result',
-          component: () => import('@/views/physical/exam-manage/exam-result/index')
+          component: () => import('@/views/physical/exam-manage/exam-report/index')
         },
         {
           path: '/userList',

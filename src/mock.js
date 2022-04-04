@@ -1,7 +1,29 @@
 import Mock from 'mockjs'
 
 const Random = Mock.Random
-
+/**
+ * 随机一般体检
+ */
+const randomBase = () =>{
+    return Mock.mock({
+          org_code: Random.id(),
+          Height:  Random.integer(140, 200),
+          Weight: Random.float(40, 100,2,2),
+          name: Random.cname(),
+          birthday: Random.integer(2, 70),
+          gender: Random.integer(1, 2),
+          idCard: Random.id(),
+          VisitingDate: Random.now(),
+          cur_address: Random.county(true),
+          phone: Random.integer(10000000000, 99999999999),
+          BMI: Random.float(10, 30,2,2),
+          heart_rate: Random.integer(10, 200),
+          Temperature: Random.float(25, 45,2,2),
+          LSBP: Random.integer(60, 90),
+          LDBP:Random.integer(80, 180)
+  });
+}
+Mock.mock('/api/base-exam', randomBase)
 /**
  * 随机尿常规
  */

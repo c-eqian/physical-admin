@@ -1,5 +1,27 @@
 <template>
   <div>
+    <el-input clearable placeholder="请输入体检编号" v-model="examData.RequisitionId" class="input-with-select">
+      <el-select slot="prepend" placeholder="请选择" value="111">
+        <el-option label="餐厅名" value="1"></el-option>
+        <el-option label="订单号" value="2"></el-option>
+        <el-option label="用户电话" value="3"></el-option>
+      </el-select>
+      <el-button slot="append" icon="el-icon-search" @click="search"></el-button>
+    </el-input>
+    <div v-if="visible">
+      <el-row style="position: absolute;right: 50px">
+        <el-button type="primary" @click="success" icon="el-icon-check" circle></el-button>
+        <el-button type="danger" @click="refuse" icon="el-icon-close" circle></el-button>
+      </el-row>
+    </div>
+    <div v-else style="position: absolute;top: 200px;">
+      <el-row>
+        <el-button type="primary" @click="getBaseData" icon="el-icon-s-promotion">生成</el-button>
+      </el-row>
+      <el-row>
+        <el-button type="danger" @click="saveBaseData" icon="el-icon-check">保存</el-button>
+      </el-row>
+    </div>
     <h1>体检结果基础信息</h1>
     <table class="base-info">
       <tr>
@@ -28,16 +50,16 @@
       </tr>
       <!-- 一般状况 -->
       <tr>
-        <td rowspan="5">一般状况</td>
+        <td rowspan="6">一般状况</td>
         <td class="center height-30">身高</td>
         <td colspan="2" class="center">{{ examData.Height }} cm</td>
         <td class="center height-30">体重</td>
         <td class="center height-30" colspan="2">{{ examData.Weight }} kg</td>
-        <td class="top" rowspan="5" colspan="2"></td>
+        <td class="top" rowspan="6" colspan="2"></td>
       </tr>
       <tr>
         <td class="center height-30"> 体质指数（BMI</td>
-        <td class="center height-30">{{ `${examData.BMI }`}}kg</td>
+        <td class="center height-30">{{ `${examData.BMI}` }}kg</td>
         <td class="center height-30">参考值：</td>
         <td colspan="2">体质指数正常值：18.5～23.9</td>
 
@@ -178,31 +200,92 @@ import {handle_BMI} from "@/utils/handle";
 
 export default {
   name: 'base-info',
-  props:['dialogOptions'],
   data() {
     return {
+      dialogOptions: {},
       dialogInput: '',
       dialogInputDisable: false,
-      RequisitionId: '',
-      examData:{}
+      visible: false,
+      examData: {
+        RequisitionId: '21101700009',
+        org_code: '',
+        Height: '',
+        Weight: '',
+        name: '',
+        birthday: '',
+        gender: '',
+        idCard: '',
+        VisitingDate: '',
+        cur_address: '',
+        phone: '',
+        BMI: '',
+        heart_rate: '',
+        Temperature: '36.5',
+        LSBP: '',
+        LDBP: ''
+      }
+
     }
   },
+  // computed: {
+  //   userInfoChange: function () {
+  //     // this.examData = Object.assign({}, this.examData,this.userInfo)
+  //     this.examData.RequisitionId = this.userInfo.RequisitionId;
+  //     this.examData.RequisitionId = this.userInfo.RequisitionId;
+  //     this.examData.BMI = handle_BMI(this.examData.Height,this.examData.Weight)
+  //     return this.examData
+  //   }
+  // },
   created() {
     this.visible = this.$route.params.visible;
-    const RequisitionId = this.$route.params.id;
-    this.queryBaseExam(RequisitionId)
+    const id = this.$route.params.id;
+    console.log(id)
   },
   methods: {
-    queryBaseExam(RequisitionId){
-      this.$get('/query-exam-base-by-rid',{
-        RequisitionId:RequisitionId
-      }).then(res=>{
-        if(res.data.status ===200){
-          this.examData = Object.assign({},res.data.result)
-        }else {
+    search() {
+      this.$get('/get-cache-base-exam', {RequisitionId: this.examData.RequisitionId}).then(res => {
+        if (res.data.status === 200) {
+          this.examData = Object.assign({}, this.examData, res.data.result)
+        } else {
           this.messageTip(res.data.msg)
         }
       })
+    },
+    saveBaseData() {
+      this.examData.Operator = this.$store.state.BaseStore.user.name
+      console.log(this.examData)
+      this.$post('/insertbaseexam', this.examData).then(res => {
+        this.messageTip(res.data.msg)
+      })
+    },
+    getBaseData() {
+      this.$http.get('/api/base-exam').then(res => {
+        this.$confirm('是否覆盖现有数据?', '提示', {
+          confirmButtonText: '覆盖',
+          cancelButtonText: '不了',
+          type: 'warning'
+        }).then(() => {
+        this.examData.LDBP = res.data.LDBP;
+        this.examData.LSBP = res.data.LSBP;
+        this.examData.Weight = res.data.Weight.toString();
+        this.examData.Height = res.data.Height.toString();
+        this.examData.heart_rate = res.data.heart_rate.toString();
+        this.examData.Temperature = res.data.Temperature.toString();
+        this.examData.VisitingDate = res.data.VisitingDate;
+        this.examData.BMI = handle_BMI(res.data.Height, res.data.Weight)
+        }).catch(() => {
+          this.examData.LDBP = res.data.LDBP;
+        this.examData.LSBP = res.data.LSBP;
+        this.examData.heart_rate = res.data.heart_rate.toString();
+        this.examData.Temperature = res.data.Temperature.toString();
+        this.examData.VisitingDate = res.data.VisitingDate;
+        this.examData.BMI = handle_BMI(res.data.Height, res.data.Weight)
+
+        });
+        // console.log(this.examData)
+      })
+
+
     },
     inputChange() {
 
@@ -217,7 +300,7 @@ export default {
     dialogClicked() {
 
     },
-        refuse() {//不通过
+    refuse() {//不通过
       this.dialogOptions = {
         dialogTitle: '备注',
         dialogPlaceholder: '请输入备注内容',
@@ -242,7 +325,6 @@ export default {
         });
       });
     },
-
   }
 }
 </script>
@@ -288,4 +370,3 @@ h1 {
   padding: 10px;
 }
 </style>
-

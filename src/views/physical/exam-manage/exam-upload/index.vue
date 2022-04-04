@@ -31,27 +31,27 @@
     </el-row>
     <el-table
       highlight-current-row
-      :data="users"
+      :data="examUploadList"
       height="550"
       border
       @selection-change="selectChange"
       style="width: 100%">
       <el-table-column
         sortable
-        prop="rid"
+        prop="RequisitionId"
         label="体检编号"
         fixed
         align="center"
         min-width="180">
         <template scope="scope">
-          <router-link :to="{ name:'examReportAudit',params:{id:scope.row.rid,visible:true}}">
-            {{ scope.row.rid }}
+          <router-link :to="{ name:'examReportAudit',params:{id:scope.row.RequisitionId,visible:true}}">
+            {{ scope.row.RequisitionId }}
           </router-link>
         </template>
       </el-table-column>
       <el-table-column
         sortable
-        prop="date"
+        prop="VisitingDate"
         label="体检日期"
         align="center"
         min-width="180">
@@ -62,19 +62,19 @@
         label="姓名">
       </el-table-column>
       <el-table-column
-        prop="phone"
+        prop="idCard"
         align="center"
         label="证件号码"
         min-width="180">
       </el-table-column>
       <el-table-column
-        prop="address"
+        prop="org_name"
         align="center"
         min-width="300"
         label="体检单位">
       </el-table-column>
       <el-table-column
-        prop="address"
+        prop="Operator"
         align="center"
         min-width="150"
         label="体检医生">
@@ -163,39 +163,39 @@
       :page-sizes="[10, 20, 30, 50]"
       :page-size="10"
       layout="total, sizes, prev, pager, next, jumper"
-      :total="400">
+      :total="total">
     </el-pagination>
-    <el-dialog :title="dialogTitle" width="600px" :visible.sync="userFormVisible" @close="resetForm('userForm')">
-      <el-form :model="user" :rules="rules" ref="userForm">
-        <el-form-item label="姓名" prop="name" label-width="50px">
-          <el-input v-model="user.name" autocomplete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="手机" label-width="50px">
-          <el-input v-model="user.phone" autocomplete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="地址" label-width="50px">
-          <el-input v-model="user.address" autocomplete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="日期" label-width="50px">
-          <el-date-picker
-            v-model="user.date"
-            type="date"
-            value-format="yyyy-MM-dd"
-            placeholder="选择日期">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item label="状态" label-width="50px">
-          <el-switch v-model="user.status" active-color="#13ce66"
-                     inactive-color="#ff4949"
-                     :active-value="1"
-                     :inactive-value="0"></el-switch>
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="userFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="submitUser('userForm')">确 定</el-button>
-      </div>
-    </el-dialog>
+<!--    <el-dialog :title="dialogTitle" width="600px" :visible.sync="userFormVisible" @close="resetForm('userForm')">-->
+<!--      <el-form :model="user" :rules="rules" ref="userForm">-->
+<!--        <el-form-item label="姓名" prop="name" label-width="50px">-->
+<!--          <el-input v-model="user.name" autocomplete="off"></el-input>-->
+<!--        </el-form-item>-->
+<!--        <el-form-item label="手机" label-width="50px">-->
+<!--          <el-input v-model="user.phone" autocomplete="off"></el-input>-->
+<!--        </el-form-item>-->
+<!--        <el-form-item label="地址" label-width="50px">-->
+<!--          <el-input v-model="user.address" autocomplete="off"></el-input>-->
+<!--        </el-form-item>-->
+<!--        <el-form-item label="日期" label-width="50px">-->
+<!--          <el-date-picker-->
+<!--            v-model="user.date"-->
+<!--            type="date"-->
+<!--            value-format="yyyy-MM-dd"-->
+<!--            placeholder="选择日期">-->
+<!--          </el-date-picker>-->
+<!--        </el-form-item>-->
+<!--        <el-form-item label="状态" label-width="50px">-->
+<!--          <el-switch v-model="user.status" active-color="#13ce66"-->
+<!--                     inactive-color="#ff4949"-->
+<!--                     :active-value="1"-->
+<!--                     :inactive-value="0"></el-switch>-->
+<!--        </el-form-item>-->
+<!--      </el-form>-->
+<!--      <div slot="footer" class="dialog-footer">-->
+<!--        <el-button @click="userFormVisible = false">取 消</el-button>-->
+<!--        <el-button type="primary" @click="submitUser('userForm')">确 定</el-button>-->
+<!--      </div>-->
+<!--    </el-dialog>-->
   </div>
 </template>
 
@@ -209,17 +209,9 @@ export default {
   },
   data() {
     return {
-      users: [],
       placeholder: '请输入',
-      user: {
-        id: '',
-        date: '',
-        name: '',
-        phone: '',
-        address: '',
-        status: 0
-      },
-      userBackup: Object.assign({}, this.user),
+      total:0,
+      examUploadList:[],
       multipleSelection: [],
       userFormVisible: false,
       dialogTitle: '',
@@ -233,20 +225,32 @@ export default {
     }
   },
   mounted() {
-    this.getUsers()
+    this.getGetUploadList()
   },
   methods: {
     search(value) {
       console.log(value)
     },
-    getUsers() {
-      this.loading = true
-      this.$http('/api/users').then((res) => {
-        this.users = res.data
+    getGetUploadList() {
+        const org_code = this.$store.state.BaseStore.user.org_id;
+      this.$get('/query_exam_upload',{
+        org_code:org_code
+      }).then(res=>{
+        if(res.data.status ===200){
+          this.total = res.data.result.total
+          this.examUploadList = res.data.result.lt
+        }else {
+          this.messageTip(res.data.msg)
+        }
         console.log(res)
-      }).catch((err) => {
-        console.error(err)
       })
+      // this.loading = true
+      // this.$http('/api/users').then((res) => {
+      //   this.users = res.data
+      //   console.log(res)
+      // }).catch((err) => {
+      //   console.error(err)
+      // })
     },
     handleEdit(index, row) {
       this.dialogTitle = '编辑'
@@ -322,7 +326,14 @@ export default {
       this.dialogTitle = '新增'
       this.user = Object.assign({}, this.userBackup)
       this.userFormVisible = true
-    }
+    },
+    messageTip(msg, type = 'error') {
+      this.$message({
+        showClose: true,
+        message: msg,
+        type: type
+      })
+    },
   }
 }
 </script>
