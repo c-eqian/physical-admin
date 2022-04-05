@@ -32,14 +32,19 @@ const router = new Router({
       component: Index,
       redirect: '/console',
       children: [
-            {
+        {
+          path: '/physical-manage/exam-mock/immunoassay/:id',
+          name: "examMockUrine",
+          component: () => import('@/views/physical/exam-manage/exam-mock/immunoassay')
+        },
+        {
           path: '/physical-manage/exam-report-audit/:id',
-          name:"examReportAudit",
+          name: "examReportAudit",
           component: () => import('@/views/physical/exam-manage/exam-report-audit/index')
-    },
+        },
         {
           path: '/analyze-manage/analyze-center',
-          name:"analyzeManageAnalyze",
+          name: "analyzeManageAnalyze",
           component: () => import('@/views/physical/analyze-manage/analyze-center/index')
         },
         {
@@ -52,7 +57,7 @@ const router = new Router({
         },
         {
           path: '/user-manage/exam-report/mock',
-          name:"examReportMock",
+          name: "examReportMock",
           component: () => import('@/views/physical/exam-manage/exam-mock/index')
         },
         {
@@ -96,7 +101,7 @@ const router = new Router({
     },
     {
       path: '*',
-      redirect: { path: '/404' }
+      redirect: {path: '/404'}
     }
   ]
 })
@@ -115,7 +120,7 @@ router.beforeEach((to, from, next) => {
 
   // 判断是否登录
   if (!user && url !== LOGINURL) {
-    next({ path: LOGINURL })
+    next({path: LOGINURL})
   } else {
     next()
   }

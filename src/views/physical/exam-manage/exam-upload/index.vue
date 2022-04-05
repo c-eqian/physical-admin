@@ -84,7 +84,7 @@
         align="center"
         prop="examStatus"
         label="体检状态">
-        <template slot-scope="scope">
+        <template scope="scope">
           <el-tag :type="scope.row.examStatus===1?'success':'primary'">
             {{ scope.row.examStatus === 1 ? "已完成" : "体检中" }}
           </el-tag>
