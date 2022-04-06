@@ -9,19 +9,10 @@
     <div class="exam-result-card">
       <el-tabs type="border-card">
         <el-tab-pane label="基础信息">
-          <self-base-info :dialogOptions="dialogOptions"></self-base-info>
+          <base-exam :examData="examData" ></base-exam>
         </el-tab-pane>
         <el-tab-pane label="生化检查">
-          <blood-check></blood-check>
-        </el-tab-pane>
-        <el-tab-pane label="心电图检查">
-          <e-c-g></e-c-g>
-        </el-tab-pane>
-        <el-tab-pane label="免疫检查">
-          <immunoassay></immunoassay>
-        </el-tab-pane>
-        <el-tab-pane label="B超">
-          <ultrasound></ultrasound>
+          <other-exam :examData="examData"></other-exam>
         </el-tab-pane>
       </el-tabs>
     </div>
@@ -31,32 +22,35 @@
 </template>
 
 <script>
-// eslint-disable-next-line no-unused-vars
-import examCard from '@/components/physical/exam-card/index'
-import selfBaseInfo from '@/components/physical/exam-res/base-info'
-// eslint-disable-next-line no-unused-vars
-import bloodCheck from '@/components/physical/exam-res/bloodcheck'
-// eslint-disable-next-line no-unused-vars
-import ECG from '@/components/physical/exam-res/ecg'
-// eslint-disable-next-line no-unused-vars
-import immunoassay from '@/components/physical/exam-res/immunoassay'
-// eslint-disable-next-line no-unused-vars
-import ultrasound from '@/components/physical/exam-res/ultrasound'
-// eslint-disable-next-line no-unused-vars
-import xray from '@/components/physical/exam-res/xray'
+import baseExam from './components/base/index'
+import otherExam from './components/other/index'
 
 export default {
   name: 'index',
   data() {
     return {
+      examData:{
+      },
       dialogOptions:{},
         RequisitionId: '',
     }
   },
   created() {
     this.RequisitionId = this.$route.params.id
+    this.search()
   },
   methods:{
+    search(){
+      this.$get('/query_exam_base_and_urine_by_rid',{
+        RequisitionId:this.RequisitionId
+      }).then(res=>{
+        if(res.data.status===200){
+          this.examData = Object.assign({},this.examData,res.data.result)
+        }else {
+          this.messageTip(res.data.msg)
+        }
+      })
+    },
     refuse() {//不通过
       this.dialogOptions = {
         dialogTitle: '备注',
@@ -91,23 +85,10 @@ export default {
     },
   },
   components: {
-    // eslint-disable-next-line vue/no-unused-components
-    examCard,
-
-    selfBaseInfo,
-
-    // eslint-disable-next-line vue/no-unused-components
-    bloodCheck,
-    // eslint-disable-next-line vue/no-unused-components
-    ECG,
-    // eslint-disable-next-line vue/no-unused-components
-    immunoassay,
-    // eslint-disable-next-line vue/no-unused-components
-    ultrasound,
-    // eslint-disable-next-line vue/no-unused-components
-    xray
-
+    baseExam,
+    otherExam
   }
+
 }
 </script>
 
