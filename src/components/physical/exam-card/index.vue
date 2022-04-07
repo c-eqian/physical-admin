@@ -8,7 +8,8 @@
       </el-select>
       <el-button slot="append" icon="el-icon-search"  @click="search"></el-button>
     </el-input>
-    <el-button type="primary" @click="mockData">MOCK数据</el-button>
+    <el-button type="primary" @click="mockData" icon="el-icon-edit">MOCK数据</el-button>
+     <el-button type="primary" @click="mockData" icon="el-icon-circle-plus-outline">新增体检</el-button>
     <div class="exam-card" v-if="examList">
       <el-card class="box-card">
         <div slot="header" class="clearfix">

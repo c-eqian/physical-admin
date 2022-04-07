@@ -16,7 +16,18 @@
         </el-tab-pane>
       </el-tabs>
     </div>
-
+    <el-dialog
+      :title="dialogOptions.dialogTitle"
+      :visible.sync="dialogOptions.DialogShow"
+      width="30%"
+      center>
+      <el-input clearable @input="inputChange" type="textarea" v-model="dialogInput"
+                :placeholder="dialogOptions.dialogPlaceholder"></el-input>
+      <span slot="footer" class="dialog-footer">
+    <el-button @click="dialogOptions.DialogShow = false">取 消</el-button>
+    <el-button :disabled="dialogInputDisable" type="primary" @click="dialogClicked">确 定</el-button>
+  </span>
+    </el-dialog>
   </div>
 
 </template>
@@ -31,6 +42,8 @@ export default {
     return {
       examData:{
       },
+      dialogInput:'',
+      dialogInputDisable:true,
       dialogOptions:{},
         RequisitionId: '',
     }
@@ -51,6 +64,28 @@ export default {
         }
       })
     },
+    submit(status=1,remark=''){ //提交审核
+      if(this.RequisitionId){
+        this.$get('/exam_result_audit_by_rid',{
+          RequisitionId:this.RequisitionId,
+          status:status,
+          remark:remark
+        }).then(res=> {
+            this.messageTip(res.data.msg, res.data.status === 200 ? "success" : 'error')
+      })
+        }else {
+          this.messageTip("体检编码为空！")
+        }
+       this.dialogOptions={}
+
+    },
+    inputChange(val){ //校验输入
+      this.dialogInputDisable = !val;
+      console.log(this.dialogInput)
+    },
+    dialogClicked(){
+      this.submit(-1,this.dialogInput)
+    },
     refuse() {//不通过
       this.dialogOptions = {
         dialogTitle: '备注',
@@ -59,22 +94,15 @@ export default {
       }
     },
     success() { // 通过
+      this.$confirm('是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'info'
+      }).then(() => {
+         this.submit(1)
+      }).catch(() => {
 
-      // this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
-      //   confirmButtonText: '确定',
-      //   cancelButtonText: '取消',
-      //   type: 'warning'
-      // }).then(() => {
-      //   this.$message({
-      //     type: 'success',
-      //     message: '操作成功!'
-      //   });
-      // }).catch(() => {
-      //   this.$message({
-      //     type: 'info',
-      //     message: '已取消删除'
-      //   });
-      // });
+      });
     },
     messageTip(msg, type = 'error') {
       this.$message({
