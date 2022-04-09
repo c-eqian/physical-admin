@@ -58,7 +58,8 @@ export default {
         RequisitionId:this.RequisitionId
       }).then(res=>{
         if(res.data.status===200){
-          this.examData = Object.assign({},this.examData,res.data.result)
+          this.examData = res.data.result
+          console.log(222,this.examData)
         }else {
           this.messageTip(res.data.msg)
         }

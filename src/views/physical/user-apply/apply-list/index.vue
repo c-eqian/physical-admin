@@ -320,6 +320,7 @@ export default {
           timestamp: timestamp
         }
       }
+      console.log(params)
       this.$get('/applyList', params).then(res => {
         console.log(res)
         if (res.data.status === 200) {

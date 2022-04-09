@@ -9,7 +9,7 @@
       <el-button slot="append" icon="el-icon-search"  @click="search"></el-button>
     </el-input>
     <el-button type="primary" @click="mockData" icon="el-icon-edit">MOCK数据</el-button>
-     <el-button type="primary" @click="mockData" icon="el-icon-circle-plus-outline">新增体检</el-button>
+     <el-button type="primary" @click="addExam" icon="el-icon-circle-plus-outline">新增体检</el-button>
     <div class="exam-card" v-if="examList">
       <el-card class="box-card">
         <div slot="header" class="clearfix">
@@ -70,7 +70,7 @@
             <div class="item-flex" v-for="(ite,index) in item.lt" :key="ite.ItemCode">
               <span style="color: blue"> {{ index + 1 }}.{{ ite.ItemName }}</span>
               <span
-                style="float: right;color: #67C23A;font-size: 1.3rem">{{ ite.value, ite.ItemName }}</span>
+                style="float: right;color: #67C23A;font-size: 1.3rem">{{ ite.value+''+ite.ItemName }}</span>
               <el-divider></el-divider>
             </div>
           </el-collapse-item>
@@ -114,6 +114,9 @@ export default {
     this.switchStatus = this.$store.state.BaseStore.netConnect
   },
   methods: {
+    addExam(){
+      this.$emit('add-exam')
+    },
     mockData(){
       this.$router.push({name:'examReportMock'})
     },
@@ -210,13 +213,15 @@ export default {
 .physical-form {
   display: flex;
   justify-content: space-between;
+}
 
 .item-flex {
   display: flex;
   justify-content: space-between;
-}
 
 }
+
+
 
 .el-input {
   width: 100px;

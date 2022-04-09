@@ -1,17 +1,21 @@
 <template>
-    <exam-card  @updateData="updateData" @saveData="saveData"></exam-card>
+<div>
+      <exam-card @add-exam="addExam"  @updateData="updateData" @saveData="saveData"></exam-card>
+    <add-exam-dialog :dialogFormVisible="dialogFormVisible" @change-form-visible="dialogFormVisible=false"></add-exam-dialog>
+</div>
 </template>
 
 <script>
 // eslint-disable-next-line no-unused-vars
 import examCard from '@/components/physical/exam-card/index'
-
+import addExamDialog  from './components/add-exam-dialog/index'
 export default {
   name: 'index',
   data () {
     return {
       input3: '',
       select: '',
+      dialogFormVisible:false,
       RequisitionId: '21101700009',
       examList: []
     }
@@ -70,6 +74,9 @@ export default {
         message: msg,
         type: type
       })
+    },
+    addExam(){
+      this.dialogFormVisible=true
     }
   },
   created () {
@@ -77,7 +84,8 @@ export default {
   },
   components: {
     // eslint-disable-next-line vue/no-unused-components
-    examCard
+    examCard,
+    addExamDialog
 
   }
 }

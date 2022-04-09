@@ -18,7 +18,7 @@
         <th>参考值</th>
         <th>单位</th>
       </tr>
-      <tr v-for="(item, index) in TJ002Data.TJ002" :key="item.ItemCode">
+      <tr v-for="(item, index) in TJ002Data.TJ002" :key="item.ItemCode+index">
         <td>{{ item.abbreviation }}</td>
         <td>{{ item.ItemName }}</td>
         <td>{{ item.Lis_Result }}</td>
@@ -51,7 +51,7 @@
         <th>参考值</th>
         <th>单位</th>
       </tr>
-      <tr v-for="(item, index) in TJ008Data.TJ008" :key="item.ItemCode">
+      <tr v-for="(item, index) in TJ008Data.TJ008" :key="item.ItemCode+index">
         <td>{{ item.abbreviation }}</td>
         <td>{{ item.ItemName }}</td>
         <td>{{ item.Lis_Result }}</td>
@@ -83,7 +83,7 @@
         <th>参考值</th>
         <th>单位</th>
       </tr>
-      <tr v-for="(item, index) in TJ010Data.TJ010" :key="item.ItemCode">
+      <tr v-for="(item, index) in TJ010Data.TJ010" :key="item.ItemCode+index">
         <td>{{ item.abbreviation }}</td>
         <td>{{ item.ItemName }}</td>
         <td>{{ item.Lis_Result }}</td>
@@ -114,7 +114,7 @@
         <th>参考值</th>
         <th>单位</th>
       </tr>
-      <tr v-for="(item, index) in TJ009Data.TJ009" :key="item.ItemCode">
+      <tr v-for="(item, index) in TJ009Data.TJ009" :key="item.ItemCode+index">
         <td>{{ item.abbreviation }}</td>
         <td>{{ item.ItemName }}</td>
         <td>{{ item.Lis_Result }}</td>
@@ -145,7 +145,7 @@
         <th>参考值</th>
         <th>单位</th>
       </tr>
-      <tr v-for="(item, index) in TJ001Data.TJ001" :key="item.ItemCode">
+      <tr v-for="(item, index) in TJ001Data.TJ001" :key="item.ItemCode+index">
         <td>{{ item.abbreviation }}</td>
         <td>{{ item.ItemName }}</td>
         <td>{{ item.Lis_Result }}</td>
@@ -176,7 +176,7 @@
         <th>参考值</th>
         <th>单位</th>
       </tr>
-      <tr v-for="(item, index) in TJ006Data.TJ006" :key="item.ItemCode">
+      <tr v-for="(item, index) in TJ006Data.TJ006" :key="item.ItemCode+index">
         <td>{{ item.abbreviation }}</td>
         <td>{{ item.ItemName }}</td>
         <td>{{ item.Lis_Result }}</td>
@@ -207,7 +207,7 @@
         <th>参考值</th>
         <th>单位</th>
       </tr>
-      <tr v-for="(item, index) in TJ007Data.TJ007" :key="item.ItemCode">
+      <tr v-for="(item, index) in TJ007Data.TJ007" :key="item.ItemCode+index">
         <td>{{ item.abbreviation }}</td>
         <td>{{ item.ItemName }}</td>
         <td>{{ item.Lis_Result }}</td>
@@ -238,7 +238,7 @@
         <th>参考值</th>
         <th>单位</th>
       </tr>
-      <tr v-for="(item, index) in TJ003Data.TJ003" :key="item.ItemCode">
+      <tr v-for="(item, index) in TJ003Data.TJ003" :key="item.ItemCode+index">
         <td>{{ item.abbreviation }}</td>
         <td>{{ item.ItemName }}</td>
         <td>{{ item.Lis_Result }}</td>
@@ -269,7 +269,7 @@
         <th>参考值</th>
         <th>单位</th>
       </tr>
-      <tr v-for="(item, index) in TJ005Data.TJ005" :key="item.ItemCode">
+      <tr v-for="(item, index) in TJ005Data.TJ005" :key="item.ItemCode+index">
         <td>{{ item.abbreviation }}</td>
         <td>{{ item.ItemName }}</td>
         <td>{{ item.Lis_Result }}</td>
