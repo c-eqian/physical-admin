@@ -7,6 +7,9 @@
         </el-carousel-item>
       </el-carousel>
     </div>
+    <div>
+
+    </div>
   </div>
 </template>
 
@@ -34,6 +37,10 @@ export default {
         {
           id: 5,
           url: 'https://gimg2.baidu.com/image_search/src=http%3A%2F%2F0.rc.xiniu.com%2Fg3%2FM00%2F2E%2F53%2FCgAH515cxgKAP1uYAAVeIG9QWrY094.png&refer=http%3A%2F%2F0.rc.xiniu.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1649645376&t=62df9152dc45b9743f268af5599fb90e'
+        },
+        {
+          id:6,
+          url: 'https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fshipin.ymfcgw.com%2Fd%2Ffile%2Fp%2F2020%2F09-12%2F54663fe72cf543ea8a102adeae8ef194.jpg&refer=http%3A%2F%2Fshipin.ymfcgw.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1652168203&t=fdfec0ed954ec5b60e2a4791f556a587'
         }
       ]
     }
@@ -50,9 +57,14 @@ export default {
 }
 
 .console {
+  height: 100%;
+  width: 100%;
   font-size: 30px;
   text-align: center;
-  margin-top: 350px;
+  background-repeat:repeat-x;
+  background-size:cover;
+  background-image: url("https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fwww.joyue-tech.com%2F_nuxt%2Fimg%2Fd03ef6a.jpg&refer=http%3A%2F%2Fwww.joyue-tech.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1652167786&t=e041cdfd33a295ed239aaa89cba9ff39");
+  //background-image: url("https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fimg9.51tietu.net%2Fpic%2F2019-091007%2F4dpppqkztb44dpppqkztb4.jpg&refer=http%3A%2F%2Fimg9.51tietu.net&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1652167287&t=e3c821e1a741c451caabb969f564de75");
 }
 
 .el-carousel__item h3 {

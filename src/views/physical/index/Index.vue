@@ -1,8 +1,9 @@
 <template>
   <el-container class="index-box">
     <el-aside :width="asideWidth">
-      <div class="logo">
-        <img class="logo" v-show="!isCollapse" src="../../../assets/logo2.png" alt="ELementUI" width="122" height="27">
+      <div class="logo" v-show="!isCollapse">
+
+<!--        <img class="logo" v-show="!isCollapse" src="../../../assets/logo2.png" alt="ELementUI" >-->
       </div>
       <menus :isCollapse="isCollapse"/>
     </el-aside>
@@ -73,13 +74,15 @@ export default {
     height: 100vh;
     min-height: 100%;
     .logo {
-      background-color: #20222A;
+      background-repeat: no-repeat;
+      background-image: url("../../../assets/logo2.png");
+      //background-image: url("https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fimg95.699pic.com%2Fdesgin_photo%2F40078%2F3835_list.jpg&refer=http%3A%2F%2Fimg95.699pic.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1652168259&t=fde62ac70e74776aa995f647a169918f");
       color: rgba(255,255,255,.8);
       text-align: center;
       height: 60px;
-      padding-top: 16px;
-      font-size: 16px;
+      width: 100%;
       box-sizing: border-box;
+      background-size:cover;
       border-bottom: 1px solid gray;
     }
   }

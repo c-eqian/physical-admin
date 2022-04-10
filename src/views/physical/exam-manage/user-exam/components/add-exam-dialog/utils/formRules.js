@@ -7,7 +7,7 @@ const diaLogFormRules= {
           ],
         }
 const form = {
-         userId: '',
+        userId: '',
         idCard: '',
         name: '',
         gender: 2,
