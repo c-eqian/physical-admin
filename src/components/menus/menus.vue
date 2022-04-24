@@ -3,7 +3,7 @@
     class="menu-nav"
     router
     :default-active="currentPath"
-    background-color="#20222A"
+    background-color="#4B7DFA"
     text-color="rgba(255,255,255,.8)"
     active-text-color="#ffd04b"
     :collapse="isCollapse">

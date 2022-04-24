@@ -70,7 +70,9 @@ export default {
     }
   }
   .el-aside {
-    background-color: #20222A;
+    color: #fff;
+    background-color: rgb(75,125,250);
+    //background-color: #20222A;
     height: 100vh;
     min-height: 100%;
     .logo {

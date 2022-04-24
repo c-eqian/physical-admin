@@ -299,7 +299,8 @@ export default {
         page: this.currentPage,
         limit: this.pageSize
       }).then(res => {
-        console.log(res.data)
+        this.userTotal = res.data.result.total
+        this.tableData = handle_apply_data(res.data.result.lt)
       })
     },
     get_apply_list (timestamp = 0) { // 查询申请列表

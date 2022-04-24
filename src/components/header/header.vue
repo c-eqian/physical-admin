@@ -77,7 +77,7 @@ export default {
   },
   methods: {
     applyClicked () { // 申请列表
-      this.$router.push({ path: '/apply-list' })
+      this.$router.push({ name: 'applyList' })
     },
     netConnectClicked () { // 网络连接
       this.$router.push({ path: '/network-manage/Internet-connection' })

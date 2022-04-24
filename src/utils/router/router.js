@@ -24,6 +24,7 @@ const router = new Router({
     },
     {
       path: '/apply-list',
+      name:'applyList',
       component: () => import('@/views/physical/user-apply/apply-list/index')
     },
 

@@ -141,7 +141,7 @@ export default {
   height: 100%;
   overflow: hidden;
   background: #20222A;
-  background: url("../../../assets/img/back2.jpg");
+  background: url("https://s1.ax1x.com/2022/04/24/L5fieH.jpg");
   position: fixed;
   background-size: 100% 100%;
 
