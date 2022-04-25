@@ -5,16 +5,16 @@
 </template>
 
 <script>
-import echarts from "echarts";
-import option from "@/common/option";
+import echarts from 'echarts'
+import option from '@/common/option'
 
 export default {
-  name: "index",
-  mounted() {
+  name: 'index',
+  mounted () {
     this.drawEcharts()
   },
   methods: {
-    drawEcharts() {
+    drawEcharts () {
       let chart = echarts.init(document.getElementById('echarts'))
       // 自定义工具事件
       option.toolbox.feature.myTool.onclick = () => {
