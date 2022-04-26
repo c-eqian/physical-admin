@@ -52,6 +52,7 @@
               <el-checkbox-group v-model="checkedList" @change="handleCheckedCitiesChange">
                 <el-checkbox v-for="item in ruleForm.codeList.lt"
                              :label="item.FeeItemCode"
+                             :disabled="item.FeeItemCode==='JB001'"
                              name="type"
                              :key="item.FeeItemCode"
                 >{{ item.FeeItemName }}
@@ -127,6 +128,7 @@ export default {
         idCard: this.ruleForm.idCard,
         org_code: this.org_code
       }).then(res => {
+        console.log(res,525)
         if (res.data.status === 200) {
           if (res.data.result.org_code !== this.org_code) {
             this.$confirm('该用户与当前机构不匹配, 是否继续?', '提示', {
@@ -140,6 +142,12 @@ export default {
               this.showStatus = true
             }).catch(() => {
             });
+          }
+          else {
+              this.ruleForm = res.data.result
+              this.list = res.data.result.codeList.lt
+              this.submitForm.userId = res.data.result.userId;
+              this.showStatus = true
           }
 
         } else {

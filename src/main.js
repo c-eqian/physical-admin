@@ -14,6 +14,8 @@ import { post, get, all } from './utils/request/request'
 import { SM4DeCrypto, SM4EnCrypto } from './utils/sm4/crypto'
 Vue.config.productionTip = false
 Vue.config.devtools = true
+import Plugin from 'v-fit-columns';
+Vue.use(Plugin);
 Vue.use(ElementUI)
 // 接收消息
 const getsocketData = e => {  // 创建接收消息函数

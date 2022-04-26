@@ -28,11 +28,12 @@
     "eslint": "^5.8.0",
     "eslint-plugin-vue": "^5.0.0-0",
     "gm-crypt": "0.0.2",
+    "less-loader": "^4.1.0",
     "mockjs": "^1.0.1-beta3",
     "node-sass": "^6.0.1",
-    "sass-loader": "^5.0.1",
     "postcss-loader": "^2.0.8",
-    "less-loader": "^4.1.0",
+    "sass-loader": "^5.0.1",
+    "v-fit-columns": "^0.2.0",
     "vue-style-loader": "^3.0.1",
     "vue-template-compiler": "^2.5.17"
   }
