@@ -21,7 +21,7 @@ const http = axios.create({
 //  基本URL，当配置该项后，在后面发起请求时，加请求的路径即可
 //   baseURL:'http://120.77.44.219:13208',//后台接口url
   // baseURL: , // 后台接口url
-  baseURL: BASEURL.dev,
+  baseURL: BASEURL.test,
   //  设置超时时间
   timeout: 10 * 1000
   // withCredentials: false,
@@ -52,7 +52,8 @@ http.interceptors.request.use(config => {
     config.data = qs.stringify(config.data)
     // config.data = qs.parse(qs.stringify(config.data))
   };
-  //  加载动画
+  if(!config.params.noLoading){
+      //  加载动画
   let options = {
     lock: true,
     text: '正在拼命加载中',
@@ -61,6 +62,7 @@ http.interceptors.request.use(config => {
     background: 'rgba(0, 0, 0, 0.7)'
   }
   loadings = Loading.service(options)
+  }
   //  必须要返回config
   return config
 //  发送错误处理

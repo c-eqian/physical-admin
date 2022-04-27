@@ -15,7 +15,12 @@
       </el-form-item>
       <el-form-item>
         <el-button size="small" type="primary" icon="el-icon-search">搜索</el-button>
-        <el-button size="small" type="primary" icon="el-icon-plus">添加</el-button>
+        <el-button
+          size="small"
+          type="primary"
+          icon="el-icon-plus"
+          @click="dialogVisible=true"
+        >添加</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -124,16 +129,27 @@
       layout="total, sizes, prev, pager, next, jumper"
       :total="tableTotal">
     </el-pagination>
+    <add-user-dialog
+      :dialog-visible="dialogVisible"
+      @update-viable="dialogVisible=false"
+    >
+
+    </add-user-dialog>
   </div>
 
 </template>
 
 <script>
- import { handleLabel,handleStatus } from "@/views/physical/sys-user-manage/user-auth/utils";
+ import { handleLabel,handleStatus } from "@/views/physical/sys-user-manage/utils";
  import { handlefForMatTime } from '@/utils/plugin/utils'
+ import addUserDialog from '@/views/physical/sys-user-manage/components/add-sys-user-dialog/index'
 export default {
+   components:{
+     addUserDialog,
+   },
   data() {
     return {
+      dialogVisible:false,
       tableTotal: 0, // 总数据
       currentPage: 1, // 当前页
       pageSize: 50, // 每页数据
