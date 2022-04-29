@@ -15,6 +15,10 @@ export const handleLabel = (label) => {
       label: "护士",
       tag: 'info'
     },
+    3: {
+      label: "其他",
+      tag: 'info'
+    },
   }
   return labelObj[label]
 }
@@ -40,14 +44,14 @@ export const handleStatus = (status) => {
   return statusText
 }
 export const rules = {
-    sys_user_name: [
+    userName: [
           {required: true, message: '请输入活动名称', trigger: 'blur'},
           {min: 2, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur'}
         ],
         birthday: [
           {required: true, message: '请选择日期', trigger: 'change'}
         ],
-        sex: [
+        gender: [
           {type: 'date', required: true, message: '请选择性别', trigger: 'change'}
         ],
         sys_type: [
@@ -56,10 +60,10 @@ export const rules = {
         authority: [
           {type: 'array', required: true, message: '角色分配不能为空', trigger: 'change'}
         ],
-        sys_user_account: [
+        userAccount: [
           {required: true, message: '账号不能为空', trigger: 'blur'}
         ],
-        sys_user_password: [
+        userPassword: [
           {required: true, message: '密码不能为空', trigger: 'blur'}
         ],
         phone: [

@@ -12,8 +12,8 @@
                class="demo-ruleForm">
         <el-row>
           <el-col :span="12">
-            <el-form-item label="姓名" prop="sys_user_name">
-              <el-input clearable v-model="ruleForm.sys_user_name"></el-input>
+            <el-form-item label="姓名" prop="userName">
+              <el-input clearable v-model="ruleForm.userName"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -27,8 +27,8 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="性别" prop="sex">
-              <el-radio-group v-model="ruleForm.sex">
+            <el-form-item label="性别" prop="gender">
+              <el-radio-group v-model="ruleForm.gender">
                 <el-radio :label="1">男</el-radio>
                 <el-radio :label="2">女</el-radio>
               </el-radio-group>
@@ -70,17 +70,18 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <el-form-item label="登录账号" prop="sys_user_account">
-          <el-input clearable v-model="ruleForm.sys_user_account"></el-input>
+        <el-form-item label="登录账号" prop="userAccount">
+          <el-input clearable v-model="ruleForm.userAccount"></el-input>
         </el-form-item>
-        <el-form-item label="登录密码" prop="sys_user_password">
-          <el-input show-password clearable v-model="ruleForm.sys_user_password"></el-input>
+        <el-form-item label="登录密码" prop="userPassword">
+          <el-input show-password clearable v-model="ruleForm.userPassword"></el-input>
         </el-form-item>
         <el-form-item label="启用" prop="status">
           <el-switch v-model="ruleForm.status"></el-switch>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="submitForm('ruleForm')">立即创建</el-button>
+          <el-button type="primary" :loading="creatLoading" @click="submitForm('ruleForm')">立即创建</el-button>
+          <el-button @click="creatUserInfo" :loading="getLoading">获取</el-button>
           <el-button @click="resetForm('ruleForm')">重置</el-button>
         </el-form-item>
       </el-form>
@@ -98,19 +99,22 @@ export default {
     return {
       orgList: [],
       loading: false,
+      creatLoading: false,
+      getLoading: false,
+      isRequest: false,
       ruleForm: {
         org_id: '',
         idCard: '',
         phone: '',
         user_id: '',
-        sys_user_name: '',
-        sys_user_password: '',
-        sys_user_account: '',
+        userName: '',
+        userAccount: '',
+        userPassword: '',
         status: true,
         sys_type: '',
         create_by: '',
         authority: '',
-        sex: '',
+        gender: '',
         birthday: ''
 
       },
@@ -118,6 +122,18 @@ export default {
     };
   },
   methods: {
+    async creatUserInfo() { // 获取随机数据
+      this.getLoading = true
+      await this.$get('/creat-user-info', {
+        noLoading: true
+      }).then(res => {
+        if (res.data.status === 200) {
+          this.ruleForm = Object.assign({}, this.ruleForm, res.data.result)
+        }
+        console.log(res)
+      })
+      this.getLoading = false
+    },
     handleSelect(item) {
       console.log(item)
     },
@@ -125,12 +141,14 @@ export default {
     async remoteMethod(isSearch) {
       if (isSearch && this.orgList.length === 0) {
         this.loading = true
-        await this.$get('/sys-org-list',{
-          noLoading:true
+        await this.$get('/sys-org-list', {
+          noLoading: true
         }).then(res => {
           if (res.data.status === 200) {
             this.orgList = res.data.result
             console.log(this.orgList)
+          } else {
+            this.messageTip(res.data.msg)
           }
           console.log(res)
         })
@@ -139,16 +157,32 @@ export default {
 
 
     },
-    submitForm(formName) {
-      console.log(this.ruleForm)
-      this.$refs[formName].validate((valid) => {
-        if (valid) {
-          console.log(this.ruleForm)
-        } else {
-          console.log('error submit!!');
-          return false;
-        }
-      });
+    async submitForm(formName) {
+      if (this.creatLoading) {
+        return
+      }
+
+      await this.$refs[formName].validate((valid) => {
+        this.ruleForm.create_by = this.$store.state.BaseStore.user.user_id
+        this.ruleForm.noLoading = true
+        this.isRequest = !valid;
+      })
+      if (this.isRequest) {
+        this.creatLoading = true
+        await this.$post('/add-sys-user', this.ruleForm).then(res => {
+          this.messageTip(res.data.msg)
+          this.creatLoading = false
+          if (res.data.status !== 200) {
+            return
+          }
+          this.isRequest = false
+          setTimeout(() => {
+            this.$emit('creat-success')
+          }, 1500)
+        })
+      }
+
+
     },
     resetForm(formName) {
       this.$refs[formName].resetFields();
@@ -156,6 +190,13 @@ export default {
     handleClose() {
       this.$emit('update-viable')
 
+    },
+    messageTip(msg = '无数据') { // 提示窗口
+      this.$message({
+        message: msg,
+        type: 'warning',
+        duration: 1500
+      })
     }
   }
 }

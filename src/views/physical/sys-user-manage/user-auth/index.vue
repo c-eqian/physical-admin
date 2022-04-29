@@ -21,6 +21,12 @@
           icon="el-icon-plus"
           @click="dialogVisible=true"
         >添加</el-button>
+         <el-button
+           size="small"
+           type="danger"
+           icon="el-icon-delete"
+           @click="deleteListClicked"
+         >删除</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -31,7 +37,6 @@
       style="width: 100%"
       height="580"
       align="center"
-      v-fit-columns
       :header-cell-style="{
                        'background-color': '#F9F9F9',
                        'text-align':'center',
@@ -44,7 +49,7 @@
       <el-table-column
         type="selection"
         :selectable="handleSelectable"
-        width="30">
+        width="50">
       </el-table-column>
       <el-table-column
         prop="idCard"
@@ -124,7 +129,7 @@
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
       :current-page="currentPage"
-      :page-sizes="[50, 100, 150, 200]"
+      :page-sizes="[10, 20, 30, 40]"
       :page-size="pageSize"
       layout="total, sizes, prev, pager, next, jumper"
       :total="tableTotal">
@@ -132,6 +137,7 @@
     <add-user-dialog
       :dialog-visible="dialogVisible"
       @update-viable="dialogVisible=false"
+      @creat-success="creatSuccess"
     >
 
     </add-user-dialog>
@@ -152,14 +158,45 @@ export default {
       dialogVisible:false,
       tableTotal: 0, // 总数据
       currentPage: 1, // 当前页
-      pageSize: 50, // 每页数据
+      pageSize: 10, // 每页数据
       tableData: [],
       selfId:0,
-      multipleSelection: []
+      selectionList: []
     }
   },
-  created() {
-    this.selfId = this.$store.state.BaseStore.user.user_id;
+  async created() {
+    await this.getSysUserData()
+  },
+  methods: {
+    async deleteListClicked() { //删除操作
+       if(this.selectionList.length>0){
+         let array = []
+         this.selectionList.forEach(item=>{
+           array.push({idCard:item.idCard})
+         })
+         await this.$post('/delete-sys-user',{
+           list:JSON.stringify(array)
+         }).then(res=>{
+           this.messageTip(res.data.msg)
+           setTimeout(()=>{
+             this.getSysUserData()
+           },1500)
+         })
+
+       }else {
+         this.messageTip('请至少选择一项','error')
+       }
+     },
+     // 创建成功回调
+     creatSuccess(){
+       this.dialogVisible = false
+       this.getSysUserData()
+     },
+    handleRowClick(row) {
+      console.log(row)
+    },
+    getSysUserData(){
+      this.selfId = this.$store.state.BaseStore.user.user_id;
     this.$get('/query_sys_user-list', {
       page: this.currentPage,
       limit: this.pageSize,
@@ -172,10 +209,6 @@ export default {
         this.messageTip(res.data.msg, 'error')
       }
     })
-  },
-  methods: {
-    handleRowClick(row) {
-      console.log(row)
     },
     handleData(){
       let array = []
@@ -185,7 +218,13 @@ export default {
         item.statusText = handleStatus(item.status);
         item.register_time = handlefForMatTime(item.register_time)
         item.account_change_time = handlefForMatTime(item.account_change_time)
-        array.push(item)
+        if (item.isCurrent){
+          array.unshift(item)
+        }
+        else {
+          array.push(item)
+        }
+
       })
       this.tableData = array;
       console.log(this.tableData)
@@ -200,7 +239,8 @@ export default {
       }
     },
     handleSelectionChange(val) {
-      this.multipleSelection = val;
+      this.selectionList = val;
+      console.log(this.selectionList)
     },
     // 处理是否可选择
     handleSelectable(row, index){
@@ -213,20 +253,12 @@ export default {
     // 每页数据改变
     handleSizeChange(val) {
       this.pageSize = val
-      if (this.isSearch) {
-        this.requestSearch()
-      } else {
-        this.getUserList()
-      }
+      this.getSysUserData()
     },
     // 切换当前页
     handleCurrentChange(val) {
       this.currentPage = val
-      if (this.isSearch) {
-        this.requestSearch()
-      } else {
-        this.getUserList()
-      }
+      this.getSysUserData()
     },
     /**
      *信息弹窗提示
