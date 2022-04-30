@@ -48,7 +48,6 @@
         class="tableBox"
         :data="tableData"
         border
-        stripe
         @row-dblclick="rowDoubleClicked"
         :header-cell-style="{
                        'background-color': '#F9F9F9',
@@ -56,7 +55,7 @@
                          'font-size': '1rem'
         }"
         :cell-style="{'text-align':'center', 'font-size': '1rem'}"
-        height=600px
+        height=550px
         highlight-current-row
         style="width: 100%">
         <el-table-column
@@ -142,7 +141,7 @@
           label="操作"
           width="100">
           <template slot-scope="scope">
-            <el-dropdown v-if="scope.row.apply_status===0" @command="dropdownCallback">
+            <el-dropdown v-if="scope.row.apply_status===0||scope.row.apply_status==='0'" @command="dropdownCallback">
           <span class="el-dropdown-link">
             选择<i class="el-icon-arrow-down el-icon--right"></i>
           </span>
@@ -152,13 +151,13 @@
                 <el-dropdown-item icon="el-icon-error" :command="{data:scope.row,id:-1}">拒绝</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
-            <el-button icon="el-icon-remove" v-else-if="scope.row.apply_status===1" @click="handleClick(scope.row)"
+            <el-button icon="el-icon-remove" v-else-if="scope.row.apply_status===1||scope.row.apply_status==='1'" @click="handleClick(scope.row)"
                        type="success"
                        size="small">
               撤销
             </el-button>
             <!--            <el-button type="text" size="small">编辑</el-button>-->
-            <el-button icon="el-icon-s-help" v-else-if="scope.row.apply_status===-1" @click="handleClick(scope.row)"
+            <el-button icon="el-icon-s-help" v-else-if="scope.row.apply_status===-1||scope.row.apply_status==='-1'" @click="handleClick(scope.row)"
                        type="primary"
                        size="small">复审
             </el-button>

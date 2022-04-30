@@ -86,12 +86,17 @@ http.interceptors.request.use(config => {
 // 响应拦截器
 http.interceptors.response.use(response => {
 //  服务器响应，关闭加载动画
-  loadings.close()
+  if(loadings){
+    loadings.close()
+  }
+
   // 返回响应结果
   return response
 //  响应错误处理
 }, error => {
-  loadings.close()
+  if(loadings){
+    loadings.close()
+  }
   return Promise.reject(error)
 }
 )

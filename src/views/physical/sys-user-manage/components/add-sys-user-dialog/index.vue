@@ -161,14 +161,15 @@ export default {
       if (this.creatLoading) {
         return
       }
-
+      console.log(222)
       await this.$refs[formName].validate((valid) => {
         this.ruleForm.create_by = this.$store.state.BaseStore.user.user_id
         this.ruleForm.noLoading = true
-        this.isRequest = !valid;
+        this.isRequest = valid;
       })
       if (this.isRequest) {
         this.creatLoading = true
+        console.log(3333)
         await this.$post('/add-sys-user', this.ruleForm).then(res => {
           this.messageTip(res.data.msg)
           this.creatLoading = false

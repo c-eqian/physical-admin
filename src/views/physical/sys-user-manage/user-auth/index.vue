@@ -20,13 +20,15 @@
           type="primary"
           icon="el-icon-plus"
           @click="dialogVisible=true"
-        >添加</el-button>
-         <el-button
-           size="small"
-           type="danger"
-           icon="el-icon-delete"
-           @click="deleteListClicked"
-         >删除</el-button>
+        >添加
+        </el-button>
+        <el-button
+          size="small"
+          type="danger"
+          icon="el-icon-delete"
+          @click="deleteListClicked"
+        >删除
+        </el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -37,6 +39,8 @@
       style="width: 100%"
       height="580"
       align="center"
+      stripe
+      v-loading="tableLoading"
       :header-cell-style="{
                        'background-color': '#F9F9F9',
                        'text-align':'center',
@@ -67,9 +71,9 @@
         width="150"
         label="类型">
         <template scope="scope">
-            <el-tag size="mini" disable-transitions :type="scope.row.labelTag.tag">
-              {{ scope.row.labelTag.label}}
-            </el-tag>
+          <el-tag size="mini" disable-transitions :type="scope.row.labelTag.tag">
+            {{ scope.row.labelTag.label }}
+          </el-tag>
           <el-tag type="success" size="mini" v-if="scope.row.isCurrent">当前用户</el-tag>
         </template>
       </el-table-column>
@@ -112,18 +116,18 @@
         prop="status"
         label="状态">
         <template scope="scope">
-          {{scope.row.statusText}}
+          {{ scope.row.statusText }}
         </template>
       </el-table-column>
-       <el-table-column
-      fixed="right"
-      label="操作"
-      width="180">
-      <template slot-scope="scope">
-        <el-button @click="handleRowClick(scope.row)" type="text" size="small">查看</el-button>
-        <el-button type="text" size="small">权限编辑</el-button>
-      </template>
-    </el-table-column>
+      <el-table-column
+        fixed="right"
+        label="操作"
+        width="180">
+        <template slot-scope="scope">
+          <el-button @click="handleRowClick(scope.row)" type="text" size="small">查看</el-button>
+          <el-button type="text" size="small">权限编辑</el-button>
+        </template>
+      </el-table-column>
     </el-table>
     <el-pagination
       @size-change="handleSizeChange"
@@ -146,21 +150,23 @@
 </template>
 
 <script>
- import { handleLabel,handleStatus } from "@/views/physical/sys-user-manage/utils";
- import { handlefForMatTime } from '@/utils/plugin/utils'
- import addUserDialog from '@/views/physical/sys-user-manage/components/add-sys-user-dialog/index'
+import {handleLabel, handleStatus} from "@/views/physical/sys-user-manage/utils";
+import {handlefForMatTime} from '@/utils/plugin/utils'
+import addUserDialog from '@/views/physical/sys-user-manage/components/add-sys-user-dialog/index'
+
 export default {
-   components:{
-     addUserDialog,
-   },
+  components: {
+    addUserDialog,
+  },
   data() {
     return {
-      dialogVisible:false,
+      dialogVisible: false,
+      tableLoading: false,
       tableTotal: 0, // 总数据
       currentPage: 1, // 当前页
       pageSize: 10, // 每页数据
       tableData: [],
-      selfId:0,
+      selfId: 0,
       selectionList: []
     }
   },
@@ -169,59 +175,61 @@ export default {
   },
   methods: {
     async deleteListClicked() { //删除操作
-       if(this.selectionList.length>0){
-         let array = []
-         this.selectionList.forEach(item=>{
-           array.push({idCard:item.idCard})
-         })
-         await this.$post('/delete-sys-user',{
-           list:JSON.stringify(array)
-         }).then(res=>{
-           this.messageTip(res.data.msg)
-           setTimeout(()=>{
-             this.getSysUserData()
-           },1500)
-         })
+      if (this.selectionList.length > 0) {
+        let array = []
+        this.selectionList.forEach(item => {
+          array.push({idCard: item.idCard})
+        })
+        await this.$post('/delete-sys-user', {
+          list: JSON.stringify(array)
+        }).then(res => {
+          this.messageTip(res.data.msg)
+          setTimeout(() => {
+            this.getSysUserData()
+          }, 1500)
+        })
 
-       }else {
-         this.messageTip('请至少选择一项','error')
-       }
-     },
-     // 创建成功回调
-     creatSuccess(){
-       this.dialogVisible = false
-       this.getSysUserData()
-     },
+      } else {
+        this.messageTip('请至少选择一项', 'error')
+      }
+    },
+    // 创建成功回调
+    creatSuccess() {
+      this.dialogVisible = false
+      this.getSysUserData()
+    },
     handleRowClick(row) {
       console.log(row)
     },
-    getSysUserData(){
+   async getSysUserData() {
+      this.tableLoading = true
       this.selfId = this.$store.state.BaseStore.user.user_id;
-    this.$get('/query_sys_user-list', {
-      page: this.currentPage,
-      limit: this.pageSize,
-    }).then(res => {
-      if (res.data.status === 200) {
-        this.tableTotal = res.data.result.total;
-        this.tableData = res.data.result.lt;
-        this.handleData()
-      } else {
-        this.messageTip(res.data.msg, 'error')
-      }
-    })
+     await this.$get('/query_sys_user-list', {
+        page: this.currentPage,
+        limit: this.pageSize,
+        noLoading: true
+      }).then(res => {
+        if (res.data.status === 200) {
+          this.tableTotal = res.data.result.total;
+          this.tableData = res.data.result.lt;
+          this.handleData()
+        } else {
+          this.messageTip(res.data.msg, 'error')
+        }
+      })
+      this.tableLoading = false
     },
-    handleData(){
+    handleData() {
       let array = []
-      this.tableData.forEach(item=>{
+      this.tableData.forEach(item => {
         item.labelTag = handleLabel(item.sys_type);
         item.isCurrent = item.user_id === this.selfId;
         item.statusText = handleStatus(item.status);
         item.register_time = handlefForMatTime(item.register_time)
         item.account_change_time = handlefForMatTime(item.account_change_time)
-        if (item.isCurrent){
+        if (item.isCurrent) {
           array.unshift(item)
-        }
-        else {
+        } else {
           array.push(item)
         }
 
@@ -243,8 +251,8 @@ export default {
       console.log(this.selectionList)
     },
     // 处理是否可选择
-    handleSelectable(row, index){
-      if (row.user_id===this.selfId){
+    handleSelectable(row, index) {
+      if (row.user_id === this.selfId) {
         return false
       }
       return true

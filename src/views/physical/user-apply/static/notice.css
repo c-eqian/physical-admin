@@ -14,7 +14,7 @@ body{
 #notice-content .notice-table{
     display:flex;
     width: 98%;
-    min-height:630px;
+    min-height:550px;
     margin-left:1%
 }
 #notice-content .notice-table .el-table{

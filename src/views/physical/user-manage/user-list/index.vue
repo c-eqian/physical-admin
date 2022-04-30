@@ -2,24 +2,24 @@
   <div class="user-data-contain" id="user-data-contain">
 
     <div style="width: 100% !important;display: flex;justify-content:space-between">
-    <pageHeader v-if="isSearch" @goBack="goBack" :contentTitle="contentTitle"></pageHeader>
-    <el-autocomplete class="input-search" :placeholder="placeholder" :debounce=0
-                @select="handleSelect"
-                :fetch-suggestions="querySearch"
-                  @keyup.enter.native="onKeyDown"
-                autocomplete="on" clearable v-model="inputSearch">
+      <pageHeader v-if="isSearch" @goBack="goBack" :contentTitle="contentTitle"></pageHeader>
+      <el-autocomplete class="input-search" :placeholder="placeholder" :debounce=0
+                       @select="handleSelect"
+                       :fetch-suggestions="querySearch"
+                       @keyup.enter.native="onKeyDown"
+                       autocomplete="on" clearable v-model="inputSearch">
         <el-button slot="append" icon="el-icon-search"
-         @click="searchBtn">
-         </el-button>
-    </el-autocomplete>
+                   @click="searchBtn">
+        </el-button>
+      </el-autocomplete>
       <el-row>
-      <el-col :span="24">
-        <div class="tool-box">
-          <el-button type="primary" icon="el-icon-circle-plus-outline" size="small" @click="handleAdd" >新增</el-button>
-          <el-button type="danger" icon="el-icon-delete" size="small" >批量删除</el-button>
-        </div>
-      </el-col>
-    </el-row>
+        <el-col :span="24">
+          <div class="tool-box">
+            <el-button type="primary" icon="el-icon-circle-plus-outline" size="small" @click="handleAdd">新增</el-button>
+            <el-button type="danger" icon="el-icon-delete" size="small">批量删除</el-button>
+          </div>
+        </el-col>
+      </el-row>
     </div>
     <div class="user-data-table">
       <el-table
@@ -27,6 +27,7 @@
         :data="tableData"
         border
         stripe
+        v-loading="tableLoading"
         @row-dblclick="rowDoubleClicked"
         :header-cell-style="{
                        'background-color': '#F9F9F9',
@@ -38,13 +39,10 @@
         highlight-current-row
         style="width: 100%">
         <el-table-column
-          fixed
-          prop="ids"
-          label="序号"
-          width="80">
+          type="index"
+          width="50">
         </el-table-column>
         <el-table-column
-          fixed
           prop="name"
           label="姓名"
           sortable
@@ -106,12 +104,13 @@
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
       :current-page="currentPage"
-      :page-sizes="[50, 100, 150, 200]"
+      :page-sizes="[10, 20, 30, 40]"
       :page-size="pageSize"
       layout="total, sizes, prev, pager, next, jumper"
       :total="userTotal">
     </el-pagination>
-    <user-info @closeDialogVisible="closeDialogVisible" @user-info-form="dialogCallback" :dialogVisible="dialogVisible" :userInfoForm.sync="userInfo" ></user-info>
+    <user-info @closeDialogVisible="closeDialogVisible" @user-info-form="dialogCallback" :dialogVisible="dialogVisible"
+               :userInfoForm.sync="userInfo"></user-info>
   </div>
 </template>
 
@@ -129,12 +128,13 @@ export default {
     // eslint-disable-next-line vue/no-unused-components
     userInfo
   },
-  data () {
+  data() {
     return {
+      tableLoading: false,
       contentTitle: '搜索',
       userTotal: 0, // 总数据
       currentPage: 1, // 当前页
-      pageSize: 50, // 每页数据
+      pageSize: 20, // 每页数据
       org_code: 0, // 机构代码
       inputSearch: '', // 输入搜索
       tableData: [],
@@ -143,27 +143,27 @@ export default {
       dialogVisible: false,
       userInfo: {},
       searchSelect: [
-        { id: 1, value: '111' },
-        { id: 2, value: '222' },
-        { id: 3, value: '333' },
-        { id: 4, value: '444' }
+        {id: 1, value: '111'},
+        {id: 2, value: '222'},
+        {id: 3, value: '333'},
+        {id: 4, value: '444'}
       ],
       placeholder: '支持姓名、证件、机构搜索'
     }
   },
-  async mounted () {
+  async mounted() {
     this.org_code = this.$store.state.BaseStore.user.org_id
-    await this.getTotal()// 获取总数
+    // await this.getTotal()// 获取总数
     await this.getUserList()// 获取用户数据
   },
   methods: {
-    dialogCallback(value){
+    dialogCallback(value) {
       this.userInfo = {}
     },
-    handleAdd () { // 新增
+    handleAdd() { // 新增
       this.dialogVisible = !this.dialogVisible
     },
-    requestSearch () { // 搜索请求
+    requestSearch() { // 搜索请求
       this.$get(
         '/likeSearch',
         {
@@ -184,7 +184,7 @@ export default {
         console.log(error)
       })
     },
-    onKeyDown (e) { // 监听键盘回车键
+    onKeyDown(e) { // 监听键盘回车键
       if (e.keyCode === 13 && this.inputSearch !== '') {
         this.pageSize = 50
         this.currentPage = 1
@@ -195,7 +195,7 @@ export default {
       }
     },
     // 搜索
-    searchBtn () {
+    searchBtn() {
       if (this.inputSearch !== '') {
         this.pageSize = 50
         this.currentPage = 1
@@ -203,28 +203,28 @@ export default {
         this.requestSearch()
       }
     },
-    querySearch (queryString, cb) { // 输入框建议回调
+    querySearch(queryString, cb) { // 输入框建议回调
       let dataList = [ // 也可以在后端接口动态获取
-        { id: 1, value: '111' },
-        { id: 2, value: '222' },
-        { id: 3, value: '333' },
-        { id: 4, value: '444' }
+        {id: 1, value: '111'},
+        {id: 2, value: '222'},
+        {id: 3, value: '333'},
+        {id: 4, value: '444'}
       ]
       var results = queryString ? dataList.filter(this.createFilter(queryString)) : dataList
       // 调用 callback 返回建议列表的数据
       cb(results)
     },
-    createFilter (queryString) {
+    createFilter(queryString) {
       return (restaurant) => {
         return (restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0)
       }
     },
     // 建议回调选中
-    handleSelect (item) {
+    handleSelect(item) {
       console.log(item)
     },
     // 每页数据改变
-    handleSizeChange (val) {
+    handleSizeChange(val) {
       this.pageSize = val
       if (this.isSearch) {
         this.requestSearch()
@@ -233,7 +233,7 @@ export default {
       }
     },
     // 切换当前页
-    handleCurrentChange (val) {
+    handleCurrentChange(val) {
       this.currentPage = val
       if (this.isSearch) {
         this.requestSearch()
@@ -242,7 +242,7 @@ export default {
       }
     },
     // 搜索的结果数
-    search_result_total () {
+    search_result_total() {
       this.$get('/SearchTotal', {
         searchText: this.inputSearch
       }).then(res => {
@@ -260,58 +260,68 @@ export default {
         }
       })
     },
-    closeDialogVisible () { // 关闭弹窗
+    closeDialogVisible() { // 关闭弹窗
       this.dialogVisible = false
     },
-    // 用户总数
-    getTotal () {
-      this.$get('/userTotal', {
-        org_code: this.org_code
+    // // 用户总数
+    // getTotal () {
+    //   this.$get('/userTotal', {
+    //     org_code: this.org_code
+    //   }).then(res => {
+    //     if (res.data.status === 200) {
+    //       this.userTotal = res.data.result.total
+    //     }
+    //   })
+    // },
+    // 获取用户数据
+    async getUserList() {
+      this.tableLoading = true
+      await this.$get('/userList', {
+        org_code: this.org_code,
+        page: this.currentPage,
+        limit: this.pageSize,
+        noLoading: true
       }).then(res => {
+        console.log(res)
         if (res.data.status === 200) {
+          this.handleUserData(res.data.result.lt)
           this.userTotal = res.data.result.total
         }
       })
-    },
-    // 获取用户数据
-    getUserList () {
-      this.$get('/userList', {
-        org_code: this.org_code,
-        page: this.currentPage,
-        limit: this.pageSize
-      }).then(res => {
-        if (res.data.status === 200) {
-          this.handleUserData(res.data.result)
-        }
-      })
+      this.tableLoading = false
     },
     // 双击某行
-    rowDoubleClicked (row, column, event) {
+    rowDoubleClicked(row, column, event) {
       console.log(row, column, event)
     },
-    viewUserClick (row) {
+    viewUserClick(row) {
       // this.$store.commit('BaseStore/updateUserInfoForm', row)
       // 深度拷贝
       this.userInfo = deepClone(row)
       this.dialogVisible = !this.dialogVisible
     },
     // 处理用户数据
-    handleUserData (userData) {
-      for (var index in userData) {
-        userData[index].ids = (parseInt(index) + 1).toString() // 添加编号
-        userData[index].gender = handleGender(userData[index].gender)
-        userData[index].live_type = userData[index].live_type === 1 ? '户籍' : '非户籍'
-        userData[index].age = getAge(userData[index].birthday)
+    handleUserData(userData) {
+      console.log(userData)
+      try {
+        for (var index in userData) {
+          userData[index].gender = handleGender(userData[index].gender)
+          userData[index].live_type = userData[index].live_type === 1 ? '户籍' : '非户籍'
+          userData[index].age = getAge(userData[index].birthday)
+        }
+        this.tableData = userData
+      } catch (e) {
+        this.messageTip("数据解析异常")
       }
-      this.tableData = userData
+
     },
-    goBack () { // 页面返回按钮触发
+    goBack() { // 页面返回按钮触发
       this.isSearch = false
       this.isShowBack = false
-      this.getTotal()// 获取总数
+      // this.getTotal()// 获取总数
       this.getUserList()// 获取用户数据
     },
-    messageTip (msg = '无数据') { // 提示窗口
+    messageTip(msg = '无数据') { // 提示窗口
       this.$message({
         message: msg,
         type: 'warning',
@@ -323,15 +333,17 @@ export default {
 </script>
 
 <style scoped lang="less">
-/deep/ .user-data-contain .el-input{
+/deep/ .user-data-contain .el-input {
   width: 100%;
 }
+
 .user-data-contain {
   width: 100%;
   height: 690px;
   overflow: hidden;
 
 }
+
 .user-data-table {
   overflow: hidden;
   height: 600px;

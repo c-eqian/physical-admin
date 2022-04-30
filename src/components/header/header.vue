@@ -43,6 +43,7 @@
           <span class="el-dropdown-link">
             {{ username }}<i class="el-icon-caret-bottom el-icon--right"></i>
           </span>
+         <el-avatar  size="small" src="https://s1.ax1x.com/2022/04/16/LYmxwn.jpg"></el-avatar>
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item command="profile" disabled>个人资料</el-dropdown-item>
             <el-dropdown-item command="updatepwd" disabled>修改密码</el-dropdown-item>

@@ -41,25 +41,25 @@
         <el-collapse accordion>
           <el-collapse-item title="基本体检" v-model="formData">
             <div class="item-flex">
-              <span style="color: blue"> 1.身高(cm)</span>
+              <span style="color: blue;width: 100px"> 1.身高(cm)</span>
               <span
                 style="float: right;color: #67C23A;font-size: 1.3rem">{{`${formData.Height}`}}</span>
               <el-divider></el-divider>
             </div>
             <div class="item-flex">
-              <span style="color: blue"> 2.体重(kg)</span>
+              <span style="color: blue;width: 100px"> 2.体重(kg)</span>
               <span
                 style="float: right;color: #67C23A;font-size: 1.3rem">{{`${formData.Weight}`}}</span>
               <el-divider></el-divider>
             </div>
             <div class="item-flex">
-              <span style="color: blue"> 3.体温(℃)</span>
+              <span style="color: blue;width: 100px"> 3.体温(℃)</span>
               <span
                 style="float: right;color: #67C23A;font-size: 1.3rem">{{`${formData.Temperature}`}}</span>
               <el-divider></el-divider>
             </div>
             <div class="item-flex">
-              <span style="color: blue"> 4.心率(次/min)</span>
+              <span style="color: blue;width: 100px"> 4.心率(次/min)</span>
               <span
                 style="float: right;color: #67C23A;font-size: 1.3rem">{{`${formData.heart_rate}`}}</span>
               <el-divider></el-divider>
@@ -68,9 +68,10 @@
           <el-collapse-item :title="item.FeeItemName" :name="item.FeeItemName" v-for="item in examList"
                             :key="item.FeeItemCode" v-if="item.FeeItemCode!=='JB001'">
             <div class="item-flex" v-for="(ite,index) in item.lt" :key="ite.ItemCode">
-              <span style="color: blue"> {{ index + 1 }}.{{ ite.ItemName }}</span>
+              <span style="color: blue;width: 100px"> {{ index + 1 }}.{{ ite.ItemName }}</span>
               <span
-                style="float: right;color: #67C23A;font-size: 1.3rem">{{ ite.value+''+ite.ItemName }}</span>
+                 style="float: right;color: #67C23A;font-size: 1.3rem">{{ ite.value?ite.value:''+'' }}</span>
+<!--                style="float: right;color: #67C23A;font-size: 1.3rem">{{ ite.value+''+ite.ItemName }}</span>-->
               <el-divider></el-divider>
             </div>
           </el-collapse-item>
@@ -245,7 +246,7 @@ export default {
 
 .box-card {
   /*overflow: auto;*/
-  min-width: 680px;
+  width: 680px;
   margin-top: 50px;
 }
 </style>

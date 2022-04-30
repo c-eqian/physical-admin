@@ -22,17 +22,22 @@ const router = new Router({
       path: '/physical-manage/phy-exam-audit',
       component: () => import('@/views/physical/exam-manage/exam-audit/index')
     },
-    {
-      path: '/apply-list',
-      name: 'applyList',
-      component: () => import('@/views/physical/user-apply/apply-list/index')
-    },
+    // {
+    //   path: '/apply-list',
+    //   name: 'applyList',
+    //   component: () => import('@/views/physical/user-apply/apply-list/index')
+    // },
 
     {
       path: '/index',
       component: Index,
       redirect: '/console',
       children: [
+        {
+          path: '/apply-list',
+          name: 'applyList',
+          component: () => import('@/views/physical/user-apply/apply-list/index')
+        },
         {
           path: '/sys-user-manage/user-auth-list',
           name: 'userManageUserAuth',
@@ -90,11 +95,11 @@ const router = new Router({
           name: 'articles',
           component: Articles
         },
-        {
-          path: '/echarts',
-          name: 'echarts',
-          component: () => import('@/views/physical/analyze-manage/analyze-center/index1')
-        },
+        // {
+        //   path: '/echarts',
+        //   name: 'echarts',
+        //   component: () => import('@/views/physical/analyze-manage/analyze-center/index1')
+        // },
         {
           path: '/404',
           component: NotFound
@@ -107,7 +112,7 @@ const router = new Router({
     },
     {
       path: '*',
-      redirect: { path: '/404' }
+      redirect: {path: '/404'}
     }
   ]
 })
@@ -126,7 +131,7 @@ router.beforeEach((to, from, next) => {
 
   // 判断是否登录
   if (!user && url !== LOGINURL) {
-    next({ path: LOGINURL })
+    next({path: LOGINURL})
   } else {
     next()
   }
