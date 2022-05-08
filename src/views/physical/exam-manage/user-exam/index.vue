@@ -62,10 +62,10 @@ export default {
           this.messageTip(res.data.msg)
         }
         else {
-          this.examList = res.data.result
+          this.examList = res.data.result.list
           this.$store.commit('BaseStore/updateExamList',this.examList)
         }
-        console.log(res)
+        console.log(res.data.result.list)
       })
     },
     messageTip (msg,type='error') {

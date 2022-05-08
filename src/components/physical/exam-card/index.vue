@@ -27,11 +27,11 @@
         <div class="physical-form">
           <div class="demo-input-suffix">
             姓名：
-            <el-tag>陈十三</el-tag>
+            <el-tag>楚滢辉</el-tag>
           </div>
           <div class="demo-input-suffix">
             编号：
-            <el-tag type="info">99999999999</el-tag>
+            <el-tag type="info">4578634854405</el-tag>
           </div>
           <div class="demo-input-suffix">
             体检编码：
@@ -130,8 +130,9 @@ export default {
       })
     },
     updateData(params) {
-      this.formData.Height = params.length;
+      this.formData.Height = params.height;
       this.formData.Weight = params.weight;
+      this.formData.heart_rate = params.HR;
       this.$store.commit('BaseStore/updateExamList', this.examList)
     },
     requestUserExamList() { // 查询该条码下需要体检的项目大类
@@ -141,7 +142,7 @@ export default {
         if (res.data.status !== 200) {
           this.messageTip(res.data.msg)
         } else {
-          this.examList = res.data.result
+          this.examList = res.data.result.list
           this.$store.commit('BaseStore/updateExamList', this.examList)
         }
         console.log(res)
@@ -190,6 +191,7 @@ export default {
       this.client.on("message", (topic, message) => {
         console.log(topic, message)
         let data = Utf8ArrayToStr(message)
+        console.log(data)
         const {
           params
         } = data
