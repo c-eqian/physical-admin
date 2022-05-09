@@ -248,7 +248,7 @@ export default {
 
 .box-card {
   /*overflow: auto;*/
-  width: 680px;
-  margin-top: 50px;
+  width: 100%;
+  min-width: 500px;
 }
 </style>

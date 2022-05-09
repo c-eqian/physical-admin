@@ -18,3 +18,10 @@ npm run build
 ```
 
 <br/>
+
+**feature/update-0513分支**
+
+```
+git clone -b feature/update-0513 https://gitee.com/cyq13/physical-admin.git
+```
+

@@ -22,7 +22,7 @@ const http = axios.create({
 //  基本URL，当配置该项后，在后面发起请求时，加请求的路径即可
 //   baseURL:'http://120.77.44.219:13208',//后台接口url
   // baseURL: , // 后台接口url
-  baseURL: BASEURL.test,
+  baseURL: BASEURL.dev,
   //  设置超时时间
   timeout: 10 * 1000
   // withCredentials: false,
@@ -34,6 +34,7 @@ const http = axios.create({
 http.defaults.withCredentials = true
 // 设置post请求头：告知服务器请求主体的数据格式
 // 'Content-Type':'application/json'
+http.defaults.headers.post['Content-Type'] = 'application/x-www-fromurlencodeed'
 http.defaults.headers['Content-type'] = 'application/x-www-form-urlencoded'
 let loadings,noLoading=false
 // 配置请求拦截器

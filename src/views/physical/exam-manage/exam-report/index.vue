@@ -9,7 +9,7 @@
       <el-button  slot="append" icon="el-icon-search" @click="search"></el-button>
     </el-input>
     <div class="exam-result-card">
-      <el-tabs type="border-card">
+      <el-tabs type="border-card" >
         <el-tab-pane label="基础信息">
           <base-exam :examData="examData" ></base-exam>
         </el-tab-pane>
@@ -66,9 +66,9 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .exam-result-card{
-  overflow: auto;
+  overflow-y: auto;
   height: 580px;
 }
 .exam-box {
