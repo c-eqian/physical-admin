@@ -1,7 +1,7 @@
 <template>
   <div class="login-box">
     <el-form :model="loginForm" :rules="rules" ref="loginForm" class="login-form">
-      <h3 class="title">系 统 登 录</h3>
+      <h3 class="title">欢迎使用网关管理系统</h3>
       <el-form-item prop="name">
         <el-input
           v-model="loginForm.name"
@@ -141,17 +141,20 @@ export default {
   height: 100%;
   overflow: hidden;
   background: #20222A;
-  background: url("../../../assets/img/back2.jpg");
+  background: url("https://s1.ax1x.com/2022/04/30/OpMkY6.jpg");
+  //background: url("https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fimg.book118.com%2Fsr1%2FM00%2F1B%2F33%2FwKh2Al8urGiIMWOiAAF0g3qh0C8AAkhtQEo7NUAAXSb396.jpg&refer=http%3A%2F%2Fimg.book118.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1654066555&t=b36a5df43c8f9d593f5c7edbfb877c4b");
+  //background: url("https://s1.ax1x.com/2022/04/24/L5fieH.jpg");
   position: fixed;
   background-size: 100% 100%;
 
   .login-form {
-    border-radius: 5px;
+    border-radius: 10px;
     background-clip: padding-box;
-    margin: 180px auto;
+    margin: 180px 100px 180px auto;
     width: 350px;
     padding: 35px 35px 15px 35px;
-    background: #f5f5f5;
+    //background: #f5f5f5;
+    background: rgba(245,245,245,0.6);
     border: 1px solid #eaeaea;
     box-shadow: 0 0 5px #cac6c6;
 

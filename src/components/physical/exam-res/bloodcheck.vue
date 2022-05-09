@@ -1,5 +1,11 @@
 <template>
   <div>
+     <div  style="position: absolute;top: 200px;">
+      <el-row >
+        <el-button type="primary"  icon="el-icon-check" >生成</el-button>
+      </el-row>
+      <el-row><el-button type="danger"  icon="el-icon-close" >保存</el-button></el-row>
+    </div>
     <h1>血清检查一</h1>
     <table>
       <tr>

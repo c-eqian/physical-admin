@@ -1,12 +1,12 @@
 <template>
   <div style="margin-top: 15px" class="exam-box">
-    <el-input placeholder="请输入体检编号" v-model="input3" class="input-with-select">
-      <el-select v-model="select" slot="prepend" placeholder="请选择">
+    <el-input clearable placeholder="请输入体检编号" v-model="userInfo.RequisitionId" class="input-with-select">
+      <el-select  slot="prepend" placeholder="请选择">
         <el-option label="餐厅名" value="1"></el-option>
         <el-option label="订单号" value="2"></el-option>
         <el-option label="用户电话" value="3"></el-option>
       </el-select>
-      <el-button slot="append" icon="el-icon-search"></el-button>
+      <el-button slot="append" icon="el-icon-search" @click="search"></el-button>
     </el-input>
     <!--    <exam-card></exam-card>-->
     <div class="exam-result-card">
@@ -52,9 +52,29 @@ export default {
   name: 'index',
   data() {
     return {
-      input3: '',
-      select: ''
+      userInfo:{
+        RequisitionId: '21101700009',
+      }
     }
+  },
+  methods:{
+    search(){
+      this.$get('/get-cache-base-exam', {RequisitionId:this.userInfo.RequisitionId}).then(res => {
+      if(res.data.status===200){
+          this.userInfo = Object.assign({},this.userInfo,res.data.result)
+      }
+      else {
+        this.messageTip(res.data.msg)
+      }
+      })
+    },
+    messageTip(msg, type = 'error') {
+      this.$message({
+        showClose: true,
+        message: msg,
+        type: type
+      })
+    },
   },
   components: {
     // eslint-disable-next-line vue/no-unused-components

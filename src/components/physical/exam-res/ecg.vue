@@ -1,5 +1,11 @@
 <template>
   <div>
+     <div style="position: absolute;top:">
+      <el-row >
+        <el-button type="primary"  icon="el-icon-check" >生成</el-button>
+      </el-row>
+      <el-row><el-button type="danger"  icon="el-icon-close" >保存</el-button></el-row>
+    </div>
     <h1>心电图检查</h1>
     <table>
       <tr>

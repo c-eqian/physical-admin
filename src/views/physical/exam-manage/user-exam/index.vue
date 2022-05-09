@@ -1,34 +1,59 @@
 <template>
-  <div style="margin-top: 15px" class="exam-box">
-    <el-input placeholder="请输入体检编号" v-model="input3" class="input-with-select">
-      <el-select v-model="select" slot="prepend" placeholder="请选择">
-        <el-option label="餐厅名" value="1"></el-option>
-        <el-option label="订单号" value="2"></el-option>
-        <el-option label="用户电话" value="3"></el-option>
-      </el-select>
-      <el-button slot="append" icon="el-icon-search"></el-button>
-    </el-input>
-    <exam-card :examList="examList"></exam-card>
-
-  </div>
-
+<div>
+      <exam-card @add-exam="addExam"  @updateData="updateData" @saveData="saveData"></exam-card>
+    <add-exam-dialog :dialogFormVisible="dialogFormVisible" @change-form-visible="dialogFormVisible=false"></add-exam-dialog>
+</div>
 </template>
 
 <script>
 // eslint-disable-next-line no-unused-vars
 import examCard from '@/components/physical/exam-card/index'
-
+import addExamDialog  from './components/add-exam-dialog/index'
 export default {
   name: 'index',
   data () {
     return {
       input3: '',
       select: '',
-      RequisitionId: '21101700008',
+      dialogFormVisible:false,
+      RequisitionId: '21101700009',
       examList: []
     }
   },
   methods: {
+    saveData(){
+      let data = {RequisitionId:this.RequisitionId,Height:'',Weight:'',BMI:'',Temperature:'',heart_rate:''};
+      for(const index in this.examList){
+        if(this.examList[index].FeeItemCode==='JB001'){
+          for(const ind in this.examList[index].lt){
+            if(this.examList[index].lt[ind].ItemCode==='JB-001'){
+             data.Height  = this.examList[index].lt[ind].value||'';
+            }
+            if(this.examList[index].lt[ind].ItemCode==='JB-002'){
+             data.Weight  = this.examList[index].lt[ind].value||'';
+            }
+          }
+        }
+      }
+      this.$post('/cache-base-exam', data).then(res=>{
+          this.messageTip(res.data.msg,res.data.status===200?'success':'error')
+      })
+    },
+    updateData(params){
+      for(const index in this.examList){
+        if(this.examList[index].FeeItemCode==='JB001'){
+          for(const ind in this.examList[index].lt){
+            if(this.examList[index].lt[ind].ItemCode==='JB-001'){
+              this.examList[index].lt[ind].value = params.length;
+            }
+            if(this.examList[index].lt[ind].ItemCode==='JB-002'){
+              this.examList[index].lt[ind].value = params.weight;
+            }
+          }
+        }
+      }
+      this.$store.commit('BaseStore/updateExamList',this.examList)
+    },
     requestUserExamList () { // 查询该条码下需要体检的项目大类
       this.$get('/current-exam-list', {
         RequisitionId: this.RequisitionId
@@ -37,25 +62,30 @@ export default {
           this.messageTip(res.data.msg)
         }
         else {
-          this.examList = res.data.result
+          this.examList = res.data.result.list
+          this.$store.commit('BaseStore/updateExamList',this.examList)
         }
-        console.log(res)
+        console.log(res.data.result.list)
       })
     },
-    messageTip (msg) {
+    messageTip (msg,type='error') {
       this.$message({
         showClose: true,
         message: msg,
-        type: 'error'
+        type: type
       })
+    },
+    addExam(){
+      this.dialogFormVisible=true
     }
   },
   created () {
-    this.requestUserExamList()
+    // this.requestUserExamList()
   },
   components: {
     // eslint-disable-next-line vue/no-unused-components
-    examCard
+    examCard,
+    addExamDialog
 
   }
 }
@@ -71,8 +101,9 @@ export default {
 }
 
 /deep/ .input-with-select {
-  width: 50%;
+  width: 45%;
   margin-left: 25%;
+  margin-right: 5%;
   margin-bottom: 25px;
 }
 

@@ -29,7 +29,8 @@ const BaseStore = {
     mqttClient:'',
     mqttData: {},
     isShowUserInfoDialog: false, // 是否显示用户信息弹窗
-    userInfoForm: {}
+    userInfoForm: {},
+    examList:{},
   },
   /*
   Mutation 用于变更 Store中的数据。
@@ -41,6 +42,9 @@ const BaseStore = {
   调用（需要在根节点注入 store）。
    */
   mutations: {
+    updateExamList (state, payload) {
+      state.examList = payload
+    },
     updateIsShowUserInfoDialog (state) {
       state.isShowUserInfoDialog = !state.isShowUserInfoDialog
     },
