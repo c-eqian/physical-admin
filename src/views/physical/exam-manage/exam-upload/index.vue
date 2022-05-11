@@ -34,6 +34,7 @@
       :data="examUploadList"
       height="550"
       border
+       v-loading="tableLoading"
       @selection-change="selectChange"
       style="width: 100%">
       <el-table-column
@@ -209,6 +210,7 @@ export default {
   },
   data() {
     return {
+      tableLoading:false,
       placeholder: '请输入',
       total:0,
       examUploadList:[],
@@ -231,10 +233,12 @@ export default {
     search(value) {
       console.log(value)
     },
-    getGetUploadList() {
+   async getGetUploadList() {
         const org_code = this.$store.state.BaseStore.user.org_id;
-      this.$get('/query_exam_upload',{
-        org_code:org_code
+        this.tableLoading = true;
+      await  this.$get('/query_exam_upload',{
+        org_code:org_code,
+        noLoading:true
       }).then(res=>{
         if(res.data.status ===200){
           this.total = res.data.result.total
@@ -244,6 +248,7 @@ export default {
         }
         console.log(res)
       })
+      this.tableLoading=false
       // this.loading = true
       // this.$http('/api/users').then((res) => {
       //   this.users = res.data

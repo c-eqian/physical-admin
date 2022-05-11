@@ -65,6 +65,7 @@ const router = new Router({
         },
         {
           path: "/physical-manage/upload_physical_exam",
+          name:'uploadPhysicalExam',
           component: () =>
             import("@/views/physical/exam-manage/exam-upload/index"),
         },

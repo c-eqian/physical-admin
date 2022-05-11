@@ -413,7 +413,7 @@ export default {
           te_bing_zhi_zd +
           " " +
           ping_he_zhi_zd;
-        
+
         this.CalculateScoremessage(zd)
       }
     },
@@ -475,4 +475,4 @@ export default {
   }
 }
 </style>
- 
+

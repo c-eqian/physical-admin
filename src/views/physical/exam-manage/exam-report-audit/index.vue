@@ -73,6 +73,11 @@ export default {
           remark:remark
         }).then(res=> {
             this.messageTip(res.data.msg, res.data.status === 200 ? "success" : 'error')
+            setTimeout(()=>{
+              this.$router.replace({
+                name:'uploadPhysicalExam'
+              })
+            },1500)
       })
         }else {
           this.messageTip("体检编码为空！")
