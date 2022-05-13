@@ -133,6 +133,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.header-box{
+  /deep/ .el-col-6 {
+    width: 50%;
+  }
+}
 .btn-tool {
   border: none;
   background: transparent;

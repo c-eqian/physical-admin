@@ -2,10 +2,11 @@
   <div class="user-data-contain" id="user-data-contain">
 
     <div style="width: 100% !important;display: flex;justify-content:space-between">
-      <pageHeader v-if="isSearch" @goBack="goBack" :contentTitle="contentTitle"></pageHeader>
+      <!--      <pageHeader v-if="isSearch" @goBack="goBack" :contentTitle="contentTitle"></pageHeader>-->
       <el-autocomplete class="input-search" :placeholder="placeholder" :debounce=0
                        @select="handleSelect"
                        :fetch-suggestions="querySearch"
+                       :trigger-on-focus="false"
                        @keyup.enter.native="onKeyDown"
                        autocomplete="on" clearable v-model="inputSearch">
         <el-button slot="append" icon="el-icon-search"
@@ -16,7 +17,7 @@
         <el-col :span="24">
           <div class="tool-box">
             <el-button type="primary" icon="el-icon-circle-plus-outline" size="small" @click="handleAdd">新增</el-button>
-            <el-button type="danger" icon="el-icon-delete" size="small">批量删除</el-button>
+            <el-button type="danger" @click="deleteListClicked" icon="el-icon-delete" size="small">批量删除</el-button>
           </div>
         </el-col>
       </el-row>
@@ -36,10 +37,11 @@
         }"
         :cell-style="{'text-align':'center', 'font-size': '1rem'}"
         height=600px
+        @selection-change="handleSelectionChange"
         highlight-current-row
         style="width: 100%">
         <el-table-column
-          type="index"
+          type="selection"
           width="50">
         </el-table-column>
         <el-table-column
@@ -109,8 +111,12 @@
       layout="total, sizes, prev, pager, next, jumper"
       :total="userTotal">
     </el-pagination>
-    <user-info @closeDialogVisible="closeDialogVisible" @user-info-form="dialogCallback" :dialogVisible="dialogVisible"
-               :userInfoForm.sync="userInfo"></user-info>
+    <user-info @closeDialogVisible="closeDialogVisible"
+               @user-info-form="dialogCallback"
+               @add-success="addSuccess"
+               :dialogVisible="dialogVisible"
+               :userInfoForm.sync="userInfo"
+               :type="openType"></user-info>
   </div>
 </template>
 
@@ -130,6 +136,8 @@ export default {
   },
   data() {
     return {
+      openType: true,
+      selectionList: [],
       tableLoading: false,
       contentTitle: '搜索',
       userTotal: 0, // 总数据
@@ -142,6 +150,7 @@ export default {
       isSearch: false, // 是否搜索状态
       dialogVisible: false,
       userInfo: {},
+      dataList: [],
       searchSelect: [
         {id: 1, value: '111'},
         {id: 2, value: '222'},
@@ -157,19 +166,49 @@ export default {
     await this.getUserList()// 获取用户数据
   },
   methods: {
+    async deleteListClicked() { //删除操作
+      if (this.selectionList.length > 0) {
+        let array = []
+        this.selectionList.forEach(item => {
+          array.push({idCard: item.idcard})
+        })
+        await this.$post('/delete-user', {
+          list: JSON.stringify(array)
+        }).then(res => {
+          this.messageTip(res.data.msg, 'success')
+          setTimeout(() => {
+            this.getUserList()
+          }, 1500)
+        })
+
+      } else {
+        this.messageTip('请至少选择一项', 'error')
+      }
+    },
+    handleSelectionChange(val) {
+      this.selectionList = val;
+      console.log(this.selectionList)
+    },
     dialogCallback(value) {
+      this.openType = true
       this.userInfo = {}
+    },
+    addSuccess() {
+      this.getUserList()// 获取用户数据
     },
     handleAdd() { // 新增
       this.dialogVisible = !this.dialogVisible
     },
-    requestSearch() { // 搜索请求
-      this.$get(
+    async requestSearch(searchText = '') { // 搜索请求
+      this.tableLoading = true
+      await this.$get(
         '/likeSearch',
         {
-          searchText: this.inputSearch,
+          searchText: searchText,
           page: this.currentPage,
-          limit: this.pageSize
+          limit: this.pageSize,
+          timestamp: new Date(),
+          noLoading: true
         }
       ).then(res => {
         if (res.data.status === 200) {
@@ -177,41 +216,64 @@ export default {
             this.isSearch = true
             this.isShowBack = !this.isShowBack// 取反
           }
-
-          this.handleUserData(res.data.result)
+          this.userTotal = res.data.result.total
+          this.handleUserData(res.data.result.lt)
+          console.log(res.data.result.lt,5558)
+        }
+        else {
+          this.messageTip(res.data.msg,'error')
         }
       }).catch(error => {
         console.log(error)
       })
+      this.tableLoading = false
     },
     onKeyDown(e) { // 监听键盘回车键
       if (e.keyCode === 13 && this.inputSearch !== '') {
-        this.pageSize = 50
+        this.pageSize = 20
         this.currentPage = 1
-        this.search_result_total()
-        this.requestSearch()
+        // this.search_result_total()
+        this.requestSearch(this.inputSearch)
       } else {
         this.messageTip('请输入搜索内容')
       }
     },
     // 搜索
     searchBtn() {
-      if (this.inputSearch !== '') {
-        this.pageSize = 50
+      this.pageSize = 20
         this.currentPage = 1
-        this.search_result_total()
-        this.requestSearch()
+        // this.search_result_total()
+        // this.requestSearch(this.inputSearch)
+      if (this.inputSearch !== '') {
+        this.pageSize = 20
+        this.currentPage = 1
+        // this.search_result_total()
+        this.requestSearch(this.inputSearch)
+      }else
+      {
+        this.getUserList()
       }
     },
-    querySearch(queryString, cb) { // 输入框建议回调
-      let dataList = [ // 也可以在后端接口动态获取
-        {id: 1, value: '111'},
-        {id: 2, value: '222'},
-        {id: 3, value: '333'},
-        {id: 4, value: '444'}
-      ]
-      var results = queryString ? dataList.filter(this.createFilter(queryString)) : dataList
+    async querySearch(queryString, cb) { // 输入框建议回调
+      if (!queryString) return
+      console.log(queryString)
+      await this.$get('/searchSuggestion', {
+        keyWords: queryString,
+        noLoading: true
+      }).then(res => {
+        if (res.data.status === 200) {
+          this.dataList = []
+          // this.dataList = res.data.result
+          res.data.result.forEach(item => {
+            item.value = item.name;
+            this.dataList.push(item)
+          })
+        }
+        console.log(this.dataList)
+      })
+      var results = queryString ? this.dataList.filter(this.createFilter(queryString)) : this.dataList
       // 调用 callback 返回建议列表的数据
+      console.log(results)
       cb(results)
     },
     createFilter(queryString) {
@@ -221,13 +283,13 @@ export default {
     },
     // 建议回调选中
     handleSelect(item) {
-      console.log(item)
+      this.requestSearch(item.name)
     },
     // 每页数据改变
     handleSizeChange(val) {
       this.pageSize = val
       if (this.isSearch) {
-        this.requestSearch()
+        this.requestSearch(this.inputSearch)
       } else {
         this.getUserList()
       }
@@ -236,7 +298,7 @@ export default {
     handleCurrentChange(val) {
       this.currentPage = val
       if (this.isSearch) {
-        this.requestSearch()
+        this.requestSearch(this.inputSearch)
       } else {
         this.getUserList()
       }
@@ -261,6 +323,7 @@ export default {
       })
     },
     closeDialogVisible() { // 关闭弹窗
+      this.openType = true
       this.dialogVisible = false
     },
     // // 用户总数
@@ -280,6 +343,7 @@ export default {
         org_code: this.org_code,
         page: this.currentPage,
         limit: this.pageSize,
+        timestamp: new Date(),
         noLoading: true
       }).then(res => {
         console.log(res)
@@ -298,10 +362,12 @@ export default {
       // this.$store.commit('BaseStore/updateUserInfoForm', row)
       // 深度拷贝
       this.userInfo = deepClone(row)
+      this.openType = false
       this.dialogVisible = !this.dialogVisible
     },
     // 处理用户数据
     handleUserData(userData) {
+      this.tableData = []
       console.log(userData)
       try {
         for (var index in userData) {
@@ -321,10 +387,10 @@ export default {
       // this.getTotal()// 获取总数
       this.getUserList()// 获取用户数据
     },
-    messageTip(msg = '无数据') { // 提示窗口
+    messageTip(msg = '无数据', type = 'warning') { // 提示窗口
       this.$message({
         message: msg,
-        type: 'warning',
+        type: type,
         duration: 1500
       })
     }
