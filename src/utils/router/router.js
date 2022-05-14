@@ -16,6 +16,7 @@ const router = new Router({
   routes: [
     {
       path: "/login",
+      name:'Login',
       component: Login,
     },
     {
@@ -38,6 +39,12 @@ const router = new Router({
           name: "applyList",
           component: () =>
             import("@/views/physical/user-apply/apply-list/index"),
+        },
+        {
+          path: "/self_info",
+          name:'selfInfo',
+          component : () => import("@/views/physical/personal/index")
+
         },
         {
           path: "/sys-user-manage/user-auth-list",

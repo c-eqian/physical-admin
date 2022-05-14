@@ -96,6 +96,7 @@ export default {
       this.$router.push({ path: '/network-manage/Internet-connection' })
     },
     collapse () {
+      this.$emit('isCollapse')
       this.$store.commit('BaseStore/switchCollapse')
     },
     refresh () {

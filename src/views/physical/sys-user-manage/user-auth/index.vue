@@ -5,16 +5,21 @@
     <!--      <el-breadcrumb-item>角色管理</el-breadcrumb-item>-->
     <!--    </el-breadcrumb>-->
     <!-- 搜索筛选 -->
-    <el-form :inline="true" class="user-search">
+    <el-form :inline="true" class="user-search" @submit.native.prevent>
 
       <el-form-item label="搜索：">
-        <el-input size="small" placeholder="输入角色名称"></el-input>
-      </el-form-item>
-      <el-form-item label="">
-        <el-input size="small" placeholder="输入角色代码"></el-input>
+        <el-autocomplete class="input-search" placeholder="请输入姓名" :debounce=0
+                         @select="handleSelect"
+                         :fetch-suggestions="querySearch"
+                         :trigger-on-focus="false"
+                         @keyup.enter.native="onKeyDown"
+                         autocomplete="on" clearable v-model="inputSearch">
+          <el-button slot="append" icon="el-icon-search"
+                     @click="searchBtn">
+          </el-button>
+        </el-autocomplete>
       </el-form-item>
       <el-form-item>
-        <el-button size="small" type="primary" icon="el-icon-search">搜索</el-button>
         <el-button
           size="small"
           type="primary"
@@ -145,6 +150,14 @@
     >
 
     </add-user-dialog>
+    <detail-user-dialog
+      :dialog-visible="detailVisible"
+      @update-viable="detailVisible=false"
+      :sysUserDetail="userDetail"
+      @save-success="saveSuccess"
+    >
+
+    </detail-user-dialog>
   </div>
 
 </template>
@@ -152,28 +165,116 @@
 <script>
 import {handleLabel, handleStatus} from "@/views/physical/sys-user-manage/utils";
 import {handlefForMatTime} from '@/utils/plugin/utils'
+import detailUserDialog from '@/views/physical/sys-user-manage/components/detail-sys-user-dialog/index'
 import addUserDialog from '@/views/physical/sys-user-manage/components/add-sys-user-dialog/index'
+import {deepClone} from "@/utils/handle";
 
 export default {
   components: {
     addUserDialog,
+    detailUserDialog,
   },
   data() {
     return {
+      inputSearch:'',
       dialogVisible: false,
+      userDetail: {},
+      detailVisible: false,
       tableLoading: false,
       tableTotal: 0, // 总数据
       currentPage: 1, // 当前页
       pageSize: 10, // 每页数据
       tableData: [],
       selfId: 0,
-      selectionList: []
+      selectionList: [],
+      dataList: [],
     }
   },
   async created() {
     await this.getSysUserData()
   },
   methods: {
+    // 建议回调选中
+    handleSelect(item) {
+      this.requestSearch(item.sys_user_name)
+    },
+    async querySearch(queryString, cb) { // 输入框建议回调
+      if (!queryString) return
+      await this.$get('/sys-search-suggestions', {
+        keyWords: queryString,
+        noLoading: true
+      }).then(res => {
+        if (res.data.status === 200) {
+          this.dataList = []
+          // this.dataList = res.data.result
+          res.data.result.forEach(item => {
+            item.value = item.sys_user_name;
+            this.dataList.push(item)
+          })
+        }
+        console.log(this.dataList,25)
+      })
+      var results = queryString ? this.dataList.filter(this.createFilter(queryString)) : this.dataList
+      // 调用 callback 返回建议列表的数据
+      cb(results)
+    },
+    createFilter(queryString) {
+      return (restaurant) => {
+        return (restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0)
+      }
+    },
+    onKeyDown(e) { // 监听键盘回车键
+      if (e.keyCode === 13 && this.inputSearch !== '') {
+        this.pageSize = 20
+        this.currentPage = 1
+        this.requestSearch(this.inputSearch)
+      } else {
+        this.messageTip('请输入搜索内容','error')
+      }
+    },
+    async requestSearch(searchText = '') { // 搜索请求
+      this.tableLoading = true
+      await this.$get(
+        '/sys-like-search',
+        {
+          searchText: searchText,
+          page: this.currentPage,
+          limit: this.pageSize,
+          timestamp: new Date(),
+          noLoading: true
+        }
+      ).then(res => {
+        if (res.data.status === 200) {
+          console.log(res)
+          this.tableTotal = res.data.result.total
+          this.tableData = res.data.result.lt
+          // console.log(this.tableData,9799)
+          this.handleData()
+        }
+        else {
+          this.messageTip(res.data.msg,'error')
+        }
+      }).catch(error => {
+        console.log(error)
+      })
+      this.tableLoading = false
+    },
+    // 搜索
+    searchBtn() {
+      this.pageSize = 20
+      this.currentPage = 1
+      if (this.inputSearch !== '') {
+        this.pageSize = 20
+        this.currentPage = 1
+        this.requestSearch(this.inputSearch)
+      } else {
+        this.getSysUserData()
+      }
+    },
+    saveSuccess() {
+      this.detailVisible = false;
+      this.getSysUserData()
+    },
     async deleteListClicked() { //删除操作
       if (this.selectionList.length > 0) {
         let array = []
@@ -199,12 +300,14 @@ export default {
       this.getSysUserData()
     },
     handleRowClick(row) {
+      this.detailVisible = true
+      this.userDetail = deepClone(row)
       console.log(row)
     },
-   async getSysUserData() {
+    async getSysUserData() {
       this.tableLoading = true
       this.selfId = this.$store.state.BaseStore.user.user_id;
-     await this.$get('/query_sys_user-list', {
+      await this.$get('/query_sys_user-list', {
         page: this.currentPage,
         limit: this.pageSize,
         noLoading: true
@@ -220,7 +323,8 @@ export default {
       this.tableLoading = false
     },
     handleData() {
-      let array = []
+      try {
+        let array = []
       this.tableData.forEach(item => {
         item.labelTag = handleLabel(item.sys_type);
         item.isCurrent = item.user_id === this.selfId;
@@ -235,7 +339,11 @@ export default {
 
       })
       this.tableData = array;
-      console.log(this.tableData)
+      console.log(this.tableData,222)
+      }catch (e) {
+        console.log(e)
+      }
+
     },
     toggleSelection(rows) {
       if (rows) {
