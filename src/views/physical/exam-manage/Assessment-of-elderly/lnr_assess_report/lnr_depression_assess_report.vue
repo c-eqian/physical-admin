@@ -1,16 +1,26 @@
 <template>
-  <div class="assess">
+  <div>
+    <div class="btn-style" style=" width:100px;position: absolute;top: 100px;z-index: 999;float: left">
+      <el-button type="primary" class="results" @click="CalculationResults"
+      >计算结果
+      </el-button>
+              <div style="margin-top: 30px">得分：<span>{{ level }}</span></div>
+            <el-button style="margin-top: 30px" type="primary" class="results" @click="CalculationResults"
+      >保存结果
+      </el-button>
+    </div>
+      <div class="assess">
     <div class="report_title">
       <h1>老年人情感状态抑郁评估表</h1>
       <div class="title_nav">
-        <div>居民姓名：</div>
-        <div>电话号码：</div>
-        <div>性别：</div>
-        <div>身份证号：</div>
-        <div>年龄：</div>
-        <div>流水号：</div>
+        <div>居民姓名：<strong>{{baseInfo.name}}</strong></div>
+        <div>电话号码：<strong>{{baseInfo.phone}}</strong></div>
+        <div>性 &nbsp &nbsp 别：<strong>{{baseInfo.gender}}</strong></div>
+        <div>身份证号：<strong>{{baseInfo.idCard}}</strong></div>
+        <div>年 &nbsp &nbsp &nbsp  龄：<strong>{{baseInfo.birthday}}</strong></div>
+        <div>流水号 ： </div>
         <div>评估日期：</div>
-        <div>机构名称：</div>
+        <div>机构名称：<strong>{{baseInfo.org_name}}</strong></div>
         <div>评估医生：</div>
       </div>
     </div>
@@ -42,18 +52,163 @@
         </template>
       </el-table-column>
     </el-table>
-    <el-button type="primary" class="results" @click="CalculationResults"
-      >计算结果</el-button
-    >
+
   </div>
+  </div>
+
 </template>
 
 <script>
+import {getAge, handleGender} from "@/utils/plugin/utils";
+
 export default {
   data() {
     return {
+      userId:'',
+      level:'',
+      isSubmit:false,
+      status:false,
+      submitForm:{
+        userId:'',
+        org_code:'',
+        doc_code:'',
+        RequisitionId:''
+      },
+      baseInfo:{
+        birthday:'',
+        phone:'',
+        idCard:'',
+        org_name:'',
+        org_code:'',
+        name:'',
+        gender:'',
+      },
       tableData: [{}],
     };
+  },
+    created() {
+    this.userId = this.$route.params.id;
+    this.submitForm.userId = this.$route.params.id;
+    this.submitForm.org_code = this.$store.state.BaseStore.user.org_id;
+    this.submitForm.RequisitionId = this.$route.params.rid;
+    this.submitForm.doc_code = this.$store.state.BaseStore.user.user_id
+    this.getUserInfo()
+  },
+    methods: {
+    submit(){
+      this.isSubmit = true;
+      this.CalculationResults() // 先计算结果
+      if(this.status){
+        this.$post('/add_or_update_depression',this.submitForm).then(res=>{
+        console.log(res)
+      })
+      }
+      this.isSubmit = false
+    },
+      getUserInfo(){
+      this.$get('/user_details_by_idCard',{
+        userId:this.userId
+      }).then(res=>{
+        if(res.data.status===200){
+          this.baseInfo = Object.assign({},this.baseInfo,res.data.result)
+          this.baseInfo.gender = handleGender(this.baseInfo.gender)
+          this.baseInfo.birthday = getAge(this.baseInfo.birthday)
+        }else{
+          this.messageTip(res.data.msg)
+        }
+        console.log(res)
+      })
+
+    },
+    messageTip(msg, type = 'error') {
+      this.$message({
+        showClose: true,
+        message: msg,
+        type: type
+      })
+    },
+    //计算评估结果
+    CalculationResults() {
+      const _answerList = this.tableData;
+      let score = 0;
+      //遍历答案列表，判断是否存在为答题情况
+      let NotAnswerList = _answerList.filter((item) => item.answer === 2);
+      if (NotAnswerList.length > 0) {
+        let AnsweId = NotAnswerList.map((v, i) => {
+          return v.qus_id;
+        });
+        this.openmessage(AnsweId);
+      } else {
+          //计算评估分数
+        for (let item of _answerList) {
+          if (
+            item.qus_id == "1" ||
+            item.qus_id == "7" ||
+            item.qus_id == "9" ||
+            item.qus_id == "15" ||
+            item.qus_id == "19" ||
+            item.qus_id == "21" ||
+            item.qus_id == "27" ||
+            item.qus_id == "29" ||
+            item.qus_id == "30"
+          ) {
+            if (item.answer === 0) {
+              score++;
+            }
+          } else {
+            if (item.answer === 1) {
+              score++;
+            }
+          }
+          this.submitForm[`qus_id_${item.qus_id}`]=item.answer;
+
+        }
+        this.CalculateScore(score);//计算评估等级
+        this.submitForm[`final_point`]=score
+      }
+    },
+    openmessage(AnsweId) {
+      this.$alert("以下题目未填写，请继续答题！" + AnsweId, "提示", {
+        confirmButtonText: "确定",
+      });
+    },
+    CalculateScoremessage(str) {
+      this.$alert(str, "评测结果", {
+        confirmButtonText: "确定",
+      });
+    },
+    //计算得分
+    CalculateScore(score) {
+      /*正常（0~10分）轻度抑郁（11~20分）中重度抑郁（21~30分） */
+      if (score <= 10) {
+        if(!this.isSubmit){
+          this.CalculateScoremessage("正常（0~10分）");
+          this.status = false
+        }else {
+          this.status = true
+        }
+        this.level = "正常（0~10分）"
+        this.submitForm[`depression_assesss_level`]=1
+      } else if (score > 10 && score <= 20) {
+        if(!this.isSubmit){
+          this.CalculateScoremessage("轻度抑郁（11~20分）");
+          this.status = false
+        }else {
+          this.status = true
+        }
+         this.level = "轻度抑郁（11~20分）"
+        this.submitForm[`depression_assesss_level`]=2
+      } else if (score > 20 && score <= 30) {
+        this.level = "中重度抑郁（21~30分）"
+        this.submitForm[`depression_assesss_level`]=3
+        if(!this.isSubmit){
+           this.CalculateScoremessage("中重度抑郁（21~30分）");
+          this.status = false
+        }else {
+          this.status = true
+        }
+      }
+    },
   },
   mounted() {
     //题目数据
@@ -99,70 +254,16 @@ export default {
     });
     this.tableData = jsonstr;
   },
-  methods: {
-    //计算评估结果
-    CalculationResults() {
-      const _answerList = this.tableData;
-      let score = 0;
-      //遍历答案列表，判断是否存在为答题情况
-      let NotAnswerList = _answerList.filter((item) => item.answer === 2);
-      if (NotAnswerList.length > 0) {
-        let AnsweId = NotAnswerList.map((v, i) => {
-          return v.qus_id;
-        });
-        this.openmessage(AnsweId);
-      } else {
-          //计算评估分数
-        for (let item of _answerList) {
-          if (
-            item.qus_id == "1" ||
-            item.qus_id == "7" ||
-            item.qus_id == "9" ||
-            item.qus_id == "15" ||
-            item.qus_id == "19" ||
-            item.qus_id == "21" ||
-            item.qus_id == "27" ||
-            item.qus_id == "29" ||
-            item.qus_id == "30"
-          ) {
-            if (item.answer === 0) {
-              score++;
-            }
-          } else {
-            if (item.answer === 1) {
-              score++;
-            }
-          }
-        }
-        this.CalculateScore(score);//计算评估等级
-      }
-    },
-    openmessage(AnsweId) {
-      this.$alert("以下题目未填写，请继续答题！" + AnsweId, "提示", {
-        confirmButtonText: "确定",
-      });
-    },
-    CalculateScoremessage(str) {
-      this.$alert(str, "评测结果", {
-        confirmButtonText: "确定",
-      });
-    },
-    //计算得分
-    CalculateScore(score) {
-      /*正常（0~10分）轻度抑郁（11~20分）中重度抑郁（21~30分） */
-      if (score <= 10) {
-        this.CalculateScoremessage("正常（0~10分）");
-      } else if (score > 10 && score <= 20) {
-        this.CalculateScoremessage("轻度抑郁（11~20分）");
-      } else if (score > 20 && score <= 30) {
-        this.CalculateScoremessage("中重度抑郁（21~30分）");
-      }
-    },
-  },
+
 };
 </script>
 
 <style lang="scss" scoped>
+.btn-style{
+  /deep/ .el-button+.el-button {
+    margin-left: 0;
+  }
+}
 .assess {
   width: 75%;
   margin: auto;
@@ -195,4 +296,4 @@ export default {
   }
 }
 </style>
- 
+

@@ -3,14 +3,14 @@
     <div class="report_title">
       <h1>老年人智力评估表</h1>
       <div class="title_nav">
-        <div>居民姓名：</div>
-        <div>电话号码：</div>
-        <div>性别：</div>
-        <div>身份证号：</div>
-        <div>年龄：</div>
-        <div>流水号：</div>
+        <div>居民姓名：{{baseInfo.name}}</div>
+        <div>电话号码：{{baseInfo.phone}}</div>
+        <div>性 &nbsp &nbsp 别：{{baseInfo.gender}}</div>
+        <div>身份证号：{{baseInfo.idCard}}</div>
+        <div>年 &nbsp &nbsp &nbsp  龄：{{baseInfo.birthday}}</div>
+        <div>流水号 ： </div>
         <div>评估日期：</div>
-        <div>机构名称：</div>
+        <div>机构名称：{{baseInfo.org_name}}</div>
         <div>评估医生：</div>
       </div>
     </div>
@@ -46,7 +46,7 @@
           <div>
             <el-input
               v-model="tableData[scope.$index].results"
-              placeholder="请评分"
+              placeholder="请回答"
             ></el-input>
           </div>
         </template>
@@ -104,7 +104,7 @@
           <div>
             <el-input
               v-model="drawinglist[scope.$index].results"
-              placeholder="请评分"
+              placeholder="请回答"
             ></el-input>
           </div>
         </template>
@@ -128,9 +128,21 @@
 </template>
 
 <script>
+import {getAge, handleGender} from "@/utils/plugin/utils";
+
 export default {
   data() {
     return {
+      userId:'',
+      baseInfo:{
+        birthday:'',
+        phone:'',
+        idCard:'',
+        org_name:'',
+        org_code:'',
+        name:'',
+        gender:'',
+      },
       tableData: [{}],
       orderIndexArr: [],
       rowIndex: "-1",
@@ -138,6 +150,155 @@ export default {
       _length: 0,
       drawinglist: [],
     };
+  },
+  created() {
+    this.userId = this.$route.params.id;
+    this.getUserInfo()
+  },
+    methods: {
+        getUserInfo(){
+      this.$get('/user_details_by_idCard',{
+        userId:this.userId
+      }).then(res=>{
+        if(res.data.status===200){
+          this.baseInfo = Object.assign({},this.baseInfo,res.data.result)
+          this.baseInfo.gender = handleGender(this.baseInfo.gender)
+          this.baseInfo.birthday = getAge(this.baseInfo.birthday)
+        }else{
+          this.messageTip(res.data.msg)
+        }
+        console.log(res)
+      })
+
+    },
+    messageTip(msg, type = 'error') {
+      this.$message({
+        showClose: true,
+        message: msg,
+        type: type
+      })
+    },
+    //计算评估结果
+    CalculationResults() {
+      const _answerList = this.tableData;
+      let score = 0;
+      //遍历答案列表，判断是否存在为答题情况
+      let NotAnswerList = _answerList.filter(
+        (item) => item.answer === 2 || item.results == ""
+      );
+      if (NotAnswerList.length > 0) {
+        let AnsweId = NotAnswerList.map((v, i) => {
+          return v.id;
+        });
+        if (
+          this.drawinglist[0].answer === 2 ||
+          this.drawinglist[0].results === ""
+        ) {
+          AnsweId = AnsweId + this.drawinglist[0].id;
+          console.log(AnsweId)
+        }
+        this.openmessage(AnsweId);
+      } else {
+        //计算评估分数
+        for (let item of _answerList) {
+          if (item.answer === 1) {
+            score++;
+          }
+        }
+        if (this.drawinglist[0].answer == 1) {
+          score++;
+        }
+        console.log(score);
+        this.CalculateScore(score); //计算评估等级
+      }
+    },
+    openmessage(AnsweId) {
+      this.$alert("第" + AnsweId + "请继续答题！", "提示", {
+        confirmButtonText: "确定",
+      });
+    },
+    CalculateScoremessage(str) {
+      this.$alert(str, "评测结果", {
+        confirmButtonText: "确定",
+      });
+    },
+    //计算得分
+    CalculateScore(score) {
+      /*正常（27~30 分）轻度（21~26分）中度（10~20分）重度（9分以下） */
+      if (score >= 27 && score <= 30) {
+        this.CalculateScoremessage("正常（27~30 分）");
+      } else if (score >= 26 && score <= 21) {
+        this.CalculateScoremessage("轻度（21~26分）");
+      } else if (score >= 10 && score <= 20) {
+        this.CalculateScoremessage("中度（10~20分）");
+      } else if (score < 9) {
+        this.CalculateScoremessage("重度（9分以下）");
+      }
+    },
+    // 获取相同编号的数组
+    getOrderNumber() {
+      const orderObj = {};
+      this.tableData.forEach((item, index) => {
+        item.rowIndex = index;
+        if (orderObj[item.qus_id]) {
+          orderObj[item.qus_id].push(index);
+        } else {
+          orderObj[item.qus_id] = [];
+          orderObj[item.qus_id].push(index);
+        }
+      });
+      // 将数组长度大于1的值 存储到this.orderIndexArr（也就是需要合并的项）
+      Object.keys(orderObj).forEach((key) => {
+        if (orderObj[key].length > 1) {
+          this.orderIndexArr.push(orderObj[key]);
+        }
+      });
+    },
+    objectSpanMethod({ row, column, rowIndex, columnIndex }) {
+      if (columnIndex === 0) {
+        for (let i = 0; i < this.orderIndexArr.length; i += 1) {
+          let element = this.orderIndexArr[i];
+          for (let j = 0; j < element.length; j += 1) {
+            let item = element[j];
+            if (rowIndex === item) {
+              if (j === 0) {
+                return {
+                  rowspan: element.length,
+                  colspan: 1,
+                };
+              }
+              if (j !== 0) {
+                return {
+                  rowspan: 0,
+                  colspan: 0,
+                };
+              }
+            }
+          }
+        }
+      }
+    },
+    tableRowClassName({ row, rowIndex }) {
+      let arr = this.hoverOrderArr;
+      for (let i = 0; i < arr.length; i += 1) {
+        if (rowIndex === arr[i]) {
+          return "hovered-row";
+        }
+      }
+    },
+    cellMouseEnter(row, column, cell, event) {
+      this.rowIndex = row.rowIndex;
+      this.hoverOrderArr = [];
+      this.orderIndexArr.forEach((element) => {
+        if (element.indexOf(this.rowIndex) >= 0) {
+          this.hoverOrderArr = element;
+        }
+      });
+    },
+    cellMouseLeave(row, column, cell, event) {
+      this.rowIndex = "-1";
+      this.hoverOrderArr = [];
+    },
   },
   mounted() {
     //题目数据
@@ -313,129 +474,7 @@ export default {
     this.drawinglist = drawinglist;
     this.getOrderNumber();
   },
-  methods: {
-    //计算评估结果
-    CalculationResults() {
-      const _answerList = this.tableData;
-      let score = 0;
-      //遍历答案列表，判断是否存在为答题情况
-      let NotAnswerList = _answerList.filter(
-        (item) => item.answer === 2 || item.results == ""
-      );
-      if (NotAnswerList.length > 0) {
-        let AnsweId = NotAnswerList.map((v, i) => {
-          return v.id;
-        });
-        if (
-          this.drawinglist[0].answer === 2 ||
-          this.drawinglist[0].results === ""
-        ) {
-          AnsweId = AnsweId + this.drawinglist[0].id;
-          console.log(AnsweId)
-        }
-        this.openmessage(AnsweId);
-      } else {
-        //计算评估分数
-        for (let item of _answerList) {
-          if (item.answer === 1) {
-            score++;
-          }
-        }
-        if (this.drawinglist[0].answer == 1) {
-          score++;
-        }
-        console.log(score);
-        this.CalculateScore(score); //计算评估等级
-      }
-    },
-    openmessage(AnsweId) {
-      this.$alert("第" + AnsweId + "请继续答题！", "提示", {
-        confirmButtonText: "确定",
-      });
-    },
-    CalculateScoremessage(str) {
-      this.$alert(str, "评测结果", {
-        confirmButtonText: "确定",
-      });
-    },
-    //计算得分
-    CalculateScore(score) {
-      /*正常（27~30 分）轻度（21~26分）中度（10~20分）重度（9分以下） */
-      if (score >= 27 && score <= 30) {
-        this.CalculateScoremessage("正常（27~30 分）");
-      } else if (score >= 26 && score <= 21) {
-        this.CalculateScoremessage("轻度（21~26分）");
-      } else if (score >= 10 && score <= 20) {
-        this.CalculateScoremessage("中度（10~20分）");
-      } else if (score < 9) {
-        this.CalculateScoremessage("重度（9分以下）");
-      }
-    },
-    // 获取相同编号的数组
-    getOrderNumber() {
-      const orderObj = {};
-      this.tableData.forEach((item, index) => {
-        item.rowIndex = index;
-        if (orderObj[item.qus_id]) {
-          orderObj[item.qus_id].push(index);
-        } else {
-          orderObj[item.qus_id] = [];
-          orderObj[item.qus_id].push(index);
-        }
-      });
-      // 将数组长度大于1的值 存储到this.orderIndexArr（也就是需要合并的项）
-      Object.keys(orderObj).forEach((key) => {
-        if (orderObj[key].length > 1) {
-          this.orderIndexArr.push(orderObj[key]);
-        }
-      });
-    },
-    objectSpanMethod({ row, column, rowIndex, columnIndex }) {
-      if (columnIndex === 0) {
-        for (let i = 0; i < this.orderIndexArr.length; i += 1) {
-          let element = this.orderIndexArr[i];
-          for (let j = 0; j < element.length; j += 1) {
-            let item = element[j];
-            if (rowIndex === item) {
-              if (j === 0) {
-                return {
-                  rowspan: element.length,
-                  colspan: 1,
-                };
-              }
-              if (j !== 0) {
-                return {
-                  rowspan: 0,
-                  colspan: 0,
-                };
-              }
-            }
-          }
-        }
-      }
-    },
-    tableRowClassName({ row, rowIndex }) {
-      let arr = this.hoverOrderArr;
-      for (let i = 0; i < arr.length; i += 1) {
-        if (rowIndex === arr[i]) {
-          return "hovered-row";
-        }
-      }
-    },
-    cellMouseEnter(row, column, cell, event) {
-      this.rowIndex = row.rowIndex;
-      this.hoverOrderArr = [];
-      this.orderIndexArr.forEach((element) => {
-        if (element.indexOf(this.rowIndex) >= 0) {
-          this.hoverOrderArr = element;
-        }
-      });
-    },
-    cellMouseLeave(row, column, cell, event) {
-      this.rowIndex = "-1";
-      this.hoverOrderArr = [];
-    },
-  },
+
 };
 </script>
 
@@ -477,4 +516,4 @@ export default {
   }
 }
 </style>
- 
+

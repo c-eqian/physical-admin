@@ -135,7 +135,7 @@ const router = new Router({
             ),
         },
         {
-          path: "/physical-manage/aged-test/lnr_depression_assess_report",
+          path: "/physical-manage/aged-test/lnr_depression_assess_report/:id/:rid",
           name: "lnr_depression_assess_report",
           component: () =>
             import(
@@ -143,7 +143,7 @@ const router = new Router({
             ),
         },
         {
-          path: "/physical-manage/aged-test/lnr-self-care-assess-report",
+          path: "/physical-manage/aged-test/lnr-self-care-assess-report/:id/:rid",
           name: "lnr_self_care_assess_report",
           component: () =>
             import(
@@ -151,7 +151,7 @@ const router = new Router({
             ),
         },
         {
-          path: "/physical-manage/aged-test/lnr-mental-state-exam-report",
+          path: "/physical-manage/aged-test/lnr-mental-state-exam-report/:id/:rid",
           name: "lnr-mental-state-exam-report",
           component: () =>
             import(
@@ -159,7 +159,7 @@ const router = new Router({
             ),
         },
         {
-          path: "/physical-manage/aged-test/follow-zyyjk-report",
+          path: "/physical-manage/aged-test/follow-zyyjk-report/:id/:rid",
           name: "follow-zyyjk-report",
           component: () =>
             import(

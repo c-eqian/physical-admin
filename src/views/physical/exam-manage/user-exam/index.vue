@@ -2,6 +2,8 @@
 <div>
       <exam-card @add-exam="addExam"  @updateData="updateData" @saveData="saveData"></exam-card>
     <add-exam-dialog :dialogFormVisible="dialogFormVisible" @change-form-visible="dialogFormVisible=false"></add-exam-dialog>
+
+
 </div>
 </template>
 
@@ -77,10 +79,11 @@ export default {
     },
     addExam(){
       this.dialogFormVisible=true
-    }
+    },
   },
   created () {
     // this.requestUserExamList()
+
   },
   components: {
     // eslint-disable-next-line vue/no-unused-components
@@ -92,6 +95,8 @@ export default {
 </script>
 
 <style scoped>
+
+
 .exam-result-card{
   overflow: auto;
   height: 580px;

@@ -3,14 +3,14 @@
     <div class="report_title">
       <h1>老年人生活自理能力评估表</h1>
       <div class="title_nav">
-        <div>居民姓名：</div>
-        <div>电话号码：</div>
-        <div>性别：</div>
-        <div>身份证号：</div>
-        <div>年龄：</div>
-        <div>流水号：</div>
+        <div>居民姓名：{{baseInfo.name}}</div>
+        <div>电话号码：{{baseInfo.phone}}</div>
+        <div>性 &nbsp &nbsp 别：{{baseInfo.gender}}</div>
+        <div>身份证号：{{baseInfo.idCard}}</div>
+        <div>年 &nbsp &nbsp &nbsp  龄：{{baseInfo.birthday}}</div>
+        <div>流水号 ： </div>
         <div>评估日期：</div>
-        <div>机构名称：</div>
+        <div>机构名称：{{baseInfo.org_name}}</div>
         <div>评估医生：</div>
       </div>
     </div>
@@ -90,12 +90,114 @@
 </template>
 
 <script>
+import {getAge, handleGender} from "@/utils/plugin/utils";
+
 export default {
   data() {
     return {
+      userId:'',
+      baseInfo:{
+        birthday:'',
+        phone:'',
+        idCard:'',
+        org_name:'',
+        org_code:'',
+        name:'',
+        gender:'',
+      },
       tableData: [{}],
       input: "1",
     };
+  },
+  created() {
+    this.userId = this.$route.params.id;
+    this.getUserInfo()
+  },
+    methods: {
+        getUserInfo(){
+      this.$get('/user_details_by_idCard',{
+        userId:this.userId
+      }).then(res=>{
+        if(res.data.status===200){
+          this.baseInfo = Object.assign({},this.baseInfo,res.data.result)
+          this.baseInfo.gender = handleGender(this.baseInfo.gender)
+          this.baseInfo.birthday = getAge(this.baseInfo.birthday)
+        }else{
+          this.messageTip(res.data.msg)
+        }
+        console.log(res)
+      })
+
+    },
+    messageTip(msg, type = 'error') {
+      this.$message({
+        showClose: true,
+        message: msg,
+        type: type
+      })
+    },
+    //计算评估结果
+    CalculationResults() {
+      const _answerList = this.tableData;
+      let score = 0;
+      //遍历答案列表，判断是否存在为答题情况
+      let NotAnswerList = _answerList.filter(
+        (item) => item.answer == "" && item.qus_id != ""
+      );
+      if (NotAnswerList.length > 0) {
+        let AnsweId = NotAnswerList.map((v, i) => {
+          return v.qus_id;
+        });
+        this.openmessage(AnsweId);
+      } else {
+        //计算评估分数
+        for (let item of _answerList) {
+          if (item.qus_id !== "") {
+            score += parseInt(item.answer);
+          }
+        }
+        this.CalculateScore(score); //计算评估等级
+      }
+    },
+    openmessage(AnsweId) {
+      this.$alert("第" + AnsweId + "请继续答题！", "提示", {
+        confirmButtonText: "确定",
+      });
+    },
+    CalculateScoremessage(str) {
+      this.$alert(str, "评测结果", {
+        confirmButtonText: "确定",
+      });
+    },
+    //计算得分
+    CalculateScore(score) {
+      /*'可自理（0~3分）'轻度依赖（4~8分）'中度依赖（9~18分）''不能自理（19分以上）' */
+      if (score <= 3) {
+        this.CalculateScoremessage("可自理（0~3分）");
+      } else if (score > 4 && score <= 8) {
+        this.CalculateScoremessage("轻度依赖（4~8分）");
+      } else if (score > 9 && score <= 18) {
+        this.CalculateScoremessage("中度依赖（9~18分）");
+      } else if (score > 19) {
+        this.CalculateScoremessage("不能自理（19分以上）");
+      }
+    },
+    //表格行列合并函数
+    objectSpanMethod({ row, column, rowIndex, columnIndex }) {
+      if (columnIndex === 0 || columnIndex === 6) {
+        if (rowIndex % 2 === 0) {
+          return {
+            rowspan: 2,
+            colspan: 1,
+          };
+        } else {
+          return {
+            rowspan: 0,
+            colspan: 0,
+          };
+        }
+      }
+    },
   },
   mounted() {
     //题目数据
@@ -186,74 +288,11 @@ export default {
 
     //设置答案列表
     jsonstr.forEach((item, index) => {
-      item.answer = ""; 
+      item.answer = "";
     });
     this.tableData = jsonstr;
   },
-  methods: {
-    //计算评估结果
-    CalculationResults() {
-      const _answerList = this.tableData;
-      let score = 0;
-      //遍历答案列表，判断是否存在为答题情况
-      let NotAnswerList = _answerList.filter(
-        (item) => item.answer == "" && item.qus_id != ""
-      );
-      if (NotAnswerList.length > 0) {
-        let AnsweId = NotAnswerList.map((v, i) => {
-          return v.qus_id;
-        });
-        this.openmessage(AnsweId);
-      } else {
-        //计算评估分数
-        for (let item of _answerList) {
-          if (item.qus_id !== "") {
-            score += parseInt(item.answer);
-          }
-        }
-        this.CalculateScore(score); //计算评估等级
-      }
-    },
-    openmessage(AnsweId) {
-      this.$alert("第" + AnsweId + "请继续答题！", "提示", {
-        confirmButtonText: "确定",
-      });
-    },
-    CalculateScoremessage(str) {
-      this.$alert(str, "评测结果", {
-        confirmButtonText: "确定",
-      });
-    },
-    //计算得分
-    CalculateScore(score) {
-      /*'可自理（0~3分）'轻度依赖（4~8分）'中度依赖（9~18分）''不能自理（19分以上）' */
-      if (score <= 3) {
-        this.CalculateScoremessage("可自理（0~3分）");
-      } else if (score > 4 && score <= 8) {
-        this.CalculateScoremessage("轻度依赖（4~8分）");
-      } else if (score > 9 && score <= 18) {
-        this.CalculateScoremessage("中度依赖（9~18分）");
-      } else if (score > 19) {
-        this.CalculateScoremessage("不能自理（19分以上）");
-      }
-    },
-    //表格行列合并函数
-    objectSpanMethod({ row, column, rowIndex, columnIndex }) {
-      if (columnIndex === 0 || columnIndex === 6) {
-        if (rowIndex % 2 === 0) {
-          return {
-            rowspan: 2,
-            colspan: 1,
-          };
-        } else {
-          return {
-            rowspan: 0,
-            colspan: 0,
-          };
-        }
-      }
-    },
-  },
+
 };
 </script>
 
@@ -290,4 +329,4 @@ export default {
   }
 }
 </style>
- 
+
