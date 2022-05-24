@@ -19,7 +19,6 @@ export const pieOption = {
       data: [
         { value: 100048, name: '待体检' },
         { value: 7305, name: '已体检' },
-        { value: 5080, name: '待审核' },
       ],
       emphasis: {
         itemStyle: {

@@ -6,6 +6,7 @@ import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import Utils from './common/utils'
 import 'element-ui/lib/theme-chalk/reset.css'
+import scroll from 'vue-seamless-scroll'
 import './mock.js'
 import axios from 'axios'
 // eslint-disable-next-line no-unused-vars
@@ -17,6 +18,7 @@ Vue.config.devtools = true
 import Plugin from 'v-fit-columns';
 Vue.use(Plugin);
 Vue.use(ElementUI)
+Vue.use(scroll)
 // 接收消息
 const getsocketData = e => {  // 创建接收消息函数
   const data = e && e.detail.data
@@ -31,6 +33,7 @@ Vue.prototype.$get = get
 Vue.prototype.$http = axios
 Vue.prototype.$SM4DeCrypto = SM4DeCrypto
 Vue.prototype.$SM4EnCrypto = SM4EnCrypto
+
 new Vue({
   router,
   store,

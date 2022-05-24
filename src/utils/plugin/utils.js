@@ -100,13 +100,29 @@ export function personType () {
 export function genderType () {
   return [
     {
-      'label': '男',
-      'value': 1
+      label: '男',
+      value: 1
     },
     {
-      'label': '女',
-      'value': 2
+      label: '女',
+      value: 2
     }]
+}
+export function statusType () {
+  return [
+    {
+      label: '已建档',
+      value: 0
+    },
+    {
+      label: '迁出',
+      value: 20
+    },
+       {
+      label: '待建档',
+      value: 40
+    }
+]
 }
 export function liveType () {
   return [

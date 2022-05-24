@@ -1,5 +1,5 @@
 export const dashOption= {
-  series: [
+    series: [
     {
       type: 'gauge',
       progress: {
@@ -8,40 +8,39 @@ export const dashOption= {
       },
       axisLine: {
         lineStyle: {
-          width: 18
+          width: 10
         }
       },
       axisTick: {
         show: false
       },
       splitLine: {
-        length: 15,
+        length: 10,
         lineStyle: {
           width: 2,
           color: '#999'
         }
       },
       axisLabel: {
-        distance: 25,
+        distance: 10,
         color: '#999',
         fontSize: 20
       },
       anchor: {
         show: true,
         showAbove: true,
-        size: 25,
+        size: 10,
         itemStyle: {
           borderWidth: 10
         }
       },
       title: {
-        text: '完成率'
+        show: false
       },
       detail: {
         valueAnimation: true,
-        fontSize: 50,
-        offsetCenter: [0, '70%'],
-        formatter: '{value} %',
+        fontSize: 15,
+        offsetCenter: [0, '80%']
       },
       data: [
         {

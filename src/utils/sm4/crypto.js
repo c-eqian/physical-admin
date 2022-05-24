@@ -15,6 +15,11 @@ export function SM4EnCrypto (EnString) {
 // 解密字符串
 export function SM4DeCrypto (DeString) {
   // eslint-disable-next-line new-cap
-  const sm4 = new SM4.sm4(cryptoConfig)
-  return sm4.encrypt(DeString)
+  try {
+        const sm4 = new SM4.sm4(cryptoConfig)
+  return sm4.decrypt(DeString)
+  }catch (e) {
+      return DeString
+  }
+
 }

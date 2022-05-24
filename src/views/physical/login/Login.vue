@@ -76,6 +76,7 @@ export default {
                      1. 登录成功，将菜单更新通过mutations中的UpdateMenus方法至state中的menus
                      2. 将用户信息更新通过mutations中的UpdateUser方法至state中的user
                        */
+                      console.log(response.data.result.menu)
                   this.$store.commit('BaseStore/UpdateMenus', response.data.result.menu)
                   this.$store.commit('BaseStore/UpdateUser', user)
                   sessionStorage.setItem('user', JSON.stringify(this.loginForm))

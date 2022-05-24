@@ -1,7 +1,7 @@
 import mqtt from 'mqtt'
 
 let config = {
-  url: '120.77.44.219',
+  url: '43.138.188.22',
   port: 8083,
   topic: 'send/weight', // 发布主题
   sub: 'get/weight', //订阅主题
@@ -14,7 +14,7 @@ let config = {
 let client
 export class MQTT {
   constructor(config = config) {
-    this.url = `ws://${config.url||'120.77.44.219'}/mqtt`;
+    this.url = `ws://${config.url||'43.138.188.22'}/mqtt`;
     this.port = config.port;
     this.topic = config.topic;
     this.sub = config.sub;

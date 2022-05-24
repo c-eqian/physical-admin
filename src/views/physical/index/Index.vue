@@ -9,7 +9,9 @@
     </el-aside>
     <el-container>
       <el-header>
-        <headers/>
+        <headers
+          @isCollapse="collapseChange"
+        />
       </el-header>
       <el-main>
         <router-view v-if="isRouterAlive"/>
@@ -31,6 +33,7 @@ export default {
   },
   data () {
     return {
+      isCollapse:false,
       isRouterAlive: true
     }
   },
@@ -39,6 +42,9 @@ export default {
     Headers
   },
   methods: {
+    collapseChange(){
+      this.isCollapse = !this.isCollapse
+    },
     reload () {
       this.isRouterAlive = false
       this.$nextTick(() => {
@@ -46,10 +52,13 @@ export default {
       })
     }
   },
+  created() {
+    this.isCollapse =this.$store.state.BaseStore.isCollapse
+  },
   computed: {
-    isCollapse () {
-      return this.$store.state.BaseStore.isCollapse
-    },
+    // isCollapse () {
+    //   return this.$store.state.BaseStore.isCollapse
+    // },
     asideWidth () {
       return this.$store.state.BaseStore.isCollapse ? 'auto' : '200px'
     }

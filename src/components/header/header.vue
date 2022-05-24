@@ -5,6 +5,12 @@
         <button class="btn-tool" title="折叠" @click="collapse">
           <i :class="changeIcon"></i>
         </button>
+        <button class="btn-tool" title="返回" @click="toBack">
+          <i class="el-icon-back"></i>
+        </button>
+        <button class="btn-tool" title="向后" @click="toGo">
+          <i class="el-icon-right"></i>
+        </button>
         <button class="btn-tool" title="刷新" @click="refresh">
           <i class="el-icon-refresh"></i>
         </button>
@@ -77,6 +83,12 @@ export default {
     }
   },
   methods: {
+    toGo(){
+      this.$router.go(1)
+    },
+    toBack(){
+      this.$router.go(-1)
+    },
     applyClicked () { // 申请列表
       this.$router.push({ name: 'applyList' })
     },
@@ -84,6 +96,7 @@ export default {
       this.$router.push({ path: '/network-manage/Internet-connection' })
     },
     collapse () {
+      this.$emit('isCollapse')
       this.$store.commit('BaseStore/switchCollapse')
     },
     refresh () {
@@ -121,6 +134,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.header-box{
+  /deep/ .el-col-6 {
+    width: 50%;
+  }
+}
 .btn-tool {
   border: none;
   background: transparent;

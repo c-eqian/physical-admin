@@ -11,24 +11,24 @@
     <div class="notice-header">
       <pageHeader @goBack="goBack" :contentTitle="contentTitle"></pageHeader>
       <div class="notice-header-right">
-        <el-dropdown split-button>
-          选择机构
-          <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item v-for="item in org_list" :key="item.org_code" :icon="item.icon">{{ item.org_name }}
-            </el-dropdown-item>
-          </el-dropdown-menu>
-        </el-dropdown>
+<!--        <el-dropdown split-button>-->
+<!--          选择机构-->
+<!--          <el-dropdown-menu slot="dropdown">-->
+<!--            <el-dropdown-item v-for="item in org_list" :key="item.org_code" :icon="item.icon">{{ item.org_name }}-->
+<!--            </el-dropdown-item>-->
+<!--          </el-dropdown-menu>-->
+<!--        </el-dropdown>-->
         <searchInput :placeholder="placeholder" @search="search"></searchInput>
-        <el-badge :value="99" class="item" type="info">
-          <el-tag type="info">今日处理</el-tag>
+        <el-badge :value="applyTotal.total" class="item" type="info">
+          <el-tag type="info">全部</el-tag>
         </el-badge>
-        <el-badge :value="1" class="item" type="primary">
+        <el-badge :value="applyTotal.unAuditTotal" class="item" type="primary">
           <el-tag type="primary">待审核</el-tag>
         </el-badge>
-        <el-badge :value="2" class="item" type="success">
+        <el-badge :value="applyTotal.AuditTotal" class="item" type="success">
           <el-tag type="success">已通过</el-tag>
         </el-badge>
-        <el-badge :value="2" class="item" type="warning">
+        <el-badge :value="applyTotal.rejectAuditTotal" class="item" type="warning">
           <el-tag type="warning">未通过</el-tag>
 
         </el-badge>
@@ -47,6 +47,7 @@
         size="mini"
         class="tableBox"
         :data="tableData"
+        v-loading="tableLoading"
         border
         @row-dblclick="rowDoubleClicked"
         :header-cell-style="{
@@ -206,6 +207,7 @@ export default {
   data () {
     return {
       applyId: 0, // 申请ID
+      tableLoading: false,
       contentTitle: '审核中心',
       userTotal: 0,
       placeholder: '支持姓名、证件、机构搜索',
@@ -216,6 +218,12 @@ export default {
       dialogInputDisable: true,
       show: false,
       dialogOptions: {},
+      applyTotal: {
+        total: 0,
+        unAuditTotal: 0,
+        AuditTotal: 0,
+        rejectAuditTotal: 0
+      },
       org_list: [
         { org_code: '45066', org_name: '测试机构1', icon: 'el-icon-first-aid-kit' },
         { org_code: '45067', org_name: '测试机构2', icon: 'el-icon-first-aid-kit' },
@@ -227,10 +235,24 @@ export default {
       tableData: []
     }
   },
-  mounted () {
+  created() {
     this.get_apply_list()
+    this.getApplyTotal()
+  },
+  mounted () {
+
   },
   methods: {
+    getApplyTotal(){
+      this.$get('/get_apply_data_total',{
+        noLoading: true
+      }).then(res=>{
+        if(res.data.status === 200){
+          this.applyTotal = Object.assign({},this.applyTotal,res.data.result)
+        }
+        console.log(res)
+      })
+    },
     /**
      * 刷新
      * */
@@ -261,9 +283,13 @@ export default {
             DialogShow: false
           }
         }
+        setTimeout(() => {
+          this.refreshClicked()
+        }, 1500)
       })
     },
     dropdownCallback (event) {
+      console.log(event)
       this.applyId = event.data.id
       if (event.id === 1) {
         // eslint-disable-next-line no-template-curly-in-string
@@ -274,8 +300,12 @@ export default {
             apply_status: 1,
             operator_id: userId
           }
+          console.log(params)
           this.getRequest('/update-apply-status', params).then(res => {
             this.messageTip(res.data.msg, res.data.status === 200 ? 'success' : 'error')
+            setTimeout(() =>{
+              this.refreshClicked()
+            }, 1500)
           })
         })
           .catch(() => {
@@ -321,6 +351,7 @@ export default {
         }
       }
       console.log(params)
+      this.tableLoading = true
       this.$get('/applyList', params).then(res => {
         console.log(res)
         if (res.data.status === 200) {
@@ -328,6 +359,7 @@ export default {
           this.tableData = handle_apply_data(res.data.result.lt)
         }
       })
+      this.tableLoading = false
     },
     handleCurrentChange (val) {
       this.currentPage = val
@@ -354,6 +386,9 @@ export default {
           type: res.data.status === 200 ? 'success' : 'error'
         })
       })
+      setTimeout(() => {
+        this.refreshClicked()
+      }, 1500)
     },
     toBack () {
       this.$router.go(-1)

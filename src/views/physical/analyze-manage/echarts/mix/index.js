@@ -1,12 +1,12 @@
 export const mixOption = {
-   title: {
+  title: {
     text: '季度体检分析'
   },
   tooltip: {
     trigger: 'axis'
   },
   legend: {
-     data: ['测试机构1','测试机构2','测试机构3','测试机构4','测试机构5','测试机构6']
+    data: ['测试机构1', '测试机构2', '测试机构3', '测试机构4', '测试机构5', '测试机构6']
   },
   grid: {
     left: '3%',

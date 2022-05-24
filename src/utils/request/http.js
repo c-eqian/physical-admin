@@ -34,6 +34,7 @@ const http = axios.create({
 http.defaults.withCredentials = true
 // 设置post请求头：告知服务器请求主体的数据格式
 // 'Content-Type':'application/json'
+http.defaults.headers.post['Content-Type'] = 'application/x-www-fromurlencodeed'
 http.defaults.headers['Content-type'] = 'application/x-www-form-urlencoded'
 let loadings,noLoading=false
 // 配置请求拦截器
