@@ -308,12 +308,13 @@ export default {
       })
     },
     updateData(params) {
-      this.formData.Height = params.height;
-      this.formData.Weight = params.weight;
-      this.formData.heart_rate = params.HR;
+      this.formData.Height = params.height||this.formData.Height;
+      this.formData.Weight = params.weight||this.formData.Weight;
+      this.formData.heart_rate = params.HR||this.formData.heart_rate;
+      this.formData.Temperature = params.temperature||this.formData.Temperature
       this.$store.commit('BaseStore/updateExamList', this.examList)
     },
-    requestUserExamList() { // 查询该条码下需要体检的项目大类
+    requestUserExamList () { // 查询该条码下需要体检的项目大类
       this.$get('/current-exam-list', {
         RequisitionId: this.formData.RequisitionId
       }).then(res => {
@@ -450,6 +451,7 @@ export default {
     mqttSendMsg(data, topic = 'controlExam') {
       try {
         this.client.publish(topic, JSON.stringify(data))
+        console.log('成功')
         // this.scrollList('发送成功')
       } catch (e) {
         this.MqttTip('发送失败', 'error')
