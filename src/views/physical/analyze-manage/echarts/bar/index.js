@@ -1,6 +1,6 @@
 export  const barOption = {
   title: {
-    text: '体检概况'
+    text: '机构数据'
   },
   tooltip: {
     trigger: 'axis',

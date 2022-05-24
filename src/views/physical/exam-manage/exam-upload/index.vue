@@ -11,19 +11,22 @@
 
           <el-form class="demo-form-inline">
             <el-form-item label="全部" class="font-white">
-              <span>356</span>
+              <span>{{statusTotal.total}}</span>
             </el-form-item>
             <el-form-item label="已上传" class="font-white">
-              <span>356</span>
+              <span>{{statusTotal.UploadTotal}}</span>
             </el-form-item>
             <el-form-item label="未上传" class="font-white">
-              <span>356</span>
+              <span>{{statusTotal.unUploadTotal}}</span>
+            </el-form-item>
+            <el-form-item label="待审核" class="font-white">
+              <span>{{statusTotal.unAuditTotal}}</span>
             </el-form-item>
             <el-form-item label="已审核" class="font-white">
-              <span>365</span>
+              <span>{{statusTotal.AuditTotal}}</span>
             </el-form-item>
             <el-form-item label="已驳回" class="font-white">
-              <span>356</span>
+              <span>{{statusTotal.rejectUploadTotal}}</span>
             </el-form-item>
           </el-form>
         </div>
@@ -201,54 +204,74 @@
 </template>
 
 <script>
-import searchInput from "@/components/physical/searchInput/searchInput";
+import searchInput from '@/components/physical/searchInput/searchInput'
 
 export default {
   name: 'User',
   components: {
-    searchInput,
+    searchInput
   },
-  data() {
+  data () {
     return {
-      tableLoading:false,
+      tableLoading: false,
       placeholder: '请输入',
-      total:0,
-      examUploadList:[],
+      total: 0,
+      examUploadList: [],
       multipleSelection: [],
       userFormVisible: false,
       dialogTitle: '',
       rowIndex: 9999,
+      statusTotal: {
+        total: 0,
+        unAuditTotal: 0,
+        AuditTotal: 0,
+        rejectAuditTotal: 0,
+        unUploadTotal: 0,
+        rejectUploadTotal: 0,
+        UploadTotal: 0
+      },
       rules: {
         name: [
-          {required: true, message: '请输入姓名', trigger: 'blur'},
-          {min: 2, max: 5, message: '长度在 2 到 5 个字符', trigger: 'blur'}
+          { required: true, message: '请输入姓名', trigger: 'blur' },
+          { min: 2, max: 5, message: '长度在 2 到 5 个字符', trigger: 'blur' }
         ]
       }
     }
   },
-  mounted() {
+  mounted () {
     this.getGetUploadList()
+    this.getStatusTotal()
   },
   methods: {
-    search(value) {
+    async getStatusTotal(){
+      await this.$get('/get_exam_data_total',{
+        noLoading: true
+      }).then(res =>{
+        if(res.data.status===200){
+          this.statusTotal = Object.assign({},this.statusTotal,res.data.result)
+        }
+      })
+    },
+    search (value) {
       console.log(value)
     },
-   async getGetUploadList() {
-        const org_code = this.$store.state.BaseStore.user.org_id;
-        this.tableLoading = true;
-      await  this.$get('/query_exam_upload',{
-        org_code:org_code,
-        noLoading:true
-      }).then(res=>{
-        if(res.data.status ===200){
+    async getGetUploadList () {
+      // eslint-disable-next-line camelcase
+      const org_code = this.$store.state.BaseStore.user.org_id
+      this.tableLoading = true
+      await this.$get('/query_exam_upload', {
+        org_code: org_code,
+        noLoading: true
+      }).then(res => {
+        if (res.data.status === 200) {
           this.total = res.data.result.total
           this.examUploadList = res.data.result.lt
-        }else {
+        } else {
           this.messageTip(res.data.msg)
         }
         console.log(res)
       })
-      this.tableLoading=false
+      this.tableLoading = false
       // this.loading = true
       // this.$http('/api/users').then((res) => {
       //   this.users = res.data
@@ -257,13 +280,13 @@ export default {
       //   console.error(err)
       // })
     },
-    handleEdit(index, row) {
+    handleEdit (index, row) {
       this.dialogTitle = '编辑'
       this.user = Object.assign({}, row)
       this.userFormVisible = true
       this.rowIndex = index
     },
-    submitUser(formName) {
+    submitUser (formName) {
       // 表单验证
       this.$refs[formName].validate((valid) => {
         if (valid) {
@@ -284,7 +307,7 @@ export default {
         }
       })
     },
-    handleDelete(index, row) {
+    handleDelete (index, row) {
       this.$confirm(`确定删除用户 【${row.name}】 吗?`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -299,10 +322,10 @@ export default {
         console.log('取消删除')
       })
     },
-    resetForm(formName) {
+    resetForm (formName) {
       this.$refs[formName].clearValidate()
     },
-    mulDelete() {
+    mulDelete () {
       let len = this.multipleSelection.length
       if (len === 0) {
         this.$message({
@@ -324,21 +347,21 @@ export default {
         })
       }
     },
-    selectChange(val) {
+    selectChange (val) {
       this.multipleSelection = val
     },
-    handleAdd() {
+    handleAdd () {
       this.dialogTitle = '新增'
       this.user = Object.assign({}, this.userBackup)
       this.userFormVisible = true
     },
-    messageTip(msg, type = 'error') {
+    messageTip (msg, type = 'error') {
       this.$message({
         showClose: true,
         message: msg,
         type: type
       })
-    },
+    }
   }
 }
 </script>

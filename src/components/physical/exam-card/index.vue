@@ -1,15 +1,39 @@
 <template>
   <div style="margin-top: 15px" class="exam-box">
-    <el-input clearable placeholder="请输入体检编号" v-model="formData.RequisitionId" class="input-with-select">
-      <el-select v-model="select" slot="prepend" placeholder="请选择">
-        <el-option label="餐厅名" value="1"></el-option>
-        <el-option label="订单号" value="2"></el-option>
-        <el-option label="用户电话" value="3"></el-option>
-      </el-select>
-      <el-button slot="append" icon="el-icon-search" @click="search"></el-button>
-    </el-input>
-    <el-button type="primary" @click="mockData" icon="el-icon-edit">MOCK数据</el-button>
-    <el-button type="primary" @click="addExam" icon="el-icon-circle-plus-outline">新增体检</el-button>
+    <div class="exam-box-item">
+      <el-input clearable placeholder="请输入体检编号" v-model="formData.RequisitionId" class="input-with-select">
+        <el-select v-model="select" slot="prepend" placeholder="请选择">
+          <el-option label="餐厅名" value="1"></el-option>
+          <el-option label="订单号" value="2"></el-option>
+          <el-option label="用户电话" value="3"></el-option>
+        </el-select>
+        <el-button slot="append" icon="el-icon-search" @click="search"></el-button>
+      </el-input>
+      <el-button type="primary" :disabled="testDisable" @click="checkTest" icon="el-icon-postcard">校验</el-button>
+      <el-button type="primary" :disabled="testDisable" @click="heightTest" icon="el-icon-postcard">身高测试</el-button>
+      <el-button type="primary" :disabled="testDisable" @click="weightTest" icon="el-icon-postcard">体重测试</el-button>
+      <el-button type="primary" :disabled="testDisable" @click="tempTest" icon="el-icon-postcard">体温测试</el-button>
+      <el-button type="primary" :disabled="testDisable" @click="HRTest" icon="el-icon-postcard">心率测试</el-button>
+      <el-divider direction="vertical">ddd</el-divider>
+      <el-button type="primary" @click="mockData" icon="el-icon-edit">MOCK数据</el-button>
+      <el-button type="primary" @click="addExam" icon="el-icon-circle-plus-outline">新增体检</el-button>
+    </div>
+    <div class="progress">
+      <div class="progress-rate">
+        <span>进度：</span>
+        <el-steps :space="200" :active="stepStatus" finish-status="success">
+          <el-step title="身份校验"></el-step>
+          <el-step title="身高测试"></el-step>
+          <el-step title="体重测试"></el-step>
+          <el-step title="体温测试"></el-step>
+          <el-step title="心率测试"></el-step>
+          <el-step title="待接收"></el-step>
+          <el-step title="待保存"></el-step>
+          <el-step title="已完成"></el-step>
+        </el-steps>
+      </div>
+    </div>
+
     <div class="exam-card" v-if="examList">
       <el-card class="box-card">
         <div slot="header" class="clearfix">
@@ -121,12 +145,14 @@
 import {MQTT, Utf8ArrayToStr} from "@/utils/MQTT";
 import echarts from 'echarts';
 import {dashOption} from '@/views/physical/exam-manage/user-exam/echarts'
-import {getAge, handleGender} from "@/utils/plugin/utils";
+import {getAge, handlefForMatTime, handleGender} from "@/utils/plugin/utils";
 
 export default {
   name: 'index',
   data() {
     return {
+      testDisable: true,
+      stepStatus: 0,
       input3: '',
       select: '',
       baseInfo: {
@@ -169,19 +195,99 @@ export default {
 
   },
   mounted() {
-    this.test_2()
+    // console.log(handlefForMatTime(new Date()),525)
+    // this.test_2()
   },
   methods: {
-    test_2() {
-      setInterval(() => {
+    checkTest() {
+      if (this.client) {
+        if (this.formData.RequisitionId) {
+          this.mqttSendMsg({
+            rid: this.formData.RequisitionId
+          },'checkRid')
+          console.log('校验测试')
+          this.stepStatus = 1
+          this.scrollList('校验测试成功')
+        } else {
+          this.messageTip('条码为空！')
+        }
+      } else {
+        this.messageTip('服务未连接')
+      }
+    },
+    HRTest() {
+      if (this.client) {
+        this.mqttSendMsg({
+          type: '4'
+        })
+        this.stepStatus = 5
+        console.log('心率测试')
+         this.scrollList('心率测试')
+      } else {
+        this.messageTip('服务未连接')
+      }
+
+    },
+    tempTest() {
+      if (this.client) {
+        this.mqttSendMsg({
+          type: '3'
+        })
+        this.stepStatus = 4
+        console.log('体温测试')
+         this.scrollList('体温测试')
+      } else {
+        this.messageTip('服务未连接')
+      }
+
+    },
+    weightTest() {
+      if (this.client) {
+        this.mqttSendMsg({
+          type: '1'
+        })
+        this.stepStatus = 3
+        console.log('体重测试')
+         this.scrollList('体重测试')
+      } else {
+        this.messageTip('服务未连接')
+      }
+
+    },
+    heightTest() {
+      if (this.client) {
+        this.mqttSendMsg({
+          type: '2'
+        })
+        this.stepStatus = 2
+        console.log('身高测试')
+         this.scrollList('身高测试')
+      } else {
+        this.messageTip('服务未连接')
+      }
+
+    },
+    MqttTip(msg, type = 'success') {
+      this.$message({
+        message: msg,
+        type: type
+      });
+    },
+    noticeMsg() {
+      this.$notify({
+        title: '成功',
+        message: '数据接收成功',
+        type: 'success'
+      });
+    },
+    scrollList(title) {
         if (this.listData.length > 50) {
           this.listData = []
         }
         this.listData.push({
-          'title': '无缝滚动第一行无缝滚动第一行',
-          'date': '2017-12-16'
+          'title': title,
+          'date': handlefForMatTime(new Date())
         })
-      }, 1000)
     },
     addExam() {
       this.$emit('add-exam')
@@ -195,6 +301,10 @@ export default {
     saveData() {
       this.$post('/cache-base-exam', this.formData).then(res => {
         this.messageTip(res.data.msg, res.data.status === 200 ? 'success' : 'error')
+        if (res.data.status === 200) {
+          this.stepStatus = 7
+          this.stepStatus = 8
+        }
       })
     },
     updateData(params) {
@@ -215,14 +325,14 @@ export default {
           this.baseInfo.birthday = getAge(this.baseInfo.birthday)
           this.examList = res.data.result.list
           this.$store.commit('BaseStore/updateExamList', this.examList)
-          window.sessionStorage.setItem('key',JSON.stringify(res.data.result))
+          window.sessionStorage.setItem('key', JSON.stringify(res.data.result))
         }
         console.log(res)
       })
     },
-    getStoreData(){
+    getStoreData() {
       let data = window.sessionStorage.getItem('key');
-      if (data){
+      if (data) {
         data = JSON.parse(data)
         this.baseInfo = Object.assign({}, this.baseInfo, data)
         this.baseInfo.gender = handleGender(this.baseInfo.gender)
@@ -246,16 +356,28 @@ export default {
         }).then(() => {
           switch (type) {
             case 1:
-              this.$router.push({name: 'lnr_depression_assess_report',params:{id:this.baseInfo.userId,rid:this.baseInfo.RequisitionId}})
+              this.$router.push({
+                name: 'lnr_depression_assess_report',
+                params: {id: this.baseInfo.userId, rid: this.baseInfo.RequisitionId}
+              })
               break;
             case 2:
-              this.$router.push({name: 'lnr_self_care_assess_report',params:{id:this.baseInfo.userId,rid:this.baseInfo.RequisitionId}})
+              this.$router.push({
+                name: 'lnr_self_care_assess_report',
+                params: {id: this.baseInfo.userId, rid: this.baseInfo.RequisitionId}
+              })
               break;
             case 3:
-              this.$router.push({name: 'lnr-mental-state-exam-report',params:{id:this.baseInfo.userId,rid:this.baseInfo.RequisitionId}})
+              this.$router.push({
+                name: 'lnr-mental-state-exam-report',
+                params: {id: this.baseInfo.userId, rid: this.baseInfo.RequisitionId}
+              })
               break;
             case 4:
-              this.$router.push({name: 'follow-zyyjk-report',params:{id:this.baseInfo.userId,rid:this.baseInfo.RequisitionId}})
+              this.$router.push({
+                name: 'follow-zyyjk-report',
+                params: {id: this.baseInfo.userId, rid: this.baseInfo.RequisitionId}
+              })
               break;
             default:
               break;
@@ -279,6 +401,8 @@ export default {
         //连接断开
         if (this.client) {
           this.client.end()
+          this.testDisable = true
+          this.client = ''
         }
         this.$store.commit('BaseStore/updateMqttClient', '')
         this.$store.commit('BaseStore/updateNetConnect')
@@ -295,16 +419,24 @@ export default {
       this.client.on("connect", e => {
         this.message = '连接成功'
         this.loading = false
+        this.testDisable = false
         this.$store.commit('BaseStore/updateNetConnect')
         this.$store.commit('BaseStore/updateMqttClient', this.client)
         this.client.subscribe(this.sub, (err) => {
           if (!err) {
-            this.message = `订阅成功-${this.sub}`
+            this.message = `连接成功`
+            this.scrollList('MQTT连接成功')
+            this.MqttTip('连接成功')
+          } else {
+            this.scrollList('MQTT连接异常')
+            this.MqttTip('连接异常', 'error')
           }
         });
 
       });
       this.client.on("message", (topic, message) => {
+        this.noticeMsg()
+        this.stepStatus = 6
         console.log(topic, message)
         let data = Utf8ArrayToStr(message)
         console.log(data)
@@ -315,6 +447,15 @@ export default {
         this.updateData(params)
       });
     },
+    mqttSendMsg(data, topic = 'controlExam') {
+      try {
+        this.client.publish(topic, JSON.stringify(data))
+        // this.scrollList('发送成功')
+      } catch (e) {
+        this.MqttTip('发送失败', 'error')
+        this.scrollList('发送失败')
+      }
+    }
 
   },
   computed: {
@@ -328,6 +469,24 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.exam-box {
+  .exam-box-item {
+    display: flex;
+    margin-left: 0;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .progress {
+  }
+
+  .input-with-select {
+    margin-left: 0;
+    width: 30%;
+    margin-bottom: 0;
+  }
+}
+
 .date {
   margin-left: 150px;
 }
@@ -338,16 +497,17 @@ export default {
 }
 
 .card {
+
   .card-item-echarts {
     width: 80%;
+
     margin-left: 20px;
-    height: 110px;
     background-color: rgba(51, 51, 51, 0.8);
   }
 
   cursor: pointer;
   width: 50%;
-  height: 254px;
+  height: 580px;
   background: rgb(255, 255, 255);
   border-radius: 5px;
   border: 1px solid rgba(0, 0, 255, .2);
@@ -391,6 +551,7 @@ export default {
 
 .exam-card {
   width: 100%;
+  height: 580px;
   display: flex;
   justify-content: center;
 }

@@ -4,7 +4,6 @@ body{
 }
 #notice-content{
   margin-top:20px;
-   min-height:1000px
 }
 #notice-content .page-header{
   display: flex;

@@ -41,7 +41,7 @@ export const dashOption= {
         valueAnimation: true,
         fontSize: 50,
         offsetCenter: [0, '70%'],
-         formatter: '{value} %',
+        formatter: '{value} %',
       },
       data: [
         {

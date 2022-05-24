@@ -84,6 +84,14 @@ export default {
 
 
     }
+  },
+  sockets:{
+      connect: function(){
+      console.log('socket 连接成功')
+    },
+    message: function(val){
+	  console.log('返回:'+val);
+	}
   }
 }
 </script>
