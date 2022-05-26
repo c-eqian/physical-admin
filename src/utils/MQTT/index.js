@@ -67,6 +67,5 @@ export function Utf8ArrayToStr (array) {
         break
     }
   }
-
-  return JSON.parse(out)
+  return JSON.parse(out.replace(/\'/g, '"'))
 }

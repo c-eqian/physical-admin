@@ -1,7 +1,7 @@
 // 1—A型；2—B型；3—O型；4—AB型；5—不详
 // 常住类型：1—户籍；2—非户籍
 // 人群类别：1—老年人；2—孕产妇；3—0-6岁儿童；4—贫困人口；5—7到64岁
-export function orgName () {
+export function orgName() {
   return [
     {
       'label': '测试机构1',
@@ -29,7 +29,8 @@ export function orgName () {
     }
   ]
 }
-export function rules () {
+
+export function rules() {
   return {
     userName: [{
       required: true,
@@ -77,7 +78,8 @@ export function rules () {
     }]
   }
 }
-export function personType () {
+
+export function personType() {
   return [
     {
       'label': '老年人',
@@ -97,7 +99,8 @@ export function personType () {
     }
   ]
 }
-export function genderType () {
+
+export function genderType() {
   return [
     {
       label: '男',
@@ -108,7 +111,8 @@ export function genderType () {
       value: 2
     }]
 }
-export function statusType () {
+
+export function statusType() {
   return [
     {
       label: '已建档',
@@ -118,13 +122,14 @@ export function statusType () {
       label: '迁出',
       value: 20
     },
-       {
+    {
       label: '待建档',
       value: 40
     }
-]
+  ]
 }
-export function liveType () {
+
+export function liveType() {
   return [
     {
       'label': '户籍',
@@ -135,7 +140,8 @@ export function liveType () {
       'value': 2
     }]
 }
-export function boolType () {
+
+export function boolType() {
   return [
     {
       'label': 'A型',
@@ -158,7 +164,8 @@ export function boolType () {
       'value': 5
     }]
 }
-export function nationList () {
+
+export function nationList() {
   return [
     {
       'label': '布依族',
@@ -216,7 +223,7 @@ export function nationList () {
 }
 
 // 计算年龄
-export function getAge (strBirthday) {
+export function getAge(strBirthday) {
   /* 根据出生日期算出年龄 */
   let returnAge
   let strBirthdayArr = strBirthday.split('-')
@@ -257,7 +264,7 @@ export function getAge (strBirthday) {
 }
 
 // 性别处理
-export function handleGender (gender) {
+export function handleGender(gender) {
   let sex
   switch (gender) {
     case '1':
@@ -274,28 +281,103 @@ export function handleGender (gender) {
   }
   return sex
 }
-export const handlefForMatTime = (utc_datetime) =>{
-    //   // 转为正常的时间格式 年-月-日 时:分:秒
-    // let new_datetime = utc_datetime.split("T")[0] + " " + utc_datetime.split("T")[1].split(".")[0];
-    //
-    // // 处理成为时间戳
-    // let timeStamp = new Date(new_datetime.replace(/-/g, '/')).getTime();
-    // timeStamp = timeStamp / 1000;
-    // // 增加8个小时，北京时间比utc时间多八个时区
-    // timeStamp = timeStamp + 8 * 60 * 60;
-    //
-    // // 时间戳转为时间
-    // let date = new Date(parseInt(timeStamp.toString()) * 1000);
-    // let YY = date.getFullYear() + '-';
-    // let MM = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-';
-    // let DD = (date.getDate() < 10 ? '0' + (date.getDate()) : date.getDate());
-    // let hh = (date.getHours() < 10 ? '0' + date.getHours() : date.getHours()) + ':';
-    // let mm = (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()) + ':';
-    // let ss = (date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds());
-    // return YY + MM + DD + " " + hh + mm + ss;
-   let date = new Date(utc_datetime);
-    return date.getFullYear() + "-" +
-      ((date.getMonth() + 1)<10 ? '0' + (date.getMonth() + 1):(date.getMonth() + 1)) + "-" +
-      (date.getDate() < 10 ? '0' + date.getDate() : date.getDate()) + " " +
-      date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds()
+
+export const handlefForMatTime = (utc_datetime) => {
+  //   // 转为正常的时间格式 年-月-日 时:分:秒
+  // let new_datetime = utc_datetime.split("T")[0] + " " + utc_datetime.split("T")[1].split(".")[0];
+  //
+  // // 处理成为时间戳
+  // let timeStamp = new Date(new_datetime.replace(/-/g, '/')).getTime();
+  // timeStamp = timeStamp / 1000;
+  // // 增加8个小时，北京时间比utc时间多八个时区
+  // timeStamp = timeStamp + 8 * 60 * 60;
+  //
+  // // 时间戳转为时间
+  // let date = new Date(parseInt(timeStamp.toString()) * 1000);
+  // let YY = date.getFullYear() + '-';
+  // let MM = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-';
+  // let DD = (date.getDate() < 10 ? '0' + (date.getDate()) : date.getDate());
+  // let hh = (date.getHours() < 10 ? '0' + date.getHours() : date.getHours()) + ':';
+  // let mm = (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()) + ':';
+  // let ss = (date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds());
+  // return YY + MM + DD + " " + hh + mm + ss;
+  let date = new Date(utc_datetime);
+  return date.getFullYear() + "-" +
+    ((date.getMonth() + 1) < 10 ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1)) + "-" +
+    (date.getDate() < 10 ? '0' + date.getDate() : date.getDate()) + " " +
+    date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds()
 }
+
+/**
+ * 抑郁评估
+ * @param level
+ * @returns {string}
+ */
+export const handleYYLevel = (level) => {
+  let res = ''
+  switch (level) {
+    case '1':
+      res = '正常（0-10分）'
+      break
+    case '2' :
+      res = '正常（0-10分）'
+      break
+    case '3' :
+      res = '中重度抑郁（21-30分）'
+      break
+    default :
+      res = ' '
+  }
+  return res
+}
+/***
+ * 自理评估
+ * @param level
+ * @returns {string}
+ */
+export const handleZLLevel = (level) => {
+  let res = ''
+  switch (level) {
+    case '1':
+      res = '可自理（0-3分）'
+      break
+    case '2' :
+      res = '可自理（0-3分）'
+      break
+    case '3' :
+      res = '中度依赖（9-18分）'
+      break
+    case '4' :
+      res = '不能自理（19分以上)'
+      break
+    default :
+      res = ' '
+  }
+  return res
+
+}
+export const handleJLLevel = (level) => {
+  let res = ''
+  switch (level) {
+    case '1':
+      res = '可自理（0-3分）'
+      break
+    case '2' :
+      res = '可自理（0-3分）'
+      break
+    case '3' :
+      res = '中度依赖（9-18分）'
+      break
+    case '4' :
+      res = '不能自理（19分以上)'
+      break
+    default :
+      res = ' '
+  }
+  return res
+
+}
+export const handleZYYLevel = (level) => {
+
+}
+

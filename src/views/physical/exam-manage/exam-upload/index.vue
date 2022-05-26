@@ -11,22 +11,22 @@
 
           <el-form class="demo-form-inline">
             <el-form-item label="全部" class="font-white">
-              <span>{{statusTotal.total}}</span>
+              <span>{{ statusTotal.total }}</span>
             </el-form-item>
             <el-form-item label="已上传" class="font-white">
-              <span>{{statusTotal.UploadTotal}}</span>
+              <span>{{ statusTotal.UploadTotal }}</span>
             </el-form-item>
             <el-form-item label="未上传" class="font-white">
-              <span>{{statusTotal.unUploadTotal}}</span>
+              <span>{{ statusTotal.unUploadTotal }}</span>
             </el-form-item>
             <el-form-item label="待审核" class="font-white">
-              <span>{{statusTotal.unAuditTotal}}</span>
+              <span>{{ statusTotal.unAuditTotal }}</span>
             </el-form-item>
             <el-form-item label="已审核" class="font-white">
-              <span>{{statusTotal.AuditTotal}}</span>
+              <span>{{ statusTotal.AuditTotal }}</span>
             </el-form-item>
             <el-form-item label="已驳回" class="font-white">
-              <span>{{statusTotal.rejectUploadTotal}}</span>
+              <span>{{ statusTotal.rejectUploadTotal }}</span>
             </el-form-item>
           </el-form>
         </div>
@@ -37,7 +37,7 @@
       :data="examUploadList"
       height="550"
       border
-       v-loading="tableLoading"
+      v-loading="tableLoading"
       @selection-change="selectChange"
       style="width: 100%">
       <el-table-column
@@ -147,17 +147,17 @@
           <el-button v-if="scope.row.uploadStatus===1"
                      size="mini"
                      type="success"
-                     @click="handleDelete(scope.$index, scope.row)">撤销上传
+                     @click="handleRevoke(scope.$index, scope.row)">撤销上传
           </el-button>
           <el-button v-else-if="scope.row.uploadStatus===0"
                      size="mini"
                      type="primary"
-                     @click="handleDelete(scope.$index, scope.row)">上传体检
+                     @click="handleUpload(scope.$index, scope.row)">上传体检
           </el-button>
           <el-button v-else-if="scope.row.uploadStatus===-1"
                      size="mini"
                      type="primary"
-                     @click="handleDelete(scope.$index, scope.row)">重新上传
+                     @click="handleAgain(scope.$index, scope.row)">重新上传
           </el-button>
         </template>
       </el-table-column>
@@ -169,37 +169,37 @@
       layout="total, sizes, prev, pager, next, jumper"
       :total="total">
     </el-pagination>
-<!--    <el-dialog :title="dialogTitle" width="600px" :visible.sync="userFormVisible" @close="resetForm('userForm')">-->
-<!--      <el-form :model="user" :rules="rules" ref="userForm">-->
-<!--        <el-form-item label="姓名" prop="name" label-width="50px">-->
-<!--          <el-input v-model="user.name" autocomplete="off"></el-input>-->
-<!--        </el-form-item>-->
-<!--        <el-form-item label="手机" label-width="50px">-->
-<!--          <el-input v-model="user.phone" autocomplete="off"></el-input>-->
-<!--        </el-form-item>-->
-<!--        <el-form-item label="地址" label-width="50px">-->
-<!--          <el-input v-model="user.address" autocomplete="off"></el-input>-->
-<!--        </el-form-item>-->
-<!--        <el-form-item label="日期" label-width="50px">-->
-<!--          <el-date-picker-->
-<!--            v-model="user.date"-->
-<!--            type="date"-->
-<!--            value-format="yyyy-MM-dd"-->
-<!--            placeholder="选择日期">-->
-<!--          </el-date-picker>-->
-<!--        </el-form-item>-->
-<!--        <el-form-item label="状态" label-width="50px">-->
-<!--          <el-switch v-model="user.status" active-color="#13ce66"-->
-<!--                     inactive-color="#ff4949"-->
-<!--                     :active-value="1"-->
-<!--                     :inactive-value="0"></el-switch>-->
-<!--        </el-form-item>-->
-<!--      </el-form>-->
-<!--      <div slot="footer" class="dialog-footer">-->
-<!--        <el-button @click="userFormVisible = false">取 消</el-button>-->
-<!--        <el-button type="primary" @click="submitUser('userForm')">确 定</el-button>-->
-<!--      </div>-->
-<!--    </el-dialog>-->
+    <!--    <el-dialog :title="dialogTitle" width="600px" :visible.sync="userFormVisible" @close="resetForm('userForm')">-->
+    <!--      <el-form :model="user" :rules="rules" ref="userForm">-->
+    <!--        <el-form-item label="姓名" prop="name" label-width="50px">-->
+    <!--          <el-input v-model="user.name" autocomplete="off"></el-input>-->
+    <!--        </el-form-item>-->
+    <!--        <el-form-item label="手机" label-width="50px">-->
+    <!--          <el-input v-model="user.phone" autocomplete="off"></el-input>-->
+    <!--        </el-form-item>-->
+    <!--        <el-form-item label="地址" label-width="50px">-->
+    <!--          <el-input v-model="user.address" autocomplete="off"></el-input>-->
+    <!--        </el-form-item>-->
+    <!--        <el-form-item label="日期" label-width="50px">-->
+    <!--          <el-date-picker-->
+    <!--            v-model="user.date"-->
+    <!--            type="date"-->
+    <!--            value-format="yyyy-MM-dd"-->
+    <!--            placeholder="选择日期">-->
+    <!--          </el-date-picker>-->
+    <!--        </el-form-item>-->
+    <!--        <el-form-item label="状态" label-width="50px">-->
+    <!--          <el-switch v-model="user.status" active-color="#13ce66"-->
+    <!--                     inactive-color="#ff4949"-->
+    <!--                     :active-value="1"-->
+    <!--                     :inactive-value="0"></el-switch>-->
+    <!--        </el-form-item>-->
+    <!--      </el-form>-->
+    <!--      <div slot="footer" class="dialog-footer">-->
+    <!--        <el-button @click="userFormVisible = false">取 消</el-button>-->
+    <!--        <el-button type="primary" @click="submitUser('userForm')">确 定</el-button>-->
+    <!--      </div>-->
+    <!--    </el-dialog>-->
   </div>
 </template>
 
@@ -211,7 +211,7 @@ export default {
   components: {
     searchInput
   },
-  data () {
+  data() {
     return {
       tableLoading: false,
       placeholder: '请输入',
@@ -232,30 +232,30 @@ export default {
       },
       rules: {
         name: [
-          { required: true, message: '请输入姓名', trigger: 'blur' },
-          { min: 2, max: 5, message: '长度在 2 到 5 个字符', trigger: 'blur' }
+          {required: true, message: '请输入姓名', trigger: 'blur'},
+          {min: 2, max: 5, message: '长度在 2 到 5 个字符', trigger: 'blur'}
         ]
       }
     }
   },
-  mounted () {
+  mounted() {
     this.getGetUploadList()
     this.getStatusTotal()
   },
   methods: {
-    async getStatusTotal(){
-      await this.$get('/get_exam_data_total',{
+    async getStatusTotal() {
+      await this.$get('/get_exam_data_total', {
         noLoading: true
-      }).then(res =>{
-        if(res.data.status===200){
-          this.statusTotal = Object.assign({},this.statusTotal,res.data.result)
+      }).then(res => {
+        if (res.data.status === 200) {
+          this.statusTotal = Object.assign({}, this.statusTotal, res.data.result)
         }
       })
     },
-    search (value) {
+    search(value) {
       console.log(value)
     },
-    async getGetUploadList () {
+    async getGetUploadList() {
       // eslint-disable-next-line camelcase
       const org_code = this.$store.state.BaseStore.user.org_id
       this.tableLoading = true
@@ -280,13 +280,13 @@ export default {
       //   console.error(err)
       // })
     },
-    handleEdit (index, row) {
+    handleEdit(index, row) {
       this.dialogTitle = '编辑'
       this.user = Object.assign({}, row)
       this.userFormVisible = true
       this.rowIndex = index
     },
-    submitUser (formName) {
+    submitUser(formName) {
       // 表单验证
       this.$refs[formName].validate((valid) => {
         if (valid) {
@@ -307,25 +307,60 @@ export default {
         }
       })
     },
-    handleDelete (index, row) {
-      this.$confirm(`确定删除用户 【${row.name}】 吗?`, '提示', {
+    updateUpload(rid, status = 0) {
+      this.$get('/exam_result_upload_by_rid', {
+        rid: rid,
+        uploadStatus: status
+      }).then(res => {
+        this.messageTip(res.data.msg, res.data.status === 200 ? 'success' : 'error')
+        setTimeout(() => {
+          this.getGetUploadList()
+          this.getStatusTotal()
+        }, 1500)
+      })
+    },
+    handleUpload(index, row) {
+      this.$confirm(`确定上传用户 【${row.name}】 吗?`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.users.splice(index, 1)
-        this.$message({
-          type: 'success',
-          message: '删除成功!'
-        })
+        this.updateUpload(row.RequisitionId, 1)
       }).catch(() => {
-        console.log('取消删除')
+        console.log('取消操作')
+      })
+      console.log(row, 58)
+
+    },
+    /**
+     * 撤销上传
+     */
+    handleRevoke(index, row) {
+      this.$confirm(`确定撤销用户 【${row.name}】上传吗?`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.updateUpload(row.RequisitionId, -1)
+      }).catch(() => {
+        console.log('取消操作')
       })
     },
-    resetForm (formName) {
+    handleAgain(index, row) {
+      this.$confirm(`确定重新上传用户 【${row.name}】吗?`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.updateUpload(row.RequisitionId, 1)
+      }).catch(() => {
+        console.log('取消操作')
+      })
+    },
+    resetForm(formName) {
       this.$refs[formName].clearValidate()
     },
-    mulDelete () {
+    mulDelete() {
       let len = this.multipleSelection.length
       if (len === 0) {
         this.$message({
@@ -347,15 +382,15 @@ export default {
         })
       }
     },
-    selectChange (val) {
+    selectChange(val) {
       this.multipleSelection = val
     },
-    handleAdd () {
+    handleAdd() {
       this.dialogTitle = '新增'
       this.user = Object.assign({}, this.userBackup)
       this.userFormVisible = true
     },
-    messageTip (msg, type = 'error') {
+    messageTip(msg, type = 'error') {
       this.$message({
         showClose: true,
         message: msg,
@@ -392,7 +427,7 @@ export default {
         color: white;
 
         span {
-          font-family: YouYuan,sans-serif;
+          font-family: YouYuan, sans-serif;
           font-size: 1em;
           vertical-align: middle;
           font-weight: normal

@@ -8,13 +8,13 @@
       </el-select>
       <el-button slot="append" icon="el-icon-search" @click="search"></el-button>
     </el-input>
-<!--    <div v-if="visible">-->
-<!--      <el-row style="position: absolute;right: 50px">-->
-<!--        <el-button type="primary" @click="success" icon="el-icon-check" circle></el-button>-->
-<!--        <el-button type="danger" @click="refuse" icon="el-icon-close" circle></el-button>-->
-<!--      </el-row>-->
-<!--    </div>-->
-    <div  style="position: absolute;top: 200px;">
+    <!--    <div v-if="visible">-->
+    <!--      <el-row style="position: absolute;right: 50px">-->
+    <!--        <el-button type="primary" @click="success" icon="el-icon-check" circle></el-button>-->
+    <!--        <el-button type="danger" @click="refuse" icon="el-icon-close" circle></el-button>-->
+    <!--      </el-row>-->
+    <!--    </div>-->
+    <div style="position: absolute;top: 200px;">
       <el-row>
         <el-button type="primary" @click="getBaseData" icon="el-icon-s-promotion">生成</el-button>
       </el-row>
@@ -224,11 +224,11 @@ export default {
         VisitingDate: '',
         cur_address: '',
         phone: '',
-        BMI: '',
-        heart_rate: '',
+        BMI: '0',
+        heart_rate: '0',
         Temperature: '36.5',
-        LSBP: '',
-        LDBP: ''
+        LSBP: '0',
+        LDBP: '0'
       }
 
     }
@@ -248,8 +248,8 @@ export default {
     // console.log(id)
   },
   methods: {
-    toNext(){
-      this.$router.push({name:'examMockUrine',params: {id:this.examData.RequisitionId}})
+    toNext() {
+      this.$router.push({name: 'examMockUrine', params: {id: this.examData.RequisitionId}})
     },
     search() {
       this.$get('/get-cache-base-exam', {RequisitionId: this.examData.RequisitionId}).then(res => {
@@ -264,7 +264,7 @@ export default {
       this.examData.Operator = this.$store.state.BaseStore.user.name
       console.log(this.examData)
       this.$post('/insertbaseexam', this.examData).then(res => {
-        this.messageTip(res.data.msg)
+        this.messageTip(res.data.msg,res.data.status===200?'success':'error')
       })
     },
     getBaseData() {
@@ -274,21 +274,21 @@ export default {
           cancelButtonText: '不了',
           type: 'warning'
         }).then(() => {
-        this.examData.LDBP = res.data.LDBP;
-        this.examData.LSBP = res.data.LSBP;
-        this.examData.Weight = res.data.Weight.toString();
-        this.examData.Height = res.data.Height.toString();
-        this.examData.heart_rate = res.data.heart_rate.toString();
-        this.examData.Temperature = res.data.Temperature.toString();
-        this.examData.VisitingDate = res.data.VisitingDate;
-        this.examData.BMI = handle_BMI(res.data.Height, res.data.Weight)
+          this.examData.LDBP = res.data.LDBP;
+          this.examData.LSBP = res.data.LSBP;
+          this.examData.Weight = res.data.Weight.toString();
+          this.examData.Height = res.data.Height.toString();
+          this.examData.heart_rate = res.data.heart_rate.toString();
+          this.examData.Temperature = res.data.Temperature.toString();
+          this.examData.VisitingDate = res.data.VisitingDate;
+          this.examData.BMI = handle_BMI(res.data.Height, res.data.Weight)
         }).catch(() => {
           this.examData.LDBP = res.data.LDBP;
-        this.examData.LSBP = res.data.LSBP;
-        this.examData.heart_rate = res.data.heart_rate.toString();
-        this.examData.Temperature = res.data.Temperature.toString();
-        this.examData.VisitingDate = res.data.VisitingDate;
-        this.examData.BMI = handle_BMI(res.data.Height, res.data.Weight)
+          this.examData.LSBP = res.data.LSBP;
+          // this.examData.heart_rate = res.data.heart_rate.toString();
+          // this.examData.Temperature = res.data.Temperature.toString();
+          this.examData.VisitingDate = res.data.VisitingDate;
+          this.examData.BMI = handle_BMI(res.data.Height, res.data.Weight)
 
         });
         // console.log(this.examData)

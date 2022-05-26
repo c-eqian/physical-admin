@@ -97,7 +97,14 @@
           width="100">
           <template slot-scope="scope">
             <el-button @click="viewUserClick(scope.row)" type="text" size="small">查看</el-button>
-            <el-button type="text" size="small">编辑</el-button>
+            <el-button v-if="!scope.row.cardId" type="text"
+                       @click="addCard(scope.row)"
+                       size="small">绑卡
+            </el-button>
+            <el-button v-else type="text" style="color: red"
+                       @click="deleteCard(scope.row)"
+                       size="small">解绑
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -116,7 +123,15 @@
                @add-success="addSuccess"
                :dialogVisible="dialogVisible"
                :userInfoForm.sync="userInfo"
-               :type="openType"></user-info>
+               :type="openType">
+
+    </user-info>
+    <add-card
+      :addCardVisible="addCardVisible"
+      :rowForm="rowData"
+      @update-visible="updateVisible"
+    >
+    </add-card>
   </div>
 </template>
 
@@ -125,12 +140,14 @@ import {getAge, handleGender} from '@/utils/plugin/utils'
 import {deepClone} from '@/utils/handle'
 import pageHeader from '@/components/physical/pageHeader/pageHeader'
 import userInfo from '@/components/physical/user-info/index'
+import addCard from '../components/add-card/index'
 import '../static/my-css.css'
 
 export default {
   name: 'userList',
   components: {
     pageHeader,
+    addCard,
     // eslint-disable-next-line vue/no-unused-components
     userInfo
   },
@@ -149,7 +166,9 @@ export default {
       isShowBack: false, // 是否显示返回按钮
       isSearch: false, // 是否搜索状态
       dialogVisible: false,
+      addCardVisible: false,
       userInfo: {},
+      rowData: {},
       dataList: [],
       searchSelect: [
         {id: 1, value: '111'},
@@ -166,7 +185,40 @@ export default {
     await this.getUserList()// 获取用户数据
   },
   methods: {
-    async deleteListClicked() { //删除操作
+    async deleteCard(row) {
+      await this.$confirm(`【${row.name}】绑定的【${row.cardId}】将被解除，是否继续？`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$get('/delete-card', {
+          userId: row.userId
+        }).then(res => {
+          this.messageTip(res.data.msg, res.data.status === 200 ? 'success' : 'error')
+          setTimeout(() => {
+            this.getUserList()
+          }, 1500)
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '取消操作'
+        });
+      });
+    },
+    addCard(row) {
+      console.log(row)
+      // 深度拷贝
+      this.rowData = deepClone(row)
+      this.addCardVisible = true
+    },
+    updateVisible() {
+      this.addCardVisible = false
+      setTimeout(() => {
+        this.getUserList()
+      }, 1500)
+    },
+    async deleteListClicked() { // 删除操作
       if (this.selectionList.length > 0) {
         let array = []
         this.selectionList.forEach(item => {
@@ -180,13 +232,12 @@ export default {
             this.getUserList()
           }, 1500)
         })
-
       } else {
         this.messageTip('请至少选择一项', 'error')
       }
     },
     handleSelectionChange(val) {
-      this.selectionList = val;
+      this.selectionList = val
       console.log(this.selectionList)
     },
     dialogCallback(value) {
@@ -218,10 +269,9 @@ export default {
           }
           this.userTotal = res.data.result.total
           this.handleUserData(res.data.result.lt)
-          console.log(res.data.result.lt,5558)
-        }
-        else {
-          this.messageTip(res.data.msg,'error')
+          console.log(res.data.result.lt, 5558)
+        } else {
+          this.messageTip(res.data.msg, 'error')
         }
       }).catch(error => {
         console.log(error)
@@ -241,16 +291,15 @@ export default {
     // 搜索
     searchBtn() {
       this.pageSize = 20
-        this.currentPage = 1
-        // this.search_result_total()
-        // this.requestSearch(this.inputSearch)
+      this.currentPage = 1
+      // this.search_result_total()
+      // this.requestSearch(this.inputSearch)
       if (this.inputSearch !== '') {
         this.pageSize = 20
         this.currentPage = 1
         // this.search_result_total()
         this.requestSearch(this.inputSearch)
-      }else
-      {
+      } else {
         this.getUserList()
       }
     },
@@ -265,7 +314,7 @@ export default {
           this.dataList = []
           // this.dataList = res.data.result
           res.data.result.forEach(item => {
-            item.value = item.name;
+            item.value = item.name
             this.dataList.push(item)
           })
         }
@@ -377,9 +426,8 @@ export default {
         }
         this.tableData = userData
       } catch (e) {
-        this.messageTip("数据解析异常")
+        this.messageTip('数据解析异常')
       }
-
     },
     goBack() { // 页面返回按钮触发
       this.isSearch = false

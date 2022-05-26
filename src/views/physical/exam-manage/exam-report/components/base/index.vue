@@ -85,21 +85,21 @@
       <tr>
         <td rowspan="4">老年人评估</td>
         <td colspan="2" class=" height-30">老年人智力评估</td>
-        <td colspan="4" class="center height-30">心血管 : 正常</td>
+        <td colspan="4" class="center height-30">{{examData.self_care_assess_level}}</td>
         <td class="top" rowspan="4" colspan="2">医师意见: 可遵医嘱口服维<br>生素B族</td>
       </tr>
 
       <tr>
         <td colspan="2" class=" height-30">老年人中医体质辨识</td>
-        <td colspan="4" class="center height-30">心血管 : 正常</td>
+        <td colspan="4" class="center height-30">{{examData.self_care_assess_level}}</td>
+      </tr>
+      <tr>
+        <td colspan="2" class=" height-30">老年人抑郁评估</td>
+        <td colspan="4" class="center height-30">{{examData.depression_assesss_level}}</td>
       </tr>
       <tr>
         <td colspan="2" class=" height-30">老年人自理评估</td>
-        <td colspan="4" class="center height-30">心血管 : 正常</td>
-      </tr>
-      <tr>
-        <td colspan="2" class=" height-30">老年人自理评估</td>
-        <td colspan="4" class="center height-30">心血管 : 觉哦啊红烧婚纱后送哈怂上海好好</td>
+        <td colspan="4" class="center height-30">{{examData.self_care_assess_level}}</td>
       </tr>
       <!-- 内科 -->
       <tr>

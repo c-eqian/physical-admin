@@ -9,6 +9,7 @@
         </el-select>
         <el-button slot="append" icon="el-icon-search" @click="search"></el-button>
       </el-input>
+      <el-button type="primary" :disabled="testDisable" @click="swipeCard" icon="el-icon-postcard">刷卡验证</el-button>
       <el-button type="primary" :disabled="testDisable" @click="checkTest" icon="el-icon-postcard">校验</el-button>
       <el-button type="primary" :disabled="testDisable" @click="heightTest" icon="el-icon-postcard">身高测试</el-button>
       <el-button type="primary" :disabled="testDisable" @click="weightTest" icon="el-icon-postcard">体重测试</el-button>
@@ -83,6 +84,9 @@
           <div class="demo-input-suffix">
             更多：
             <el-button icon="el-icon-monitor" type="text">查看更多</el-button>
+          </div>
+          <div class="demo-input-suffix">
+            <el-button icon="el-icon-monitor" @click="clearData" type="text">清空</el-button>
           </div>
         </div>
         <el-collapse accordion>
@@ -176,6 +180,7 @@ export default {
       topic: 'send/weight', // 发布主题
       sub: 'toServer', //订阅主题
       input: '',
+      subCard: 'pushCardId',
       formData: {
         RequisitionId: '21101700009',
         Weight: '',
@@ -199,12 +204,19 @@ export default {
     // this.test_2()
   },
   methods: {
+    clearData() {
+      this.formData.Temperature = '';
+      this.formData.heart_rate = '';
+      this.formData.Weight = '';
+      this.formData.BMI = '';
+      this.formData.Height = '';
+    },
     checkTest() {
       if (this.client) {
         if (this.formData.RequisitionId) {
           this.mqttSendMsg({
             rid: this.formData.RequisitionId
-          },'checkRid')
+          }, 'checkRid')
           console.log('校验测试')
           this.stepStatus = 1
           this.scrollList('校验测试成功')
@@ -222,7 +234,7 @@ export default {
         })
         this.stepStatus = 5
         console.log('心率测试')
-         this.scrollList('心率测试')
+        this.scrollList('心率测试')
       } else {
         this.messageTip('服务未连接')
       }
@@ -235,7 +247,7 @@ export default {
         })
         this.stepStatus = 4
         console.log('体温测试')
-         this.scrollList('体温测试')
+        this.scrollList('体温测试')
       } else {
         this.messageTip('服务未连接')
       }
@@ -248,11 +260,22 @@ export default {
         })
         this.stepStatus = 3
         console.log('体重测试')
-         this.scrollList('体重测试')
+        this.scrollList('体重测试')
       } else {
         this.messageTip('服务未连接')
       }
 
+    },
+    swipeCard() {
+      if (this.client) {
+        this.mqttSendMsg({
+          type: '5'
+        })
+        console.log('刷卡')
+        this.scrollList('刷卡验证')
+      } else {
+        this.messageTip('服务未连接')
+      }
     },
     heightTest() {
       if (this.client) {
@@ -261,7 +284,7 @@ export default {
         })
         this.stepStatus = 2
         console.log('身高测试')
-         this.scrollList('身高测试')
+        this.scrollList('身高测试')
       } else {
         this.messageTip('服务未连接')
       }
@@ -281,13 +304,13 @@ export default {
       });
     },
     scrollList(title) {
-        if (this.listData.length > 50) {
-          this.listData = []
-        }
-        this.listData.push({
-          'title': title,
-          'date': handlefForMatTime(new Date())
-        })
+      if (this.listData.length > 50) {
+        this.listData = []
+      }
+      this.listData.push({
+        'title': title,
+        'date': handlefForMatTime(new Date())
+      })
     },
     addExam() {
       this.$emit('add-exam')
@@ -308,13 +331,13 @@ export default {
       })
     },
     updateData(params) {
-      this.formData.Height = params.height||this.formData.Height;
-      this.formData.Weight = params.weight||this.formData.Weight;
-      this.formData.heart_rate = params.HR||this.formData.heart_rate;
-      this.formData.Temperature = params.temperature||this.formData.Temperature
+      this.formData.Height = params.height || this.formData.Height;
+      this.formData.Weight = params.weight || this.formData.Weight;
+      this.formData.heart_rate = params.HR || this.formData.heart_rate;
+      this.formData.Temperature = params.temperature || this.formData.Temperature
       this.$store.commit('BaseStore/updateExamList', this.examList)
     },
-    requestUserExamList () { // 查询该条码下需要体检的项目大类
+    requestUserExamList() { // 查询该条码下需要体检的项目大类
       this.$get('/current-exam-list', {
         RequisitionId: this.formData.RequisitionId
       }).then(res => {
@@ -394,6 +417,16 @@ export default {
       }
 
     },
+    handleCheckCard(params){
+      if(params.status===200){
+        console.log(params)
+        this.formData.RequisitionId = params.result.RequisitionId
+        console.log(this.formData)
+        this.messageTip('查询成功','success')
+      }else {
+        this.messageTip(params.msg)
+      }
+    },
     switchChange(status) {
       this.loading = status
       if (status) {
@@ -433,19 +466,32 @@ export default {
             this.MqttTip('连接异常', 'error')
           }
         });
+        this.client.subscribe(this.subCard, (err) => {
+          if (!err) {
+            this.scrollList(`订阅主题【${this.subCard}】成功`)
+          } else {
+            this.scrollList(`订阅主题【${this.subCard}】失败`)
+          }
+        });
 
       });
       this.client.on("message", (topic, message) => {
         this.noticeMsg()
-        this.stepStatus = 6
-        console.log(topic, message)
-        let data = Utf8ArrayToStr(message)
-        console.log(data)
-        const {
-          params
-        } = data
-        //this.message = JSON.stringify(data)
-        this.updateData(params)
+        if (topic === this.sub) {
+          this.stepStatus = 6
+          let data = Utf8ArrayToStr(message)
+          const {
+            params
+          } = data
+          //this.message = JSON.stringify(data)
+          this.updateData(params)
+        } else if (topic === this.subCard) {
+          let data = Utf8ArrayToStr(message)
+          this.handleCheckCard(data)
+        } else {
+          console.log('无主题')
+        }
+
       });
     },
     mqttSendMsg(data, topic = 'controlExam') {
@@ -484,7 +530,7 @@ export default {
 
   .input-with-select {
     margin-left: 0;
-    width: 30%;
+    width: 40%;
     margin-bottom: 0;
   }
 }
